@@ -1,0 +1,16 @@
+.hg
+.hgignore
+.hgtags
+.idea
+.sonar-ide.properties
+derby.log
+target
+HitsWithSOAP
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings
+backupFitnesseWikiTest.sh
+x-ray-setup
