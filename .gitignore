@@ -4,8 +4,6 @@
 .idea
 .sonar-ide.properties
 derby.log
-target
-HitsWithSOAP
 *.iml
 *.ipr
 *.iws
@@ -14,3 +12,5 @@ HitsWithSOAP
 .settings
 backupFitnesseWikiTest.sh
 x-ray-setup
+target
+HitsWithSOAP
