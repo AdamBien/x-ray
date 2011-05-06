@@ -28,7 +28,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.abien</groupId>
+            <groupId>com.abien.xray</groupId>
             <artifactId>x-ray</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
