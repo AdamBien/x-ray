@@ -84,7 +84,7 @@ class XRayMonitoringTest extends JUnitSuite with MockitoSugar with ShouldMatcher
   def getFilterChainWithPerformance(delay:Long):FilterChain = {
     return new FilterChain(){
     override def doFilter(request:ServletRequest,response:ServletResponse){
-      Thread.sleep(delay);
+      Thread.sleep(delay+50);
     }
     }
   }
@@ -92,11 +92,11 @@ class XRayMonitoringTest extends JUnitSuite with MockitoSugar with ShouldMatcher
   def getFilterWithPerformance(delay:Long):HTTPRequestRESTInterceptor = {
     return new HTTPRequestRESTInterceptor(){
       override def sendAsync(uri:String,headers:Map[String,String])={
-        Thread.sleep(delay);
+        Thread.sleep(delay+100);
       }
       
       override def send(uri:String,headers:Map[String,String])={
-        Thread.sleep(delay);
+        Thread.sleep(delay+100);
       }
     }
   }
