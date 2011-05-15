@@ -104,7 +104,6 @@
     </dependencies>
     <build>
         <plugins>
-            <!--
               <plugin>
                 <groupId>org.scala-tools</groupId>
                 <artifactId>maven-scala-plugin</artifactId>
@@ -130,7 +129,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -157,7 +155,7 @@
         <finalName>x-ray</finalName>
     </build>
     <properties>
-        <netbeans.hint.deploy.server>gfv3ee6wc</netbeans.hint.deploy.server>
+        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
         <scala.version>2.8.0</scala.version>
     </properties>
 </project>
