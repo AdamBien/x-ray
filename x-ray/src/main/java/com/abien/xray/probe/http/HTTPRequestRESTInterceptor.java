@@ -39,11 +39,11 @@ public class HTTPRequestRESTInterceptor implements Filter {
     static final String REFERER = "referer";
     static final String DELIMITER = "|";
     static Executor executor = null;
-    private static AtomicInteger nrOfRejectedJobs = new AtomicInteger(0);
-    private static long xrayPerformance = -1;
-    private static long worstXrayPerformance = -1;
-    private static long applicationPerformance = -1;
-    private static long worstApplicationPerformance = -1;
+    private volatile static AtomicInteger nrOfRejectedJobs = new AtomicInteger(0);
+    private volatile static long xrayPerformance = -1;
+    private volatile static long worstXrayPerformance = -1;
+    private volatile static long applicationPerformance = -1;
+    private volatile static long worstApplicationPerformance = -1;
     public final static int NR_OF_THREADS = 2;
     public final static int QUEUE_CAPACITY = 5;
 
