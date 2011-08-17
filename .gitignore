@@ -15,3 +15,12 @@ backupFitnesseWikiTest.sh
 x-ray-setup
 target
 HitsWithSOAP
+/HitsWithSoap/HitsWithSoap-war/dist/
+/HitsWithSoap/HitsWithSoap-war/build/
+/HitsWithSoap/build/
+/HitsWithSoap/dist/
+/HitsWithSoap/HitsWithSoap-ejb/dist/
+/HitsWithSoap/HitsWithSoap-ejb/build/
+/HitsWithSoap/HitsWithSoap-ejb/nbproject/private/
+/HitsWithSoap/HitsWithSoap-war/nbproject/private/
+/HitsWithSoap/nbproject/private/
