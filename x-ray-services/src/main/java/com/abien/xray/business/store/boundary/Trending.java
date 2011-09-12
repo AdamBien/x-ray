@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 /**
@@ -22,7 +23,7 @@ import javax.interceptor.Interceptors;
 @Interceptors(PerformanceAuditor.class)
 public class Trending extends TitleFilter{
 
-    @EJB
+    @Inject
     Hits hits;
 
 

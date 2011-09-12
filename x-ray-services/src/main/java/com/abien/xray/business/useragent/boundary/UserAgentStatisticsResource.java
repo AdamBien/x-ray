@@ -10,6 +10,7 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import javax.inject.Inject;
 
 /**
  * User: blog.adam-bien.com
@@ -21,7 +22,7 @@ import java.util.List;
 @Interceptors(PerformanceAuditor.class)
 public class UserAgentStatisticsResource {
 
-    @EJB
+    @Inject
     UserAgentStatistics agentStatistics;
 
     @GET

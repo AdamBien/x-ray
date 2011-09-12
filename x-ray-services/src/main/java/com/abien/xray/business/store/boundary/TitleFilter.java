@@ -5,6 +5,7 @@ import com.abien.xray.business.store.entity.Post;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.inject.Inject;
 
 /**
  *
@@ -12,7 +13,7 @@ import javax.ejb.EJB;
  */
 public class TitleFilter {
 
-    @EJB
+    @Inject
     TitleFetcher cache;
 
     List<Post> getPostsWithExistingTitle(List<Post> mostPopularPosts, int max) {

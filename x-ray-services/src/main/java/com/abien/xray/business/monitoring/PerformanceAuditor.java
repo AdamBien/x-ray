@@ -18,7 +18,7 @@ public class PerformanceAuditor {
     @Inject
     private XRayLogger LOG;
 
-    @EJB
+    @Inject
     MonitoringResource monitoring;
 
     @AroundTimeout

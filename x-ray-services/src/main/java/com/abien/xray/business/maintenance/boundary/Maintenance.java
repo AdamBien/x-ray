@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.TEXT_PLAIN)
 public class Maintenance {
 
-    @EJB
+    @Inject
     Hits hits;
 
     @Inject

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -25,7 +26,7 @@ import javax.ws.rs.core.MediaType;
 @Interceptors(PerformanceAuditor.class)
 public class MostPopular extends TitleFilter{
 
-    @EJB
+    @Inject
     PersistentHitStore hits;
 
 

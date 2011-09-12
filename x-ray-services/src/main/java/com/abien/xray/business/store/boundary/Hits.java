@@ -39,12 +39,12 @@ public class Hits {
     XRayLogger LOG;
 
     public static final String ENTRY = "/entry/";
-    @EJB
+    @Inject
     PersistentHitStore hitStore;
-    @EJB
+    @Inject
     PersistentRefererStore refererStore;
 
-    @EJB
+    @Inject
     UserAgentStatistics userAgentStatistics;
 
     @Inject

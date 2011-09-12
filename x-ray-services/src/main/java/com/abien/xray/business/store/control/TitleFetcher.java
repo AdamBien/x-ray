@@ -34,7 +34,7 @@ public class TitleFetcher {
     private ConcurrentLinkedQueue<String> bogusTitles = null;
     public static final String BASE_URL = "http://www.adam-bien.com/roller/abien";
 
-    @EJB
+    @Inject
     PersistentHitStore persistentHitStore;
     @Inject
     TitleCache titles;
