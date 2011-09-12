@@ -24,7 +24,7 @@ import javax.ws.rs.Produces;
 @Produces({"text/plain"})
 public class HourlyStatisticsCalculator {
 
-    @EJB
+    @Inject
     Hits hits;
 
     private long currentRate = 0;

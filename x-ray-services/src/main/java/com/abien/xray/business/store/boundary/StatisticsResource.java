@@ -6,6 +6,7 @@ import com.abien.xray.business.store.entity.Hit;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -23,7 +24,7 @@ import javax.ws.rs.core.MediaType;
 @Interceptors(PerformanceAuditor.class)
 public class StatisticsResource {
 
-    @EJB
+    @Inject
     PersistentHitStore hits;
 
     @GET

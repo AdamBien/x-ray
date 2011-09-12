@@ -6,6 +6,7 @@ import com.abien.xray.business.store.boundary.Hits;
 import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.GET;
@@ -24,7 +25,7 @@ import javax.ws.rs.core.MediaType;
 @AccessTimeout(2000)
 public class DailyStatisticsCalculator {
 
-    @EJB
+    @Inject
     Hits hits;
 
     private long todayHits = 0;

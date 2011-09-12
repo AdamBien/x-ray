@@ -29,7 +29,7 @@ public class HitsResource {
 
     @Inject
     URLPathExtractor extractor;
-    @EJB
+    @Inject
     Hits hits;
 
     public static final String PREFIX = "/entry/";

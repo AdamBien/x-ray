@@ -17,7 +17,7 @@ public class HitsFlushTimer {
     @Inject
     private int hitsFlushRate;
 
-    @EJB
+    @Inject
     Hits hits;
 
     @Resource

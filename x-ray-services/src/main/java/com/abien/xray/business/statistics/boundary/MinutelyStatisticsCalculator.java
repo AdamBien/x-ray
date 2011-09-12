@@ -25,7 +25,7 @@ import javax.ws.rs.Produces;
 @Produces({"text/plain"})
 public class MinutelyStatisticsCalculator {
 
-    @EJB
+    @Inject
     Hits hits;
 
     private long currentRate = 0;

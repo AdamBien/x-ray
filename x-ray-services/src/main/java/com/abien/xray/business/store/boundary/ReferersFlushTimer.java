@@ -18,7 +18,7 @@ public class ReferersFlushTimer {
     @Inject
     private int referersFlushRate;
 
-    @EJB
+    @Inject
     Hits hits;
 
     @Resource
