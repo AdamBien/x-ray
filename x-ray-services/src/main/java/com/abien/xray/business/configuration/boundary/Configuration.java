@@ -1,20 +1,22 @@
 package com.abien.xray.business.configuration.boundary;
 
 import com.abien.xray.business.configuration.control.ConfigurationProvider;
-
+import java.net.URI;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.ws.rs.*;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.*;
-import java.net.URI;
-import java.util.*;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
-
-import static javax.ws.rs.core.MediaType.*;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 /**
  * User: blog.adam-bien.com
