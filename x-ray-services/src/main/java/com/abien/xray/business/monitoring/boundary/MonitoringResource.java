@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.annotation.Resource;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
@@ -35,6 +36,9 @@ public class MonitoringResource implements MonitoringResourceMXBean {
     private ConcurrentHashMap<String, Invocation> methods = new ConcurrentHashMap<String, Invocation>();
     private ConcurrentHashMap<String, String> diagnostics = new ConcurrentHashMap<String, String>();
     private AtomicLong exceptionCount;
+    
+    @Resource
+    SessionContext sc;
 
     @PostConstruct
     public void registerInJMX() {
@@ -42,7 +46,7 @@ public class MonitoringResource implements MonitoringResourceMXBean {
         try {
             objectName = new ObjectName("XRayMonitoring:type=" + this.getClass().getName());
             platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
-            platformMBeanServer.registerMBean(this, objectName);
+            platformMBeanServer.registerMBean(sc.getBusinessObject(MonitoringResource.class), objectName);
         } catch (Exception e) {
             throw new IllegalStateException("Problem during registration of Monitoring into JMX:" + e);
         }
