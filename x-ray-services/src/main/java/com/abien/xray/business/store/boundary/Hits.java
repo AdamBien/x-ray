@@ -55,6 +55,9 @@ public class Hits {
 
     @Inject
     Event<Diagnostics> monitoring;
+    
+    @Inject
+    Event<String> uriListener;
 
     private HitsCache hitStatistics = null;
     private HitsCache trending = null;
@@ -116,6 +119,7 @@ public class Hits {
     }
 
     void storeURI(String uniqueAction) {
+        uriListener.fire(uniqueAction);
         storeHitStatistics(uniqueAction);
         if (isRelevantForTrend(uniqueAction)) {
             storeTrending(uniqueAction);
