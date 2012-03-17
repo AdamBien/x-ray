@@ -41,6 +41,13 @@ class URLFilterTest extends JUnitSuite with MockitoSugar with ShouldMatchersForJ
     }
 
     @Test
+    def ignoreBlackListed = {
+      var result = cut.ignore("/roller/CommentAuthenticatorServlet")
+      result should be (true)
+    }
+
+
+    @Test
     def ignoresNull = {
       val result = cut.ignore(null)
       result should be (true)
