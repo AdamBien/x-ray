@@ -13,6 +13,7 @@ import java.lang.String
 import com.abien.xray.business.store.entity.Hit
 import javax.enterprise.event.Event
 import com.abien.xray.business.monitoring.entity.Diagnostics
+import javax.enterprise.event.Event
 import java.util.HashMap
 import com.abien.xray.business.logging.boundary.DevNullLogger
 
@@ -27,6 +28,7 @@ class HitsTest extends JUnitSuite with MockitoSugar with ShouldMatchersForJUnit 
     cut.hitStore = mock[PersistentHitStore];
     cut.monitoring = mock[Event[Diagnostics]];
     cut.refererStore = mock[PersistentRefererStore]
+    cut.uriListener = mock[Event[String]]
     when(cut.hitStore.getHits).thenReturn(new ConcurrentHashMap[String, AtomicLong])
     when(cut.refererStore.getReferers).thenReturn(new ConcurrentHashMap[String, AtomicLong])
     cut.preloadCache()

@@ -2,7 +2,6 @@ package com.abien.xray.business.push.boundary;
 
 import com.abien.xray.business.push.entity.Beam;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.AsyncContext;
@@ -17,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author adam bien, adam-bien.com
  */
 @WebServlet(name = "Beamer", urlPatterns = {"/beam"},asyncSupported=true)
-public class Beamer extends HttpServlet {
+public class Projector extends HttpServlet {
     
     @Inject
     Event<Beam> beam;

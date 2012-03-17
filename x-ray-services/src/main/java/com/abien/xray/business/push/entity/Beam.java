@@ -11,7 +11,6 @@ import javax.servlet.ServletResponse;
  *
  * @author adam bien, adam-bien.com
  */
-@Stateless
 public class Beam {
 
     private AsyncContext context;
