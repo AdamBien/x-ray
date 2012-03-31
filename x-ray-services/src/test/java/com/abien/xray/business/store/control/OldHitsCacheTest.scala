@@ -10,7 +10,7 @@ import org.junit.{Test, Before}
  * Date: 17.02.11
  * Time: 21:32
  */
-class HitsCacheTest extends JUnitSuite with ShouldMatchersForJUnit{
+class OldHitsCacheTest extends JUnitSuite with ShouldMatchersForJUnit{
   var cut:HitsCache = _
 
   @Before

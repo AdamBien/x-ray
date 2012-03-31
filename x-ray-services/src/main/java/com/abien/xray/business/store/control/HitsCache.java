@@ -2,6 +2,7 @@ package com.abien.xray.business.store.control;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicLong;
@@ -14,10 +15,13 @@ import java.util.concurrent.atomic.AtomicLong;
 public class HitsCache {
     private ConcurrentHashMap<String, AtomicLong> hits = null;
     private ConcurrentSkipListSet<String> dirtyKeys;
+    private ConcurrentSkipListSet<String> neverDirty;
 
     public HitsCache(Map<String, AtomicLong> hits) {
         this.hits = new ConcurrentHashMap<String, AtomicLong>(hits);
         this.dirtyKeys = new ConcurrentSkipListSet<String>();
+        this.neverDirty = new ConcurrentSkipListSet<String>();
+        initializeNeverDirty();
     }
 
     public HitsCache() {
@@ -27,6 +31,7 @@ public class HitsCache {
     public long increase(String uniqueAction){
         this.dirtyKeys.add(uniqueAction);
         hits.putIfAbsent(uniqueAction, new AtomicLong());
+        this.neverDirty.remove(uniqueAction);
         AtomicLong hitCount = hits.get(uniqueAction);
         return hitCount.incrementAndGet();
     }
@@ -55,5 +60,14 @@ public class HitsCache {
     public void clear() {
         hits.clear();
         dirtyKeys.clear();
+    }
+
+    public Set<String> getInactiveEntries(){
+        return this.neverDirty;
+    }
+    
+    final void initializeNeverDirty() {
+        Set<String> keySet = hits.keySet();
+        this.neverDirty.addAll(keySet);
     }
 }
