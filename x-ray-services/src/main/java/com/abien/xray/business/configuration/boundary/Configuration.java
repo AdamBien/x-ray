@@ -38,9 +38,10 @@ public class Configuration {
     @PostConstruct
     public void fetchConfiguration() {
         this.configuration = new HashMap<String, String>() {{
-            put("version", "0.8");
+            put("version", "0.9");
             put("hitsFlushRate", "1");
             put("referersFlushRate", "1");
+            put("scavengerPeriod", "48");
             put("debug", "false");
         }};
         this.unconfiguredFields = new HashSet<String>();
