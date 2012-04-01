@@ -1,6 +1,8 @@
 package com.abien.xray.business.store.control;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,6 +66,16 @@ public class HitsCache {
 
     public Set<String> getInactiveEntries(){
         return this.neverDirty;
+    }
+
+    public Set<String> getInactiveEntriesAndClear(){
+        Set<String> staleEntries = new HashSet<String>();
+        for (String key : this.neverDirty) {
+            this.hits.remove(key);
+            staleEntries.add(key);
+        }
+        this.neverDirty.clear();
+        return staleEntries;
     }
     
     final void initializeNeverDirty() {
