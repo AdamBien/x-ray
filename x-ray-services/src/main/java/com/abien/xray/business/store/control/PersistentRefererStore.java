@@ -54,4 +54,9 @@ public class PersistentRefererStore extends PersistentStore {
     public List<Referer> getMostPopularReferersNotContaining(String uri,int maxNumber){
         return this.em.createNamedQuery(Referer.FIND_ALL_WITHOUT).setParameter("uri", uri).setMaxResults(maxNumber).getResultList();
     }
+    
+    public void remove(String id){
+        Referer referer = this.em.getReference(Referer.class, id);
+        this.em.remove(referer);
+    }
 }
