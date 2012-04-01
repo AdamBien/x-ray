@@ -22,6 +22,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Schedule;
 import javax.ejb.Startup;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -212,6 +213,12 @@ public class Hits {
 
     public List<Referer> topReferers(int maxNumber) {
         return refererStore.getMostPopularReferers(maxNumber);
+    }
+    
+    
+    @Produces @Cache
+    public HitsCache refererStatistics(){
+        return this.refererStatistics;
     }
 
     @PreDestroy
