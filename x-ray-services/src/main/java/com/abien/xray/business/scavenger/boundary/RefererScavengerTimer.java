@@ -1,10 +1,12 @@
 package com.abien.xray.business.scavenger.boundary;
 
 import com.abien.xray.business.scavenger.control.RefererScavenger;
-import com.abien.xray.business.store.boundary.Hits;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.ejb.*;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Timeout;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 /**
