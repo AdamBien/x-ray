@@ -44,4 +44,22 @@ public class HitsCacheTest {
         assertThat(inactiveEntries,hasItems("1","2"));
         assertThat(inactiveEntries.size(),is(2));
     }
+
+    @Test
+    public void getStaleEntriesAndClear() {
+        Map<String,AtomicLong> initial = new HashMap<String, AtomicLong>();
+        initial.put("1", new AtomicLong(1));
+        initial.put("2", new AtomicLong(2));
+        cut = new HitsCache(initial);
+        Set<String> inactiveEntries = cut.getInactiveEntries();
+        assertThat(inactiveEntries,hasItems("1","2"));
+        assertThat(inactiveEntries.size(),is(2));
+        inactiveEntries = cut.getInactiveEntriesAndClear();
+        assertThat(inactiveEntries,hasItems("1","2"));
+        assertThat(inactiveEntries.size(),is(2));
+        inactiveEntries = cut.getInactiveEntries();
+        assertTrue(inactiveEntries.isEmpty());
+        assertTrue(cut.getCache().isEmpty());
+
+    }
 }
