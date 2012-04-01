@@ -11,6 +11,7 @@ import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -19,13 +20,11 @@ import javax.interceptor.Interceptors;
  * @author adam bien, adam-bien.com
  */
 @Singleton
-@Startup
-@DependsOn("Configuration")
 @Interceptors(PerformanceAuditor.class)
 public class RefererScavengerTimer {
 
     @Inject
-    private int scavengerPeriodInHours;
+    private Instance<Integer> scavengerPeriodInHours;
     
     @Resource
     TimerService timerService;
@@ -36,7 +35,7 @@ public class RefererScavengerTimer {
     @PostConstruct
     public void initializeTimer() {
         ScheduleExpression expression = new ScheduleExpression();
-        expression.hour("*/"+this.scavengerPeriodInHours);
+        expression.hour("*/"+this.scavengerPeriodInHours.get().intValue());
         TimerConfig timerConfig = new TimerConfig();
         timerConfig.setPersistent(false);
         timerService.createCalendarTimer(expression, timerConfig);
