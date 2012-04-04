@@ -41,7 +41,7 @@ public class Configuration {
             put("version", "0.9");
             put("hitsFlushRate", "1");
             put("referersFlushRate", "1");
-            put("scavengerPeriodInHours", "48");
+            put("scavengerRuns", "Mon,Wed,Fri");
             put("debug", "false");
         }};
         this.unconfiguredFields = new HashSet<String>();

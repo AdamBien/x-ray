@@ -24,7 +24,7 @@ import javax.interceptor.Interceptors;
 public class RefererScavengerTimer {
 
     @Inject
-    private Instance<Integer> scavengerPeriodInHours;
+    private Instance<String> scavengerRuns;
     
     @Resource
     TimerService timerService;
@@ -32,10 +32,9 @@ public class RefererScavengerTimer {
     @Inject
     RefererScavenger refererScavenger;
     
-    @PostConstruct
     public void initializeTimer() {
         ScheduleExpression expression = new ScheduleExpression();
-        expression.hour("*/"+this.scavengerPeriodInHours.get().intValue());
+        expression.dayOfWeek(this.scavengerRuns.get());
         TimerConfig timerConfig = new TimerConfig();
         timerConfig.setPersistent(false);
         timerService.createCalendarTimer(expression, timerConfig);
