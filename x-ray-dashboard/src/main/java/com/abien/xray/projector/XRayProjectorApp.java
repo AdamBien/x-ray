@@ -19,15 +19,28 @@ import javafx.stage.StageStyle;
 public class XRayProjectorApp extends Application {
     private HitsPane hitsPane;
     private String uri = "/x-ray/beam";
+
+    public XRayProjectorApp() {
+        hitsPane = new HitsPane();
+    }
     
-    private void init(Stage stage) {
+    
+    
+    private void init(final Stage stage) {
         stage.initStyle(StageStyle.TRANSPARENT);
         Group root = new Group();
         stage.setResizable(true);
         final Scene scene = new Scene(root, 1024,768);
+        scene.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent me) {
+                stage.setX(me.getScreenX()+me.getSceneX());
+                stage.setY(me.getScreenY()+me.getSceneY());
+                hitsPane.moving();
+            }
+        });
+        
         scene.setFill(null);
         stage.setScene(scene);
-        hitsPane = new HitsPane();
         root.getChildren().add(hitsPane);
         BeamProvider beamProvider = new BeamProvider(initialize(uri));
         beamProvider.setBeamListener(hitsPane);

@@ -31,6 +31,7 @@ public class HitsPane extends Region implements BeamListener {
     private static final Font FONT_DEFAULT = new Font(Font.getDefault().getFamily(), 30);
     private static final Random RANDOM = new Random();
     private static final Interpolator INTERPOLATOR = Interpolator.SPLINE(0.295, 0.800, 0.305, 1.000);
+    private Rectangle frame;
 
     public HitsPane() {
         setId("HitsPane");
@@ -48,12 +49,12 @@ public class HitsPane extends Region implements BeamListener {
     }
 
     public void createFrame() {
-        Rectangle rectangle = new Rectangle(0, 0, 1023, 767);
-        rectangle.setFill(null);
-        rectangle.setStroke(Color.GREEN);
-        rectangle.setStrokeWidth(1);
-        rectangle.setOpacity(0.75);
-        this.getChildren().add(rectangle);
+        this.frame = new Rectangle(0, 0, 1023, 767);
+        frame.setFill(null);
+        frame.setStroke(Color.GREEN);
+        frame.setStrokeWidth(1);
+        frame.setOpacity(0.75);
+        this.getChildren().add(frame);
     }
 
     public void onBeamArrival(String message) {
@@ -82,5 +83,9 @@ public class HitsPane extends Region implements BeamListener {
 
     private static float getRandom(double min, double max) {
         return (float) (RANDOM.nextFloat() * (max - min) + min);
+    }
+
+    void moving() {
+
     }
 }
