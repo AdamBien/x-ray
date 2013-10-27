@@ -1,22 +1,19 @@
 package com.abien.xray.business.logging.boundary;
 
-import com.abien.xray.business.configuration.control.ConfigurationProvider;
 import com.abien.xray.business.configuration.boundary.Configuration;
-
+import com.abien.xray.business.configuration.control.ConfigurationProvider;
 import java.util.logging.Logger;
 import javax.inject.Inject;
-
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.arquillian.api.Deployment;
+import static org.hamcrest.core.Is.is;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.core.Is.*;
 
 /**
  * @author blog.adam-bien.com
@@ -32,11 +29,9 @@ public class LoggerProducerIT {
 
     @Deployment
     public static JavaArchive createTestArchive() {
-        return ShrinkWrap.create(JavaArchive.class, "loggerproducer.jar").
+        return ShrinkWrap.create(JavaArchive.class).
                 addClasses(LogUser.class, LoggerProducer.class, Configuration.class, ConfigurationProvider.class, DebugConfigurationProvider.class, DevNullLogger.class, DelegatingLogger.class).
-                addManifestResource(
-                        new ByteArrayAsset("<beans/>".getBytes()),
-                        ArchivePaths.create("beans.xml"));
+                addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
