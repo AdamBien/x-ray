@@ -3,14 +3,22 @@ package com.abien.xray.business.store.boundary;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.monitoring.entity.Diagnostics;
-import com.abien.xray.business.store.control.*;
+import com.abien.xray.business.store.control.HitsCache;
+import com.abien.xray.business.store.control.HttpHeaderFilter;
+import com.abien.xray.business.store.control.PersistentHitStore;
+import com.abien.xray.business.store.control.PersistentRefererStore;
+import com.abien.xray.business.store.control.URLFilter;
 import com.abien.xray.business.store.entity.Hit;
 import com.abien.xray.business.store.entity.Post;
 import com.abien.xray.business.store.entity.Referer;
 import com.abien.xray.business.useragent.control.UserAgentStatistics;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.hazelcast.core.HazelcastInstance;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
@@ -18,8 +26,8 @@ import javax.annotation.PreDestroy;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
 import javax.ejb.Schedule;
+import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
@@ -34,6 +42,7 @@ import javax.interceptor.Interceptors;
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 @Interceptors(PerformanceAuditor.class)
 public class Hits {
+
     public static final int REFERER_MAX_LENGTH = 250;
 
     @Inject
@@ -56,7 +65,7 @@ public class Hits {
 
     @Inject
     Event<Diagnostics> monitoring;
-    
+
     @Inject
     Event<String> uriListener;
 
@@ -66,22 +75,26 @@ public class Hits {
 
     private AtomicLong numberOfRejectedRequests = new AtomicLong(0);
 
+    @Inject
+    HazelcastInstance hazelcastInstance;
 
     @PostConstruct
     public void preloadCache() {
         Map<String, AtomicLong> hits = hitStore.getHits();
         Map<String, AtomicLong> referers = refererStore.getReferers();
-        hitStatistics = new HitsCache(hits);
-        refererStatistics = new HitsCache(referers);
-        trending = new HitsCache();
+        hitStatistics = new HitsCache(this.hazelcastInstance.getMap("hits"));
+        refererStatistics = new HitsCache(this.hazelcastInstance.getMap("referers"));
+        trending = new HitsCache(this.hazelcastInstance.getMap("trending"));
     }
 
     public void updateStatistics(String uri, String referer, Map<String, String> headerMap) {
         LOG.log(Level.INFO, "updateStatistics({0})", new Object[]{uri});
         try {
-            /** TODO testing
-             userAgentStatistics.extractAndStoreReferer(headerMap);
-             **/
+            /**
+             * TODO testing
+             * userAgentStatistics.extractAndStoreReferer(headerMap);
+             *
+             */
             if (urlFilter.ignore(uri) || httpHeaderFilter.ignore(headerMap)) {
                 LOG.log(Level.INFO, "updateStatistics - URL: {0} is rejected with headers {1}", new Object[]{uri, headerMap});
                 numberOfRejectedRequests.incrementAndGet();
@@ -146,7 +159,6 @@ public class Hits {
         return referer;
     }
 
-
     boolean isRelevantForTrend(String uniqueAction) {
         if (uniqueAction == null) {
             return false;
@@ -167,7 +179,7 @@ public class Hits {
 
     public List<Post> getTrending() {
         List<Post> trends = new ArrayList<Post>();
-        ConcurrentHashMap<String, AtomicLong> cache = trending.getCache();
+        Map<String, AtomicLong> cache = trending.getCache();
         Set<Map.Entry<String, AtomicLong>> trendEntries = cache.entrySet();
         for (Map.Entry<String, AtomicLong> trendEntry : trendEntries) {
             long hits = trendEntry.getValue().get();
@@ -178,7 +190,7 @@ public class Hits {
         return trends;
     }
 
-    private long computeHits(ConcurrentHashMap<String, AtomicLong> hits) {
+    private long computeHits(Map<String, AtomicLong> hits) {
         long totalCount = 0;
         Collection<AtomicLong> individualHits = hits.values();
         for (AtomicLong atomicLong : individualHits) {
@@ -214,10 +226,10 @@ public class Hits {
     public List<Referer> topReferers(int maxNumber) {
         return refererStore.getMostPopularReferers(maxNumber);
     }
-    
-    
-    @Produces @Cache
-    public HitsCache refererStatistics(){
+
+    @Produces
+    @Cache
+    public HitsCache refererStatistics() {
         return this.refererStatistics;
     }
 
