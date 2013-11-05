@@ -16,22 +16,10 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author Adam Bien, blog.adam-bien.com
  */
-@Entity
-@Table(name="X_REFERER")
-@NamedQueries({
-@NamedQuery(name=Referer.FIND_ALL,query="Select r from Referer r order by r.count desc"),
-@NamedQuery(name=Referer.FIND_ALL_WITHOUT,query="Select r from Referer r where r.refererUri NOT LIKE :uri order by r.count desc")
-})
-@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Referer {
-    public static final String PREFIX = "com.abien.xray.business.store.entity.Referer.";
-    public static final String FIND_ALL = PREFIX + "findAllReferers";
-    public static final String FIND_ALL_WITHOUT = PREFIX + "findAllReferersWithout";
 
-    @Id
     private String refererUri;
-    @Column(name="C_COUNTER")
     private long count;
     
 

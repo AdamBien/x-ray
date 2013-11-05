@@ -1,12 +1,17 @@
 package com.abien.xray.business.store.control;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import com.abien.xray.business.store.entity.Referer;
+import com.google.common.base.Suppliers;
+import javafx.util.Pair;
+
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * User: blog.adam-bien.com Date: 17.02.11 Time: 21:11
@@ -14,66 +19,51 @@ import java.util.concurrent.atomic.AtomicLong;
 public class HitsCache {
 
     private ConcurrentMap<String, AtomicLong> hits = null;
-    private ConcurrentSkipListSet<String> dirtyKeys;
-    private ConcurrentSkipListSet<String> neverDirty;
 
     public HitsCache(ConcurrentMap hits) {
         this.hits = hits;
-        this.dirtyKeys = new ConcurrentSkipListSet<>();
-        this.neverDirty = new ConcurrentSkipListSet<>();
-        initializeNeverDirty();
     }
 
-    public long increase(String uniqueAction) {
-        this.dirtyKeys.add(uniqueAction);
-        hits.putIfAbsent(uniqueAction, new AtomicLong());
-        this.neverDirty.remove(uniqueAction);
-        AtomicLong hitCount = hits.get(uniqueAction);
+    public long increase(String uri) {
+        hits.putIfAbsent(uri, new AtomicLong());
+        AtomicLong hitCount = hits.get(uri);
         return hitCount.incrementAndGet();
+    }
+
+    public long getCount(String uri) {
+        return hits.get(uri).get();
     }
 
     public Map<String, AtomicLong> getCache() {
         return hits;
     }
 
-    public Map<String, AtomicLong> getChangedEntriesAndClear() {
-        Map<String, AtomicLong> changedValues = new HashMap<String, AtomicLong>();
-        for (String dirtyKey : dirtyKeys) {
-            dirtyKeys.remove(dirtyKey);
-            changedValues.put(dirtyKey, hits.get(dirtyKey));
-        }
-        return changedValues;
-    }
-
     public int getCacheSize() {
         return this.hits.size();
     }
 
-    public int getDirtyEntriesCount() {
-        return this.dirtyKeys.size();
+    public List<Referer> getMostPopularReferersNotContaining(String excludeContaining, int maxNumber) {
+        Comparator<Map.Entry<String,AtomicLong>> c = (l,r) -> new Long(l.getValue().get()).compareTo(r.getValue().get());
+        return this.hits.entrySet().
+                parallelStream().
+                filter(f -> !f.getKey().contains(excludeContaining)).
+                sorted(c).
+                map(f -> new Referer(f.getKey(),f.getValue().get())).
+                collect(Collectors.toList());
+    }
+
+
+    public List<Referer> getMostPopularReferers(int maxNumber) {
+        Comparator<Map.Entry<String,AtomicLong>> c = (l,r) -> new Long(l.getValue().get()).compareTo(r.getValue().get());
+        return this.hits.entrySet().parallelStream().
+                sorted(c).
+                limit(maxNumber).
+                map(f -> new Referer(f.getKey(),f.getValue().get())).
+                collect(Collectors.toList());
     }
 
     public void clear() {
         hits.clear();
-        dirtyKeys.clear();
     }
 
-    public Set<String> getInactiveEntries() {
-        return this.neverDirty;
-    }
-
-    public Set<String> getInactiveEntriesAndClear() {
-        Set<String> staleEntries = new HashSet<String>();
-        for (String key : this.neverDirty) {
-            this.hits.remove(key);
-            staleEntries.add(key);
-        }
-        this.neverDirty.clear();
-        return staleEntries;
-    }
-
-    final void initializeNeverDirty() {
-        Set<String> keySet = hits.keySet();
-        this.neverDirty.addAll(keySet);
-    }
 }

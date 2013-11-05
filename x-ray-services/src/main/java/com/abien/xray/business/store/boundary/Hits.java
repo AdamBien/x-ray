@@ -5,14 +5,13 @@ import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.monitoring.entity.Diagnostics;
 import com.abien.xray.business.store.control.HitsCache;
 import com.abien.xray.business.store.control.HttpHeaderFilter;
-import com.abien.xray.business.store.control.PersistentHitStore;
-import com.abien.xray.business.store.control.PersistentRefererStore;
 import com.abien.xray.business.store.control.URLFilter;
-import com.abien.xray.business.store.entity.Hit;
 import com.abien.xray.business.store.entity.Post;
 import com.abien.xray.business.store.entity.Referer;
 import com.abien.xray.business.useragent.control.UserAgentStatistics;
 import com.hazelcast.core.HazelcastInstance;
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,7 +24,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -49,12 +47,7 @@ public class Hits {
     XRayLogger LOG;
 
     public static final String ENTRY = "/entry/";
-    @EJB
-    PersistentHitStore hitStore;
-    @EJB
-    PersistentRefererStore refererStore;
-
-    @EJB
+    @Inject
     UserAgentStatistics userAgentStatistics;
 
     @Inject
@@ -80,11 +73,9 @@ public class Hits {
 
     @PostConstruct
     public void preloadCache() {
-        Map<String, AtomicLong> hits = hitStore.getHits();
-        Map<String, AtomicLong> referers = refererStore.getReferers();
-        hitStatistics = new HitsCache(this.hazelcastInstance.getMap("hits"));
-        refererStatistics = new HitsCache(this.hazelcastInstance.getMap("referers"));
-        trending = new HitsCache(this.hazelcastInstance.getMap("trending"));
+        this.hitStatistics = new HitsCache(this.hazelcastInstance.getMap("hits"));
+        this.refererStatistics = new HitsCache(this.hazelcastInstance.getMap("referers"));
+        this.trending = new HitsCache(this.hazelcastInstance.getMap("trending"));
     }
 
     public void updateStatistics(String uri, String referer, Map<String, String> headerMap) {
@@ -109,12 +100,17 @@ public class Hits {
         }
     }
 
+    public long getCount(String uri) {
+        return this.hitStatistics.getCount(uri);
+    }
+
     public void persistHitsCache() {
-        hitStore.store(hitStatistics.getChangedEntriesAndClear());
+        /*persist to MapDB*/
     }
 
     public void persistReferersCache() {
-        refererStore.store(refererStatistics.getCache());
+        /*persist to MapDB*/
+
     }
 
     @Schedule(hour = "*/1", persistent = false)
@@ -124,12 +120,7 @@ public class Hits {
     }
 
     public long getHitsForURI(String uri) {
-        Hit hit = hitStore.find(uri);
-        if (hit != null) {
-            return hit.getCount();
-        } else {
-            return 0;
-        }
+        return this.hitStatistics.getCount(uri);
     }
 
     void storeURI(String uniqueAction) {
@@ -201,15 +192,9 @@ public class Hits {
 
     void sendMonitoringData() {
         int hitCacheSize = this.hitStatistics.getCacheSize();
-        int hitDirtyEntriesCount = this.hitStatistics.getDirtyEntriesCount();
-
         int refererCacheSize = this.refererStatistics.getCacheSize();
-        int refererDirtyEntriesCount = this.refererStatistics.getDirtyEntriesCount();
-
         Diagnostics diagnostics = Diagnostics.with("hitCacheSize", hitCacheSize).
-                and("hitDirtyEntriesCount", hitDirtyEntriesCount).
                 and("refererCacheSize", refererCacheSize).
-                and("refererDirtyEntriesCount", refererDirtyEntriesCount).
                 and("numberOfRejectedRequests", this.numberOfRejectedRequests);
         monitoring.fire(diagnostics);
 
@@ -220,11 +205,11 @@ public class Hits {
     }
 
     public List<Referer> topReferers(String excludeContaining, int maxNumber) {
-        return refererStore.getMostPopularReferersNotContaining(excludeContaining, maxNumber);
+        return this.hitStatistics.getMostPopularReferersNotContaining(excludeContaining, maxNumber);
     }
 
     public List<Referer> topReferers(int maxNumber) {
-        return refererStore.getMostPopularReferers(maxNumber);
+        return this.hitStatistics.getMostPopularReferers(maxNumber);
     }
 
     @Produces
