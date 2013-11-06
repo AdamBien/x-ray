@@ -38,14 +38,49 @@ public class HitsCacheTest {
         assertFalse(mostPopularReferers.isEmpty());
         assertThat(mostPopularReferers.size(),is(2));
         long count = mostPopularReferers.parallelStream().
-                filter(f -> "a".equals(f.getRefererUri())).
+                filter(f -> "a".equals(f.getRefererUri()) && f.getCount() == 1).
                 count();
         assertThat(count,is(1l));
 
         count = mostPopularReferers.parallelStream().
-                filter(f -> "b".equals(f.getRefererUri())).
+                filter(f -> "b".equals(f.getRefererUri()) && f.getCount() == 1).
+                count();
+        assertThat(count,is(1l));
+    }
+
+    @Test
+    public void getMostPopularReferersWithLimit(){
+        this.cut.increase("a");
+        this.cut.increase("b");
+        this.cut.increase("c");
+        List<Referer> mostPopularReferers = this.cut.getMostPopularReferers(2);
+        assertThat(mostPopularReferers.size(),is(2));
+    }
+
+    @Test
+    public void countingOfReferersIsWorking(){
+        this.cut.increase("a");
+        this.cut.increase("a");
+        this.cut.increase("a");
+        this.cut.increase("b");
+        this.cut.increase("b");
+        this.cut.increase("c");
+        List<Referer> mostPopularReferers = this.cut.getMostPopularReferers(2);
+        System.out.println(mostPopularReferers);
+        assertThat(mostPopularReferers.size(),is(2));
+        long count = mostPopularReferers.parallelStream().
+                filter(f -> "a".equals(f.getRefererUri()) && f.getCount() == 3).
+                count();
+        assertThat(count,is(1l));
+        count = mostPopularReferers.parallelStream().
+                filter(f -> "b".equals(f.getRefererUri()) && f.getCount() == 2).
                 count();
         assertThat(count,is(1l));
 
+        count = mostPopularReferers.parallelStream().
+                filter(f -> "c".equals(f.getRefererUri()) && f.getCount() == 1).
+                count();
+        assertThat(count,is(0l));
     }
+
 }

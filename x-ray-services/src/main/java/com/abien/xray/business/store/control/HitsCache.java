@@ -19,6 +19,10 @@ import java.util.stream.Stream;
 public class HitsCache {
 
     private ConcurrentMap<String, AtomicLong> hits = null;
+    /**
+     *  Left and right swapped on purpose -> decreasing order
+     */
+    private Comparator<Map.Entry<String,AtomicLong>> decreasing = (l,r) -> new Long(r.getValue().get()).compareTo(l.getValue().get());
 
     public HitsCache(ConcurrentMap hits) {
         this.hits = hits;
@@ -43,20 +47,18 @@ public class HitsCache {
     }
 
     public List<Referer> getMostPopularReferersNotContaining(String excludeContaining, int maxNumber) {
-        Comparator<Map.Entry<String,AtomicLong>> c = (l,r) -> new Long(l.getValue().get()).compareTo(r.getValue().get());
         return this.hits.entrySet().
                 parallelStream().
                 filter(f -> !f.getKey().contains(excludeContaining)).
-                sorted(c).
+                sorted(decreasing).
                 map(f -> new Referer(f.getKey(),f.getValue().get())).
                 collect(Collectors.toList());
     }
 
 
     public List<Referer> getMostPopularReferers(int maxNumber) {
-        Comparator<Map.Entry<String,AtomicLong>> c = (l,r) -> new Long(l.getValue().get()).compareTo(r.getValue().get());
         return this.hits.entrySet().parallelStream().
-                sorted(c).
+                sorted(decreasing).
                 limit(maxNumber).
                 map(f -> new Referer(f.getKey(),f.getValue().get())).
                 collect(Collectors.toList());

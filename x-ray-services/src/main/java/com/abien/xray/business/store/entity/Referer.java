@@ -46,5 +46,11 @@ public class Referer {
         this.count = count;
     }
 
-    
+    @Override
+    public String toString() {
+        return "Referer{" +
+                "refererUri='" + refererUri + '\'' +
+                ", count=" + count +
+                '}';
+    }
 }
