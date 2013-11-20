@@ -25,3 +25,4 @@ HitsWithSOAP
 /HitsWithSoap/HitsWithSoap-war/nbproject/private/
 /HitsWithSoap/nbproject/private/
 s101plugin.state
+/x-ray-services/src/main/webapp/META-INF/context.xml
