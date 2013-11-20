@@ -1,17 +1,18 @@
 package com.abien.xray.business.store.boundary;
 
 import com.abien.xray.business.monitoring.PerformanceAuditor;
-import com.abien.xray.business.store.control.TitleFetcher;
-import com.abien.xray.business.store.entity.Hit;
+import com.abien.xray.business.store.control.HitsManagement;
 import com.abien.xray.business.store.entity.Post;
-import java.util.ArrayList;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import java.util.List;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -20,16 +21,15 @@ import javax.interceptor.Interceptors;
 @Path("trending")
 @Stateless
 @Interceptors(PerformanceAuditor.class)
-public class Trending extends TitleFilter{
+public class Trending extends TitleFilter {
 
-    @EJB
-    Hits hits;
-
+    @Inject
+    HitsManagement hits;
 
     @GET
-    @Produces({MediaType.APPLICATION_XHTML_XML,MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-    public List<Post> getTrendingPostsWithTitle(@QueryParam("max") @DefaultValue("10") int max){
+    @Produces({MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public List<Post> getTrendingPostsWithTitle(@QueryParam("max") @DefaultValue("10") int max) {
         List<Post> mostPopularPosts = hits.getTrending();
-        return getPostsWithExistingTitle(mostPopularPosts,max);
+        return getPostsWithExistingTitle(mostPopularPosts, max);
     }
 }

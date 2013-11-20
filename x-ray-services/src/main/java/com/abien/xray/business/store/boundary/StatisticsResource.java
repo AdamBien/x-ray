@@ -1,11 +1,11 @@
 package com.abien.xray.business.store.boundary;
 
+import com.abien.xray.business.store.control.HitsManagement;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
-import com.abien.xray.business.store.control.PersistentHitStore;
 import com.abien.xray.business.store.entity.Hit;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -23,16 +23,16 @@ import javax.ws.rs.core.MediaType;
 @Interceptors(PerformanceAuditor.class)
 public class StatisticsResource {
 
-    @EJB
-    PersistentHitStore hits;
+    @Inject
+    HitsManagement hits;
 
     @GET
-    @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-    public List<Hit> totalHitsAsString(@QueryParam("exclude") String excludeContaining,@QueryParam("max") @DefaultValue("10") int max){
-        if(excludeContaining == null){
-            return hits.getMostPopularURLs(max);
-        }else{
-            return hits.getMostPopularURLs(excludeContaining,max);
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public List<Hit> totalHitsAsString(@QueryParam("exclude") String excludeContaining, @QueryParam("max") @DefaultValue("10") int max) {
+        if (excludeContaining == null) {
+            return hits.getMostPopularPosts(max);
+        } else {
+            return hits.getMostPopularPostsNotContaining(excludeContaining, max);
         }
     }
 }

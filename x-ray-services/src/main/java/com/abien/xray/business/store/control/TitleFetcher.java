@@ -1,24 +1,23 @@
 package com.abien.xray.business.store.control;
 
 import com.abien.xray.business.logging.boundary.XRayLogger;
-
-import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import static com.abien.xray.business.store.entity.Post.EMPTY;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.ejb.AccessTimeout;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.Schedule;
+import javax.ejb.Singleton;
 import javax.inject.Inject;
-
-import static com.abien.xray.business.store.entity.Post.EMPTY;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
@@ -34,8 +33,6 @@ public class TitleFetcher {
     private ConcurrentLinkedQueue<String> bogusTitles = null;
     public static final String BASE_URL = "http://www.adam-bien.com/roller/abien";
 
-    @EJB
-    PersistentHitStore persistentHitStore;
     @Inject
     TitleCache titles;
 
@@ -132,6 +129,5 @@ public class TitleFetcher {
         LOG.log(Level.WARNING, "Adding {0} as bogus", new Object[]{uri});
         this.bogusTitles.add(uri);
         this.titles.remove(uri);
-        this.persistentHitStore.invalidate(uri);
     }
 }

@@ -1,7 +1,7 @@
 package com.abien.xray.business.statistics.boundary;
 
 import com.abien.xray.business.HitsPer;
-import com.abien.xray.business.store.boundary.Hits;
+import com.abien.xray.business.store.control.HitsManagement;
 
 import static com.abien.xray.business.HitsPer.Frequency.*;
 
@@ -24,8 +24,8 @@ import javax.ws.rs.Produces;
 @Produces({"text/plain"})
 public class HourlyStatisticsCalculator {
 
-    @EJB
-    Hits hits;
+    @Inject
+    HitsManagement hits;
 
     private long currentRate = 0;
     private long maxRate = 0;

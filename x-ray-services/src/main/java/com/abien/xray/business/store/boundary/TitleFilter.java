@@ -4,7 +4,7 @@ import com.abien.xray.business.store.control.TitleFetcher;
 import com.abien.xray.business.store.entity.Post;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.EJB;
+import javax.inject.Inject;
 
 /**
  *
@@ -12,13 +12,13 @@ import javax.ejb.EJB;
  */
 public class TitleFilter {
 
-    @EJB
+    @Inject
     TitleFetcher cache;
 
     List<Post> getPostsWithExistingTitle(List<Post> mostPopularPosts, int max) {
         List<Post> mostPopularPostsWithTitle = new ArrayList<Post>();
         for (Post post : mostPopularPosts) {
-            if(isBogus(post)){
+            if (isBogus(post)) {
                 continue;
             }
             fetchTitle(post);
@@ -32,7 +32,7 @@ public class TitleFilter {
     boolean isBogus(Post post) {
         return this.cache.isBogus(post.getUri());
     }
-    
+
     void fetchTitle(Post post) {
         String uri = post.getUri();
         String title = cache.getTitle(uri);

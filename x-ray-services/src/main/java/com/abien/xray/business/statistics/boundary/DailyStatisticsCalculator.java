@@ -1,12 +1,11 @@
 package com.abien.xray.business.statistics.boundary;
 
 import com.abien.xray.business.statistics.entity.DailyHits;
-import com.abien.xray.business.store.boundary.Hits;
+import com.abien.xray.business.store.control.HitsManagement;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.AccessTimeout;
-import javax.ejb.DependsOn;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Schedule;
@@ -24,12 +23,11 @@ import javax.ws.rs.core.MediaType;
 @Path("hitsperday")
 @Singleton
 @Startup
-@DependsOn("Hits")
 @AccessTimeout(2000)
 public class DailyStatisticsCalculator {
 
     @Inject
-    Hits hits;
+    HitsManagement hits;
 
     private long todayHits = 0;
     private long yesterdayHits = 0;

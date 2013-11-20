@@ -1,5 +1,6 @@
 package com.abien.xray.business.store.boundary;
 
+import com.abien.xray.business.store.control.HitsManagement;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.store.control.URLPathExtractor;
@@ -30,7 +31,7 @@ public class HitsResource {
     @Inject
     URLPathExtractor extractor;
     @Inject
-    Hits hits;
+    HitsManagement hits;
 
     public static final String PREFIX = "/entry/";
 

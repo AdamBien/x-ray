@@ -4,7 +4,7 @@ import com.abien.xray.business.HitsPer;
 
 import static com.abien.xray.business.HitsPer.Frequency.*;
 
-import com.abien.xray.business.store.boundary.Hits;
+import com.abien.xray.business.store.control.HitsManagement;
 
 import javax.ejb.AccessTimeout;
 import javax.ejb.EJB;
@@ -25,8 +25,8 @@ import javax.ws.rs.Produces;
 @Produces({"text/plain"})
 public class MinutelyStatisticsCalculator {
 
-    @EJB
-    Hits hits;
+    @Inject
+    HitsManagement hits;
 
     private long currentRate = 0;
     private long lastMeasurement = 0;

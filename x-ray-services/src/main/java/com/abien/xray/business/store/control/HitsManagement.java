@@ -1,15 +1,13 @@
-package com.abien.xray.business.store.boundary;
+package com.abien.xray.business.store.control;
 
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.monitoring.entity.Diagnostics;
 import com.abien.xray.business.statistics.entity.DailyHits;
-import com.abien.xray.business.store.control.DailyHitStore;
-import com.abien.xray.business.store.control.HitsCache;
-import com.abien.xray.business.store.control.HttpHeaderFilter;
-import com.abien.xray.business.store.control.URLFilter;
+import com.abien.xray.business.store.boundary.Cache;
+import com.abien.xray.business.store.entity.CacheValue;
+import com.abien.xray.business.store.entity.Hit;
 import com.abien.xray.business.store.entity.Post;
-import com.abien.xray.business.store.entity.Referer;
 import com.abien.xray.business.useragent.control.UserAgentStatistics;
 import com.hazelcast.core.HazelcastInstance;
 import java.util.ArrayList;
@@ -20,10 +18,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.LocalBean;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -35,11 +34,12 @@ import javax.interceptor.Interceptors;
 /**
  * @author Adam Bien, blog.adam-bien.com
  */
+@LocalBean
 @Startup
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 @Interceptors(PerformanceAuditor.class)
-public class Hits {
+public class HitsManagement {
 
     public static final int REFERER_MAX_LENGTH = 250;
 
@@ -106,15 +106,6 @@ public class Hits {
         return this.hitStatistics.getCount(uri);
     }
 
-    public void persistHitsCache() {
-        /*persist to MapDB*/
-    }
-
-    public void persistReferersCache() {
-        /*persist to MapDB*/
-
-    }
-
     @Schedule(hour = "*/1", persistent = false)
     public void resetTrends() {
         sendMonitoringData();
@@ -171,7 +162,7 @@ public class Hits {
     }
 
     public List<Post> getTrending() {
-        List<Post> trends = new ArrayList<Post>();
+        List<Post> trends = new ArrayList<>();
         Map<String, AtomicLong> cache = trending.getCache();
         Set<Map.Entry<String, AtomicLong>> trendEntries = cache.entrySet();
         for (Map.Entry<String, AtomicLong> trendEntry : trendEntries) {
@@ -206,24 +197,18 @@ public class Hits {
         return String.valueOf(totalHits());
     }
 
-    public List<Referer> topReferers(String excludeContaining, int maxNumber) {
-        return this.hitStatistics.getMostPopularReferersNotContaining(excludeContaining, maxNumber);
+    public List<CacheValue> topReferers(String excludeContaining, int maxNumber) {
+        return this.refererStatistics.getMostPopularValuesNotContaining(excludeContaining, maxNumber);
     }
 
-    public List<Referer> topReferers(int maxNumber) {
-        return this.hitStatistics.getMostPopularReferers(maxNumber);
+    public List<CacheValue> topReferers(int maxNumber) {
+        return this.refererStatistics.getMostPopularValues(maxNumber);
     }
 
     @Produces
     @Cache
     public HitsCache refererStatistics() {
         return this.refererStatistics;
-    }
-
-    @PreDestroy
-    public void saveTransientCache() {
-        persistHitsCache();
-        persistReferersCache();
     }
 
     public List<DailyHits> getDailyHits() {
@@ -233,5 +218,19 @@ public class Hits {
     public void save(DailyHits dailyHits) {
         this.dailyHits.save(dailyHits);
 
+    }
+
+    public List<Hit> getMostPopularPosts(int max) {
+        return this.hitStatistics.getMostPopularValues(max).
+                parallelStream().
+                map(s -> new Hit(s.getRefererUri(), s.getCount())).
+                collect(Collectors.toList());
+    }
+
+    public List<Hit> getMostPopularPostsNotContaining(String exclude, int max) {
+        return this.hitStatistics.getMostPopularValuesNotContaining(exclude, max).
+                parallelStream().
+                map(s -> new Hit(s.getRefererUri(), s.getCount())).
+                collect(Collectors.toList());
     }
 }
