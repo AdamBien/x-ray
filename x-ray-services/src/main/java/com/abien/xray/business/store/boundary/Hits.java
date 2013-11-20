@@ -3,6 +3,8 @@ package com.abien.xray.business.store.boundary;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.monitoring.entity.Diagnostics;
+import com.abien.xray.business.statistics.entity.DailyHits;
+import com.abien.xray.business.store.control.DailyHitStore;
 import com.abien.xray.business.store.control.HitsCache;
 import com.abien.xray.business.store.control.HttpHeaderFilter;
 import com.abien.xray.business.store.control.URLFilter;
@@ -10,8 +12,6 @@ import com.abien.xray.business.store.entity.Post;
 import com.abien.xray.business.store.entity.Referer;
 import com.abien.xray.business.useragent.control.UserAgentStatistics;
 import com.hazelcast.core.HazelcastInstance;
-import javafx.util.Pair;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -70,12 +70,14 @@ public class Hits {
 
     @Inject
     HazelcastInstance hazelcastInstance;
+    private DailyHitStore dailyHits;
 
     @PostConstruct
     public void preloadCache() {
         this.hitStatistics = new HitsCache(this.hazelcastInstance.getMap("hits"));
         this.refererStatistics = new HitsCache(this.hazelcastInstance.getMap("referers"));
         this.trending = new HitsCache(this.hazelcastInstance.getMap("trending"));
+        this.dailyHits = new DailyHitStore(this.hazelcastInstance.getMap("trending"));
     }
 
     public void updateStatistics(String uri, String referer, Map<String, String> headerMap) {
@@ -222,5 +224,14 @@ public class Hits {
     public void saveTransientCache() {
         persistHitsCache();
         persistReferersCache();
+    }
+
+    public List<DailyHits> getDailyHits() {
+        return this.dailyHits.getDailyHits();
+    }
+
+    public void save(DailyHits dailyHits) {
+        this.dailyHits.save(dailyHits);
+
     }
 }

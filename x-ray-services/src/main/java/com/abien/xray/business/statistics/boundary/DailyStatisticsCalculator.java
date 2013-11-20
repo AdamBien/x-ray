@@ -2,17 +2,21 @@ package com.abien.xray.business.statistics.boundary;
 
 import com.abien.xray.business.statistics.entity.DailyHits;
 import com.abien.xray.business.store.boundary.Hits;
-
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.ejb.AccessTimeout;
+import javax.ejb.DependsOn;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
 
 /**
  * @author Adam Bien, blog.adam-bien.com
@@ -24,15 +28,11 @@ import javax.ws.rs.core.MediaType;
 @AccessTimeout(2000)
 public class DailyStatisticsCalculator {
 
-    @EJB
+    @Inject
     Hits hits;
 
     private long todayHits = 0;
     private long yesterdayHits = 0;
-
-    @PersistenceContext
-    EntityManager em;
-
 
     @PostConstruct
     public void restoreStatistics() {
@@ -49,7 +49,7 @@ public class DailyStatisticsCalculator {
         long totalHits = getTotalHits();
         todayHits = totalHits - yesterdayHits;
         yesterdayHits = totalHits;
-        em.persist(new DailyHits(todayHits));
+        hits.save(new DailyHits(todayHits));
     }
 
     @GET
@@ -74,7 +74,7 @@ public class DailyStatisticsCalculator {
     @Lock(LockType.READ)
     @SuppressWarnings("")
     public List<DailyHits> getHistory() {
-        return this.em.createNamedQuery(DailyHits.findAllDescending).getResultList();
+        return this.hits.getDailyHits();
     }
 
     long getYesterdayHitsFromHistory() {
