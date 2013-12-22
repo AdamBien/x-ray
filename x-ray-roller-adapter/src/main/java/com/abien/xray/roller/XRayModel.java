@@ -8,7 +8,8 @@ import org.apache.roller.weblogger.ui.rendering.model.Model;
  *
  * @author Adam Bien, blog.adam-bien.com
  */
-public class XRayModel implements Model{
+public class XRayModel implements Model {
+
     public static final String XRAYMODEL_NAME = "xraymodel";
 
     private Map configuration;
@@ -16,11 +17,13 @@ public class XRayModel implements Model{
     public final static String URL = "http://192.168.0.50:5380/x-ray/resources/";
     public final static String XRAYURL = "XRAY-URL";
 
-
-
     @Override
     public void init(Map map) {
         this.configuration = map;
+        String customUri = System.getProperty("XRAY-URL");
+        if (customUri != null) {
+            this.configuration.put(XRAYURL, customUri);
+        }
         this.xray = initializeXRay(this.configuration);
     }
 
@@ -29,16 +32,16 @@ public class XRayModel implements Model{
         return XRAYMODEL_NAME;
     }
 
-    public XRay getXray(){
+    public XRay getXray() {
         return xray;
     }
 
-    String extractUrl(Map map){
-        if(map == null){
+    String extractUrl(Map map) {
+        if (map == null) {
             return URL;
         }
         String url = (String) map.get(XRAYURL);
-        if(url != null){
+        if (url != null) {
             return url;
         }
         return URL;
