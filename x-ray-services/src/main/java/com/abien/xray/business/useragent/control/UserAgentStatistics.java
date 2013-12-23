@@ -4,8 +4,6 @@ import com.abien.xray.business.useragent.entity.UserAgent;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.HttpHeaders;
 
 /**
@@ -14,15 +12,8 @@ import javax.ws.rs.core.HttpHeaders;
 @Stateless
 public class UserAgentStatistics {
 
-    @PersistenceContext
-    EntityManager em;
-
     public void updateStatistics(String userAgent) {
-        UserAgent agent = em.find(UserAgent.class, userAgent);
-        if (agent == null) {
-            agent = new UserAgent(userAgent);
-            em.persist(agent);
-        }
+        UserAgent agent = new UserAgent();
         agent.increaseCounter();
     }
 
