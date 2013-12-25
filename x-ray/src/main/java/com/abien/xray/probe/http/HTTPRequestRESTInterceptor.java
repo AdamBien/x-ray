@@ -32,8 +32,10 @@ import javax.servlet.http.HttpServletRequest;
 public class HTTPRequestRESTInterceptor implements Filter {
 
     private final static Logger LOG = Logger.getLogger(HTTPRequestRESTInterceptor.class.getName());
-    private String serviceURL;
-    public static final String SERVICE_URL_KEY = "serviceURL";
+    String serviceURL;
+    public final static String SERVICE_URL_KEY = "serviceURL";
+    public final static String XRAYURL = "XRAY-URL";
+
     URL url;
     RESTClient client;
     static final String REFERER = "referer";
@@ -55,10 +57,17 @@ public class HTTPRequestRESTInterceptor implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         this.serviceURL = filterConfig.getInitParameter(SERVICE_URL_KEY);
-        if(this.serviceURL == null){
-            LOG.severe("ServiceURL not set - check the web.xml and set the value for key:" + SERVICE_URL_KEY);
+        String customUri = System.getProperty(XRAYURL);
+        if (customUri != null) {
+            this.serviceURL = customUri;
+            LOG.info("Overwriting the x-ray URI with system properties " + this.serviceURL);
+        }
+
+        if (this.serviceURL == null) {
+            LOG.severe("ServiceURL not set - check the web.xml or system property " + XRAYURL + "and set the value for key:" + SERVICE_URL_KEY);
             return;
         }
+
         try {
             this.url = new URL(this.serviceURL);
             this.client = new RESTClient(this.url);
@@ -69,7 +78,7 @@ public class HTTPRequestRESTInterceptor implements Filter {
 
     private static void setupThreadPools() {
         MonitorableThreadFactory monitorableThreadFactory = new MonitorableThreadFactory();
-        RejectedExecutionHandler ignoringHandler = new RejectedExecutionHandler()  {
+        RejectedExecutionHandler ignoringHandler = new RejectedExecutionHandler() {
 
             @Override
             public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -98,17 +107,17 @@ public class HTTPRequestRESTInterceptor implements Filter {
         worstApplicationPerformance = Math.max(applicationPerformance, worstApplicationPerformance);
         sendAsync(uri, headers);
     }
-    
-    Map<String,String> extractHeaders(HttpServletRequest httpServletRequest){
-        Map<String,String> headers = new HashMap<String, String>();
+
+    Map<String, String> extractHeaders(HttpServletRequest httpServletRequest) {
+        Map<String, String> headers = new HashMap<String, String>();
         Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
-        if(headerNames == null){
+        if (headerNames == null) {
             return headers;
         }
-        while (headerNames.hasMoreElements()){
+        while (headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
             String header = httpServletRequest.getHeader(name);
-            headers.put(name,header);
+            headers.put(name, header);
         }
         return headers;
     }
@@ -118,9 +127,9 @@ public class HTTPRequestRESTInterceptor implements Filter {
         String actionName = createName(uri, headers.get(REFERER));
         executor.execute(new ThreadNameTrackingRunnable(runnable, actionName));
     }
-    
-    public Runnable getInstrumentedRunnable(final String uri, final Map<String,String> headers) {
-        return new Runnable()  {
+
+    public Runnable getInstrumentedRunnable(final String uri, final Map<String, String> headers) {
+        return new Runnable() {
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
@@ -129,7 +138,7 @@ public class HTTPRequestRESTInterceptor implements Filter {
                 worstXrayPerformance = Math.max(xrayPerformance, worstXrayPerformance);
             }
         };
-    }    
+    }
 
     String createName(final String uri, final String referer) {
         return uri + "|" + referer;
@@ -137,7 +146,7 @@ public class HTTPRequestRESTInterceptor implements Filter {
 
     public void send(final String uri, final Map<String, String> headers) {
         String message = createMessage(uri, headers.get(REFERER));
-        client.put(message,headers);
+        client.put(message, headers);
     }
 
     String createMessage(String uri, String referer) {
