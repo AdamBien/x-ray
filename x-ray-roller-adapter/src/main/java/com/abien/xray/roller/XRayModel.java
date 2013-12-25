@@ -1,6 +1,7 @@
 package com.abien.xray.roller;
 
 import com.abien.xray.XRay;
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.roller.weblogger.ui.rendering.model.Model;
 
@@ -14,13 +15,16 @@ public class XRayModel implements Model {
 
     private Map configuration;
     private XRay xray;
-    public final static String URL = "http://192.168.0.50:5380/x-ray/resources/";
+    public final static String URL = "http://localhost:5380/x-ray/resources/";
     public final static String XRAYURL = "XRAY-URL";
 
     @Override
     public void init(Map map) {
         this.configuration = map;
-        String customUri = System.getProperty("XRAY-URL");
+        if (this.configuration == null) {
+            this.configuration = new HashMap();
+        }
+        String customUri = System.getProperty(XRAYURL);
         if (customUri != null) {
             this.configuration.put(XRAYURL, customUri);
         }
@@ -49,6 +53,7 @@ public class XRayModel implements Model {
 
     XRay initializeXRay(Map map) {
         String url = extractUrl(map);
+        System.out.println("---Effective uri: " + url);
         return new XRay(url);
     }
 }

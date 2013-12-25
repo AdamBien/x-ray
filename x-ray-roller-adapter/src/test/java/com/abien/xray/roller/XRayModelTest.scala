@@ -19,14 +19,7 @@ class XRayModelTest extends JUnitSuite with MockitoSugar with ShouldMatchersForJ
     }
 
 
-    @Test
-    def initWithNullMap = {
-      cut.init(null)
-      def xray = cut.getXray
-      xray should not be (null)
-      val baseUrl = xray.getBaseUrl
-      baseUrl should be (XRayModel.URL)
-    }
+
 
     @Test
     def initWithMap = {
