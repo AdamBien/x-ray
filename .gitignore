@@ -3,15 +3,15 @@
 .hgtags
 .idea
 .sonar-ide.properties
-derby.log
+*.log
 *.iml
 *.ipr
 *.iws
 *.classes
+*.sh
 .classpath
 .project
 .settings
-backupFitnesseWikiTest.sh
 x-ray-setup
 target
 HitsWithSOAP

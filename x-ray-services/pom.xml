@@ -5,7 +5,7 @@
     <groupId>com.abien.xray</groupId>
     <artifactId>x-ray-services</artifactId>
     <packaging>war</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <url>http://x-ray.adam-bien.com</url>
     <dependencyManagement>
         <dependencies>
