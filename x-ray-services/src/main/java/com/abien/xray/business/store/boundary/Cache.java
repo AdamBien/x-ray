@@ -4,9 +4,7 @@
  */
 package com.abien.xray.business.store.boundary;
 
-import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
@@ -19,6 +17,13 @@ import javax.inject.Qualifier;
  */
 @Qualifier
 @Retention(RUNTIME)
-@Target({FIELD,METHOD})
+@Target({FIELD, METHOD})
 public @interface Cache {
+
+    Name value();
+
+    enum Name {
+
+        STATISTICS, TRENDING, REFERERS
+    }
 }

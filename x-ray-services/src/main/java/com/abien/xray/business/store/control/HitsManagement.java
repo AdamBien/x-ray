@@ -206,9 +206,21 @@ public class HitsManagement {
     }
 
     @Produces
-    @Cache
-    public HitsCache refererStatistics() {
+    @Cache(Cache.Name.REFERERS)
+    public HitsCache referersCache() {
         return this.refererStatistics;
+    }
+
+    @Produces
+    @Cache(Cache.Name.STATISTICS)
+    public HitsCache statisticsCache() {
+        return hitStatistics;
+    }
+
+    @Produces
+    @Cache(Cache.Name.TRENDING)
+    public HitsCache trendingCache() {
+        return trending;
     }
 
     public List<DailyHits> getDailyHits() {
@@ -233,4 +245,5 @@ public class HitsManagement {
                 map(s -> new Hit(s.getRefererUri(), s.getCount())).
                 collect(Collectors.toList());
     }
+
 }
