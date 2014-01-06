@@ -1,9 +1,7 @@
 package com.abien.xray.business.versioning.boundary;
 
-import java.io.StringReader;
-import javax.json.Json;
+import static com.abien.xray.business.RESTSupport.convertToObjectFrom;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -33,7 +31,7 @@ public class VersionResourceIT {
     @Test
     public void fetchVersion() {
         String rawValue = this.tut.request().get(String.class);
-        JsonObject json = convertFrom(rawValue);
+        JsonObject json = convertToObjectFrom(rawValue);
         assertNotNull(json);
         JsonString value = json.getJsonString("version");
         assertNotNull(value);
@@ -42,10 +40,4 @@ public class VersionResourceIT {
         Integer.parseInt(String.valueOf(majorVersion));
         assertTrue(versionNumber.contains("."));
     }
-
-    JsonObject convertFrom(String rawValue) {
-        JsonReader reader = Json.createReader(new StringReader(rawValue));
-        return reader.readObject();
-    }
-
 }
