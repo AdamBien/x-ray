@@ -13,8 +13,10 @@ import javax.json.JsonArrayBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 
 @Path("stores")
 @Stateless
@@ -29,7 +31,13 @@ public class StoresResource {
 
     @Path("{id}")
     public StoreResource resource(@PathParam("id") String name) {
-        Instance<HitsCache> cacheInstance = caches.select(new CacheInstance(name));
+        CacheInstance annotation = null;
+        try {
+            annotation = new CacheInstance(name);
+        } catch (IllegalArgumentException e) {
+            throw new WebApplicationException(Response.Status.NO_CONTENT);
+        }
+        Instance<HitsCache> cacheInstance = caches.select(annotation);
         if (cacheInstance.isUnsatisfied()) {
             return null;
         }
