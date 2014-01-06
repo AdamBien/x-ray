@@ -4,6 +4,7 @@ package com.abien.xray.business.store.boundary;
 
 import com.abien.xray.business.RESTSupport;
 import javax.json.JsonArray;
+import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -46,4 +47,20 @@ public class StoresResourceIT {
         assertThat(status, is(204));
     }
 
+    @Test
+    public void fetchContentsFromAllStores() {
+        JsonArray result = RESTSupport.convertToArrayFrom(this.tut.request(MediaType.TEXT_PLAIN).get(String.class));
+        for (int i = 0; i < result.size(); i++) {
+            String storeName = result.getJsonString(i).getString();
+            JsonObject store = storeContents(storeName);
+            Assert.assertNotNull(store);
+        }
+    }
+
+    JsonObject storeContents(String storeName) {
+        String rawContent = this.tut.path(storeName).
+                request(MediaType.TEXT_PLAIN).
+                get(String.class);
+        return RESTSupport.convertToObjectFrom(rawContent);
+    }
 }
