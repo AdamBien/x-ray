@@ -3,10 +3,13 @@
 package com.abien.xray.business.store.boundary;
 
 import com.abien.xray.business.RESTSupport;
+import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -22,6 +25,7 @@ import org.junit.Test;
  */
 public class StoresResourceIT {
 
+    public static final String STATISTICS_STORE = "STATISTICS";
     private static final String ROOT_TARGET = "http://localhost:8080/x-ray/resources/stores/";
     private WebTarget tut;
 
@@ -55,6 +59,18 @@ public class StoresResourceIT {
             JsonObject store = storeContents(storeName);
             Assert.assertNotNull(store);
         }
+    }
+
+    @Test
+    public void put() {
+        final String key = "42";
+        final long expected = 42;
+        JsonObjectBuilder builder = Json.createObjectBuilder().add(key, expected);
+        Response response = this.tut.path(STATISTICS_STORE).request(MediaType.TEXT_PLAIN).put(Entity.json(builder.build()));
+        assertThat(response.getStatus(), is(200));
+        JsonObject cache = storeContents(STATISTICS_STORE);
+        long actual = cache.getJsonNumber(key).longValue();
+        assertThat(actual, is(expected));
     }
 
     JsonObject storeContents(String storeName) {
