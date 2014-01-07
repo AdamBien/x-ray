@@ -116,11 +116,11 @@ public class HitsManagement {
         return this.hitStatistics.getCount(uri);
     }
 
-    void storeURI(String uniqueAction) {
-        uriListener.fire(uniqueAction);
-        storeHitStatistics(uniqueAction);
-        if (isRelevantForTrend(uniqueAction)) {
-            storeTrending(uniqueAction);
+    void storeURI(String uri) {
+        uriListener.fire(uri);
+        storeHitStatistics(uri);
+        if (isRelevantForTrend(uri)) {
+            storeTrending(uri);
         }
     }
 

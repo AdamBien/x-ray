@@ -30,7 +30,12 @@ public class HitsCache {
     }
 
     public long getCount(String uri) {
-        return hits.get(uri).get();
+        AtomicLong counter = hits.get(uri);
+        if (counter == null) {
+            return 0;
+        } else {
+            return counter.get();
+        }
     }
 
     public Map<String, AtomicLong> getCache() {
