@@ -5,6 +5,7 @@ package com.airhacks.satellite.cache.boundary;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.monitor.LocalMapStats;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
@@ -33,6 +34,10 @@ public class CacheExposer {
         this.referers.addEntryListener(new EntryListenerAdapter(), true);
         this.trending = this.hazelcast.getMap("trending");
         this.trending.addEntryListener(new EntryListenerAdapter(), true);
+    }
+
+    public LocalMapStats getStatistics(String name) {
+        return this.hazelcast.getMap(name).getLocalMapStats();
     }
 
     @PreDestroy
