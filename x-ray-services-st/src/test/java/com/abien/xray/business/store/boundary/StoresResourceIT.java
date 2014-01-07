@@ -7,6 +7,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -15,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Assert;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,11 +69,32 @@ public class StoresResourceIT {
         final String key = "42";
         final long expected = 42;
         JsonObjectBuilder builder = Json.createObjectBuilder().add(key, expected);
-        Response response = this.tut.path(STATISTICS_STORE).request(MediaType.TEXT_PLAIN).put(Entity.json(builder.build()));
+        Response response = put(builder);
         assertThat(response.getStatus(), is(200));
         JsonObject cache = storeContents(STATISTICS_STORE);
         long actual = cache.getJsonNumber(key).longValue();
         assertThat(actual, is(expected));
+    }
+
+    Response put(JsonObjectBuilder builder) {
+        Response response = this.tut.path(STATISTICS_STORE).request(MediaType.TEXT_PLAIN).put(Entity.json(builder.build()));
+        return response;
+    }
+
+    @Test
+    public void delete() {
+        final String key = "-" + System.currentTimeMillis();
+        final long expected = 42;
+        JsonObjectBuilder builder = Json.createObjectBuilder().add(key, expected);
+        put(builder);
+        JsonObject cache = storeContents(STATISTICS_STORE);
+        JsonValue value = cache.get(key);
+        assertNotNull(value);
+
+        this.tut.path(STATISTICS_STORE).path(key).request().delete();
+        cache = storeContents(STATISTICS_STORE);
+        value = cache.get(key);
+        assertNull(value);
     }
 
     JsonObject storeContents(String storeName) {
