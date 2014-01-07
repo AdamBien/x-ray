@@ -26,7 +26,9 @@ public class HitsCache {
     public long increase(String uri) {
         hits.putIfAbsent(uri, new AtomicLong());
         AtomicLong hitCount = hits.get(uri);
-        return hitCount.incrementAndGet();
+        long value = hitCount.incrementAndGet();
+        hits.replace(uri, hitCount);
+        return value;
     }
 
     public long getCount(String uri) {

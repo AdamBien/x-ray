@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -25,6 +24,7 @@ import javax.ws.rs.core.*;
 @Stateless
 @Interceptors(PerformanceAuditor.class)
 public class HitsResource {
+
     @Inject
     private XRayLogger LOG;
 
@@ -35,13 +35,12 @@ public class HitsResource {
 
     public static final String PREFIX = "/entry/";
 
-
     @PUT
     @Consumes({MediaType.TEXT_PLAIN})
     public Response updateStatistics(@Context HttpHeaders httpHeaders, String url) {
         if (!isEmpty(url)) {
             MultivaluedMap<String, String> headers = httpHeaders.getRequestHeaders();
-            Map<String, String> headerMap = new HashMap<String, String>();
+            Map<String, String> headerMap = new HashMap<>();
             for (Map.Entry<String, List<String>> headerEntries : headers.entrySet()) {
                 String headerName = headerEntries.getKey();
                 List<String> headerValuesList = headerEntries.getValue();

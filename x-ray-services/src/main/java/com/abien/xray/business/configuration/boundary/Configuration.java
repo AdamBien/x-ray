@@ -12,16 +12,20 @@ import javax.ejb.Startup;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 /**
- * User: blog.adam-bien.com
- * Date: 14.02.11
- * Time: 19:06
+ * User: blog.adam-bien.com Date: 14.02.11 Time: 19:06
  */
 @Startup
 @Singleton
@@ -37,13 +41,14 @@ public class Configuration {
 
     @PostConstruct
     public void fetchConfiguration() {
-        this.configuration = new HashMap<String, String>() {{
-            put("version", "0.9");
-            put("hitsFlushRate", "1");
-            put("referersFlushRate", "1");
-            put("scavengerRuns", "Mon,Wed,Fri");
-            put("debug", "false");
-        }};
+        this.configuration = new HashMap<String, String>() {
+            {
+                put("hitsFlushRate", "1");
+                put("referersFlushRate", "1");
+                put("scavengerRuns", "Mon,Wed,Fri");
+                put("debug", "true");
+            }
+        };
         this.unconfiguredFields = new HashSet<String>();
         mergeWithCustomConfiguration();
     }
@@ -58,7 +63,6 @@ public class Configuration {
             this.configuration.putAll(customConfiguration);
         }
     }
-
 
     @javax.enterprise.inject.Produces
     public String getString(InjectionPoint point) {
@@ -97,11 +101,9 @@ public class Configuration {
         return Boolean.parseBoolean(stringValue);
     }
 
-
     public Set<String> getUnconfiguredFields() {
         return this.unconfiguredFields;
     }
-
 
     @GET
     @Path("{key}")
@@ -144,5 +146,3 @@ public class Configuration {
         this.configuration.put("debug", Boolean.FALSE.toString());
     }
 }
-
-
