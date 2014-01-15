@@ -1,8 +1,8 @@
 package com.abien.xray.business.logging.boundary;
 
-import java.util.logging.Logger;
-import javax.ejb.DependsOn;
-import javax.ejb.Startup;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.logging.ILogger;
+import com.hazelcast.logging.LoggingService;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
@@ -11,17 +11,28 @@ import javax.inject.Singleton;
 /**
  * @author blog.adam-bien.com
  */
+@Singleton
 public class LoggerProducer {
 
     @Inject
     private boolean debug;
 
+    @Inject
+    HazelcastInstance instance;
+    private String LOGGING = "logging";
+
+    private LoggingService logging;
+
+    public void init() {
+        this.logging = this.instance.getLoggingService();
+    }
+
     @Produces
     public XRayLogger getLogger(InjectionPoint ip) {
         if (debug) {
             Class<?> aClass = ip.getMember().getDeclaringClass();
-            Logger logger = Logger.getLogger(aClass.getName());
-            return new DelegatingLogger(logger);
+            ILogger logger = this.logging.getLogger(aClass);
+            return new HazelcastLogger(logger);
         } else {
             return new DevNullLogger();
         }
