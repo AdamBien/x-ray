@@ -1,6 +1,10 @@
 package com.abien.xray;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -34,13 +38,13 @@ public class XRay {
         String uri = getUrl(HITS_PER_HOUR);
         return getContent(uri);
     }
-    
-    public String getHitsPerMinute(){
+
+    public String getHitsPerMinute() {
         String uri = getUrl(HITS_PER_MINUTE);
         return getContent(uri);
     }
-    
-    public String getTotalHits(){
+
+    public String getTotalHits() {
         String uri = getUrl(TOTAL_HITS);
         return getContent(uri);
     }
@@ -58,29 +62,29 @@ public class XRay {
         return getContent(postURL);
     }
 
-
-    public String getMostPopularAsHtml(){
+    public String getMostPopularAsHtml() {
         String uri = getUrl(MOST_POPULAR);
         return getContent(uri);
     }
 
-    public String getTrendingAsHtml(){
+    public String getTrendingAsHtml() {
         String uri = getUrl(TRENDING);
         return getContent(uri);
     }
-    
-    public String getTodayHits(){
+
+    public String getTodayHits() {
         String uri = getUrl(TODAY_HITS);
         return getContent(uri);
     }
 
-    public String getYesterdayHits(){
+    public String getYesterdayHits() {
         String uri = getUrl(YESTERDAY_HITS);
         return getContent(uri);
     }
 
-    String getContent(String uri){
-            try {
+    String getContent(String uri) {
+        try {
+            LOG.info("Requesting content for: " + uri);
             URL url = new URL(uri);
             return getContent(url);
         } catch (Exception ex) {
