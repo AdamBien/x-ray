@@ -3,6 +3,7 @@ package com.abien.xray.business.logging.boundary;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.logging.ILogger;
 import com.hazelcast.logging.LoggingService;
+import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
@@ -23,6 +24,7 @@ public class LoggerProducer {
 
     private LoggingService logging;
 
+    @PostConstruct
     public void init() {
         this.logging = this.instance.getLoggingService();
     }

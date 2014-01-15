@@ -1,7 +1,7 @@
 package com.abien.xray.business.logging.boundary;
 
 import com.hazelcast.logging.ILogger;
-import java.util.Formatter;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import javax.enterprise.inject.Alternative;
 
@@ -22,11 +22,7 @@ public class HazelcastLogger implements XRayLogger {
     }
 
     String serialize(String message, Object[] params) {
-        Formatter formatter = new Formatter();
-        formatter.format(message, params);
-        formatter.flush();
-        return formatter.toString();
-
+        return MessageFormat.format(message, params);
     }
 
 }

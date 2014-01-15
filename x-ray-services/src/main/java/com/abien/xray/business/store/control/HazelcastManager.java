@@ -15,7 +15,7 @@ import javax.enterprise.inject.Produces;
  */
 @Startup
 @Singleton
-public class ClusterManager {
+public class HazelcastManager {
 
     private HazelcastInstance hazelcast;
     private Cluster cluster;
