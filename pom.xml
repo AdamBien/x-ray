@@ -4,7 +4,7 @@
     <groupId>com.abien.greenfire</groupId>
     <artifactId>x-ray-assembly</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2</version>
     <name>x-ray-assembly</name>
     <url>http://maven.apache.org</url>
     <dependencies>
@@ -35,6 +35,6 @@
         <connection>scm:git:git@github.com:AdamBien/x-ray.git</connection>
         <url>scm:git:git@github.com:AdamBien/x-ray.git</url>
         <developerConnection>scm:git:git@github.com:AdamBien/x-ray.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v0.0.2</tag>
     </scm>
 </project>
