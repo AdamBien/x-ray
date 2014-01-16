@@ -49,37 +49,37 @@ public class HazelcastManager {
     }
 
     @Produces
-    @Hits
+    @Grid(Grid.Name.HITS)
     public Map<String, Long> exposeHits() {
         return this.hits;
     }
 
     @Produces
-    @Trending
+    @Grid(Grid.Name.TRENDING)
     public Map<String, Long> exposeTrending() {
         return this.trending;
     }
 
     @Produces
-    @Daily
+    @Grid(Grid.Name.DAILY)
     public Map<Date, Long> exposeDaily() {
         return this.daily;
     }
 
     @Produces
-    @Referers
+    @Grid(Grid.Name.REFERERS)
     public Map<Date, Long> exposeReferers() {
         return this.daily;
     }
 
     @Produces
-    @Titles
+    @Grid(Grid.Name.TITLES)
     public Map<String, String> titles() {
         return this.titles;
     }
 
     @Produces
-    @Firehose
+    @Grid(Grid.Name.FIREHOSE)
     public Map<String, JsonObject> exposeFirehose() {
         return this.firehose;
     }
