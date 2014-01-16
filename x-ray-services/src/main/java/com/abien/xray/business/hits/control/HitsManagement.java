@@ -73,7 +73,7 @@ public class HitsManagement {
 
     @Inject
     @Grid(Grid.Name.HITS)
-    private ConcurrentMap hits;
+    private ConcurrentMap<String, Long> hits;
 
     @Inject
     @Grid(Grid.Name.DAILY)
@@ -81,11 +81,11 @@ public class HitsManagement {
 
     @Inject
     @Grid(Grid.Name.TRENDING)
-    private ConcurrentMap trending;
+    private ConcurrentMap<String, Long> trending;
 
     @Inject
     @Grid(Grid.Name.REFERERS)
-    private ConcurrentMap referers;
+    private ConcurrentMap<String, Long> referers;
 
     @PostConstruct
     public void preloadCache() {

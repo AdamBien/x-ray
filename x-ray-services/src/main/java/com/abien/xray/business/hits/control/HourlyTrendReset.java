@@ -22,7 +22,7 @@ public class HourlyTrendReset {
 
     @Inject
     @Grid(Grid.Name.TRENDING)
-    private ConcurrentMap trending;
+    private ConcurrentMap<String, Long> trending;
 
     @Schedule(hour = "*/1", persistent = false)
     public void resetTrends() {

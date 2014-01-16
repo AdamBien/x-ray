@@ -6,8 +6,8 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.IQueue;
 import java.util.Date;
-import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentMap;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
@@ -52,31 +52,31 @@ public class HazelcastManager {
 
     @Produces
     @Grid(Grid.Name.HITS)
-    public Map<String, Long> exposeHits() {
+    public ConcurrentMap<String, Long> exposeHits() {
         return this.hits;
     }
 
     @Produces
     @Grid(Grid.Name.TRENDING)
-    public Map<String, Long> exposeTrending() {
+    public ConcurrentMap<String, Long> exposeTrending() {
         return this.trending;
     }
 
     @Produces
     @Grid(Grid.Name.DAILY)
-    public Map<Date, Long> exposeDaily() {
+    public ConcurrentMap<Date, Long> exposeDaily() {
         return this.daily;
     }
 
     @Produces
     @Grid(Grid.Name.REFERERS)
-    public Map<Date, Long> exposeReferers() {
-        return this.daily;
+    public ConcurrentMap<String, Long> exposeReferers() {
+        return this.referers;
     }
 
     @Produces
     @Grid(Grid.Name.TITLES)
-    public Map<String, String> titles() {
+    public ConcurrentMap<String, String> titles() {
         return this.titles;
     }
 
