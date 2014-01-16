@@ -19,8 +19,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -47,8 +45,7 @@ public class HitsResource {
 
     @PUT
     @Consumes({MediaType.TEXT_PLAIN})
-    public void updateStatistics(@Context HttpHeaders httpHeaders, String url, @Suspended AsyncResponse response) {
-        response.resume(Response.noContent().build());
+    public Response updateStatistics(@Context HttpHeaders httpHeaders, String url) {
         if (!isEmpty(url)) {
             MultivaluedMap<String, String> headers = httpHeaders.getRequestHeaders();
             Map<String, String> headerMap = new HashMap<>();
@@ -62,6 +59,7 @@ public class HitsResource {
             });
             processURL(url, headerMap);
         }
+        return Response.noContent().build();
     }
 
     @GET
