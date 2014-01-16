@@ -3,6 +3,7 @@ package com.abien.xray.business.grid.control;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IAtomicLong;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.IQueue;
 import java.util.Date;
@@ -13,6 +14,7 @@ import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
 
 /**
  *
@@ -83,6 +85,12 @@ public class HazelcastManager {
     @Grid(Grid.Name.FIREHOSE)
     public Queue<String> exposeFirehose() {
         return this.firehose;
+    }
+
+    @Produces
+    public IAtomicLong exposeLong(InjectionPoint ip) {
+        String name = ip.getMember().getName();
+        return hazelcast.getAtomicLong(name);
     }
 
     @PreDestroy
