@@ -4,8 +4,10 @@ import com.hazelcast.core.Cluster;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.core.IQueue;
 import java.util.Date;
 import java.util.Map;
+import java.util.Queue;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
@@ -27,7 +29,7 @@ public class HazelcastManager {
     private IMap<String, Long> hits;
     private IMap<String, Long> trending;
     private IMap<Date, Long> daily;
-    private IMap<String, JsonObject> firehose;
+    private IQueue<JsonObject> firehose;
     private IMap<String, Long> referers;
     private IMap<String, String> titles;
 
@@ -39,7 +41,7 @@ public class HazelcastManager {
         this.trending = this.hazelcast.getMap("trending");
         this.daily = this.hazelcast.getMap("daily");
         this.referers = this.hazelcast.getMap("referers");
-        this.firehose = this.hazelcast.getMap("firehose");
+        this.firehose = this.hazelcast.getQueue("firehose");
         this.titles = this.hazelcast.getMap("titles");
     }
 
@@ -80,7 +82,7 @@ public class HazelcastManager {
 
     @Produces
     @Grid(Grid.Name.FIREHOSE)
-    public Map<String, JsonObject> exposeFirehose() {
+    public Queue<JsonObject> exposeFirehose() {
         return this.firehose;
     }
 

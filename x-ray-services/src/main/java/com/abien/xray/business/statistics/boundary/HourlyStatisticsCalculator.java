@@ -1,7 +1,7 @@
 package com.abien.xray.business.statistics.boundary;
 
 import com.abien.xray.business.HitsPer;
-import com.abien.xray.business.store.control.HitsManagement;
+import com.abien.xray.business.hits.control.HitsManagement;
 
 import static com.abien.xray.business.HitsPer.Frequency.*;
 

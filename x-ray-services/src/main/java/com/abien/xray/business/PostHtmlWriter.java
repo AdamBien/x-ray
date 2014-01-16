@@ -1,6 +1,6 @@
 package com.abien.xray.business;
 
-import com.abien.xray.business.store.entity.Post;
+import com.abien.xray.business.hits.entity.Post;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;

@@ -4,7 +4,7 @@ package com.abien.xray.business.grid.boundary;
 
 import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.grid.control.GridInstance;
-import com.abien.xray.business.store.control.HitsCache;
+import com.abien.xray.business.hits.control.HitsCache;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;

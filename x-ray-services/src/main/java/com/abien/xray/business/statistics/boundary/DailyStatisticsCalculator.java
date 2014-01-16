@@ -1,7 +1,7 @@
 package com.abien.xray.business.statistics.boundary;
 
 import com.abien.xray.business.statistics.entity.DailyHits;
-import com.abien.xray.business.store.control.HitsManagement;
+import com.abien.xray.business.hits.control.HitsManagement;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.PostConstruct;

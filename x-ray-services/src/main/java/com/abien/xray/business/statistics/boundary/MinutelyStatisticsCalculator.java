@@ -4,7 +4,7 @@ import com.abien.xray.business.HitsPer;
 
 import static com.abien.xray.business.HitsPer.Frequency.*;
 
-import com.abien.xray.business.store.control.HitsManagement;
+import com.abien.xray.business.hits.control.HitsManagement;
 
 import javax.ejb.AccessTimeout;
 import javax.ejb.EJB;
