@@ -25,4 +25,9 @@ public class HazelcastLogger implements XRayLogger {
         return MessageFormat.format(message, params);
     }
 
+    @Override
+    public void log(Level level, String message) {
+        logger.log(level, message);
+    }
+
 }

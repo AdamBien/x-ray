@@ -10,7 +10,12 @@ import javax.enterprise.inject.Alternative;
 public class DevNullLogger implements XRayLogger {
 
     @Override
-    public void log(Level INFO, String string, Object[] object) {
+    public void log(Level level, String string, Object[] object) {
         //ignore everything
+    }
+
+    @Override
+    public void log(Level level, String mess) {
+        //dev/null
     }
 }
