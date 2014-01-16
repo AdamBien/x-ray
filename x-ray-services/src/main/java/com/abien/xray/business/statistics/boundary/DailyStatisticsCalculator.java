@@ -1,10 +1,9 @@
 package com.abien.xray.business.statistics.boundary;
 
-import com.abien.xray.business.statistics.entity.DailyHits;
 import com.abien.xray.business.hits.control.HitsManagement;
-import java.util.Collections;
+import com.abien.xray.business.statistics.entity.DailyHits;
+import com.hazelcast.core.IAtomicLong;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.ejb.AccessTimeout;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -29,25 +28,18 @@ public class DailyStatisticsCalculator {
     @Inject
     HitsManagement hits;
 
-    private long todayHits = 0;
-    private long yesterdayHits = 0;
-
-    @PostConstruct
-    public void restoreStatistics() {
-        long totalHits = getTotalHits();
-        long yesterdayHitsFromHistory = getYesterdayHitsFromHistory();
-        this.yesterdayHits = totalHits;
-        this.todayHits = yesterdayHitsFromHistory;
-
-    }
+    @Inject
+    private IAtomicLong todayHits;
+    @Inject
+    private IAtomicLong yesterdayHits;
 
     @Lock(LockType.WRITE)
     @Schedule(hour = "23", minute = "59", dayOfWeek = "*", dayOfMonth = "*", persistent = false)
     public void computeStatistics() {
         long totalHits = getTotalHits();
-        todayHits = totalHits - yesterdayHits;
-        yesterdayHits = totalHits;
-        hits.save(new DailyHits(todayHits));
+        todayHits.set(totalHits - yesterdayHits.get());
+        yesterdayHits.set(totalHits);
+        hits.save(new DailyHits(todayHits.get()));
     }
 
     @GET
@@ -63,7 +55,7 @@ public class DailyStatisticsCalculator {
     @Produces({"text/plain"})
     @Lock(LockType.READ)
     public String getTodaysHit() {
-        return String.valueOf(getTotalHits() - yesterdayHits);
+        return String.valueOf(getTotalHits() - yesterdayHits.get());
     }
 
     @GET
@@ -73,16 +65,6 @@ public class DailyStatisticsCalculator {
     @SuppressWarnings("")
     public List<DailyHits> getHistory() {
         return this.hits.getDailyHits();
-    }
-
-    long getYesterdayHitsFromHistory() {
-        List<DailyHits> history = getHistory();
-        if (history == null || history.isEmpty()) {
-            return 0;
-        } else {
-            Collections.reverse(history);
-            return history.get(0).getHit();
-        }
     }
 
     long getTotalHits() {
