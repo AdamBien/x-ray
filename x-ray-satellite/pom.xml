@@ -4,11 +4,11 @@
     <parent>
         <artifactId>x-ray-assembly</artifactId>
         <groupId>com.abien.greenfire</groupId>
-        <version>0.0.2</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
     <groupId>com.airhacks</groupId>
     <artifactId>x-ray-satellite</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <packaging>war</packaging>
     <dependencies>
         <dependency>

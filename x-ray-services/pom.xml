@@ -4,12 +4,12 @@
     <parent>
         <groupId>com.abien.greenfire</groupId>
         <artifactId>x-ray-assembly</artifactId>
-        <version>0.0.2</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
     <groupId>com.abien.xray</groupId>
     <artifactId>x-ray-services</artifactId>
     <packaging>war</packaging>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <url>http://x-ray.adam-bien.com</url>
     <dependencyManagement>
         <dependencies>
