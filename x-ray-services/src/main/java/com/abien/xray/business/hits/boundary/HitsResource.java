@@ -2,13 +2,11 @@ package com.abien.xray.business.hits.boundary;
 
 import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.hits.control.HitsManagement;
-import com.abien.xray.business.hits.control.URLPathExtractor;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.logging.Level;
 import javax.ejb.Stateless;
@@ -40,8 +38,6 @@ public class HitsResource {
     @Inject
     private XRayLogger LOG;
 
-    @Inject
-    URLPathExtractor extractor;
     @Inject
     HitsManagement hits;
 
@@ -107,14 +103,6 @@ public class HitsResource {
         } else {
             return post.substring(1, post.length());
         }
-    }
-
-    void processURL(String url, Map<String, String> headerMap) {
-        String uniqueAction = extractor.extractPathSegmentFromURL(url);
-        LOG.log(Level.INFO, "updateStatistics({0}) - extracted uniqueAction: {1}", new Object[]{url, uniqueAction});
-        String referer = extractor.extractReferer(url);
-        LOG.log(Level.INFO, "updateStatistics({0}) - extracted referer: {1}", new Object[]{url, referer});
-        hits.updateStatistics(uniqueAction, referer, headerMap);
     }
 
     boolean isEmpty(String url) {

@@ -1,13 +1,13 @@
 package com.abien.xray.business.hits.control;
 
 import com.abien.xray.business.grid.control.Grid;
+import com.abien.xray.business.hits.entity.CacheValue;
+import com.abien.xray.business.hits.entity.Hit;
+import com.abien.xray.business.hits.entity.Post;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.monitoring.entity.Diagnostics;
 import com.abien.xray.business.statistics.entity.DailyHits;
-import com.abien.xray.business.hits.entity.CacheValue;
-import com.abien.xray.business.hits.entity.Hit;
-import com.abien.xray.business.hits.entity.Post;
 import com.hazelcast.core.HazelcastInstance;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,13 +24,13 @@ import javax.annotation.PostConstruct;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.LocalBean;
-import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.json.JsonObject;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
@@ -74,13 +74,14 @@ public class HitsManagement {
     @Inject
     @Grid(Grid.Name.HITS)
     private ConcurrentMap hits;
-    @Inject
-    @Grid(Grid.Name.TRENDING)
-    private ConcurrentMap trending;
 
     @Inject
     @Grid(Grid.Name.DAILY)
     private Map<Date, Long> daily;
+
+    @Inject
+    @Grid(Grid.Name.TRENDING)
+    private ConcurrentMap trending;
 
     @Inject
     @Grid(Grid.Name.REFERERS)
@@ -94,7 +95,7 @@ public class HitsManagement {
         this.dailyHitCache = new DailyHitCache(this.daily);
     }
 
-    public void updateStatistics(String uri, String referer, Map<String, String> headerMap) {
+    public void updateStatistics(String uri, String referer, JsonObject headerMap) {
         LOG.log(Level.INFO, "updateStatistics({0})", new Object[]{uri});
         try {
             if (urlFilter.ignore(uri)) {//|| httpHeaderFilter.ignore(headerMap)) {
@@ -113,12 +114,6 @@ public class HitsManagement {
 
     public long getCount(String uri) {
         return this.hitCache.getCount(uri);
-    }
-
-    @Schedule(hour = "*/1", persistent = false)
-    public void resetTrends() {
-        sendMonitoringData();
-        trending.clear();
     }
 
     public long getHitsForURI(String uri) {
@@ -192,14 +187,6 @@ public class HitsManagement {
             totalCount += atomicLong.get();
         }
         return totalCount;
-    }
-
-    void sendMonitoringData() {
-        int hitCacheSize = this.hitCache.getCacheSize();
-        Diagnostics diagnostics = Diagnostics.with("hitCacheSize", hitCacheSize).
-                and("numberOfRejectedRequests", this.numberOfRejectedRequests);
-        monitoring.fire(diagnostics);
-
     }
 
     public String totalHitsAsString() {
