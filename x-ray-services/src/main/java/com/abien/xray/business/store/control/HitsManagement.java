@@ -77,7 +77,7 @@ public class HitsManagement {
         this.hitStatistics = new HitsCache(this.hazelcastInstance.getMap("hits"));
         this.refererStatistics = new HitsCache(this.hazelcastInstance.getMap("referers"));
         this.trending = new HitsCache(this.hazelcastInstance.getMap("trending"));
-        this.dailyHits = new DailyHitStore(this.hazelcastInstance.getMap("trending"));
+        this.dailyHits = new DailyHitStore(this.hazelcastInstance.getMap("daily"));
     }
 
     public void updateStatistics(String uri, String referer, Map<String, String> headerMap) {
