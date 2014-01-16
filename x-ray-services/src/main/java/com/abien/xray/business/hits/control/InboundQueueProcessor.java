@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.logging.Level;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.json.Json;
@@ -19,6 +20,7 @@ import javax.json.JsonObject;
  *
  * @author adam-bien.com
  */
+@Startup
 @Singleton
 @Interceptors(PerformanceAuditor.class)
 public class InboundQueueProcessor {
@@ -36,10 +38,13 @@ public class InboundQueueProcessor {
     @Inject
     HitsManagement management;
 
-    @Schedule(second = "*/5", persistent = false)
+    @Schedule(hour = "*", minute = "*", second = "*/5", persistent = false)
     public void processRequests() {
         LOG.log(Level.INFO, "Processing queue with depth {0}", new Object[]{firehose.size()});
-        firehose.stream().forEach(r -> processURL(r));
+        String content = null;
+        while ((content = firehose.poll()) != null) {
+            processURL(content);
+        }
     }
 
     void processURL(String payload) {
