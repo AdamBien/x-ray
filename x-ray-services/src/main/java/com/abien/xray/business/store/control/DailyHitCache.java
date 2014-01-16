@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
  *
  * @author adam-bien.com
  */
-public class DailyHitStore {
+public class DailyHitCache {
 
     private final Comparator<Map.Entry<Date, Long>> decreasing = (l, r) -> l.getValue().compareTo(r.getValue());
     private final Map<Date, Long> dailyHits;
 
-    public DailyHitStore(Map<Date, Long> dailyHits) {
+    public DailyHitCache(Map<Date, Long> dailyHits) {
         this.dailyHits = dailyHits;
     }
 

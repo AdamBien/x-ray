@@ -1,21 +1,22 @@
 package com.abien.xray.business.store.control;
 
+import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.monitoring.entity.Diagnostics;
 import com.abien.xray.business.statistics.entity.DailyHits;
-import com.abien.xray.business.store.boundary.Cache;
 import com.abien.xray.business.store.entity.CacheValue;
 import com.abien.xray.business.store.entity.Hit;
 import com.abien.xray.business.store.entity.Post;
-import com.abien.xray.business.useragent.control.UserAgentStatistics;
 import com.hazelcast.core.HazelcastInstance;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -47,8 +48,6 @@ public class HitsManagement {
     XRayLogger LOG;
 
     public static final String ENTRY = "/entry/";
-    @Inject
-    UserAgentStatistics userAgentStatistics;
 
     @Inject
     URLFilter urlFilter;
@@ -62,32 +61,42 @@ public class HitsManagement {
     @Inject
     Event<String> uriListener;
 
-    private HitsCache hitStatistics = null;
-    private HitsCache trending = null;
-    private HitsCache refererStatistics = null;
+    private HitsCache hitCache = null;
+    private HitsCache trendingCache = null;
+    private HitsCache refererCache;
 
     private AtomicLong numberOfRejectedRequests = new AtomicLong(0);
 
     @Inject
     HazelcastInstance hazelcastInstance;
-    private DailyHitStore dailyHits;
+    private DailyHitCache dailyHitCache;
+
+    @Inject
+    @Grid(Grid.Name.HITS)
+    private ConcurrentMap hits;
+    @Inject
+    @Grid(Grid.Name.TRENDING)
+    private ConcurrentMap trending;
+
+    @Inject
+    @Grid(Grid.Name.DAILY)
+    private Map<Date, Long> daily;
+
+    @Inject
+    @Grid(Grid.Name.REFERERS)
+    private ConcurrentMap referers;
 
     @PostConstruct
     public void preloadCache() {
-        this.hitStatistics = new HitsCache(this.hazelcastInstance.getMap("hits"));
-        this.refererStatistics = new HitsCache(this.hazelcastInstance.getMap("referers"));
-        this.trending = new HitsCache(this.hazelcastInstance.getMap("trending"));
-        this.dailyHits = new DailyHitStore(this.hazelcastInstance.getMap("daily"));
+        this.hitCache = new HitsCache(this.hits);
+        this.trendingCache = new HitsCache(this.trending);
+        this.refererCache = new HitsCache(this.referers);
+        this.dailyHitCache = new DailyHitCache(this.daily);
     }
 
     public void updateStatistics(String uri, String referer, Map<String, String> headerMap) {
         LOG.log(Level.INFO, "updateStatistics({0})", new Object[]{uri});
         try {
-            /**
-             * TODO testing
-             * userAgentStatistics.extractAndStoreReferer(headerMap);
-             *
-             */
             if (urlFilter.ignore(uri)) {//|| httpHeaderFilter.ignore(headerMap)) {
                 LOG.log(Level.INFO, "updateStatistics - URL: {0} is rejected by urlFilter with headers {1}", new Object[]{uri, headerMap});
                 numberOfRejectedRequests.incrementAndGet();
@@ -103,7 +112,7 @@ public class HitsManagement {
     }
 
     public long getCount(String uri) {
-        return this.hitStatistics.getCount(uri);
+        return this.hitCache.getCount(uri);
     }
 
     @Schedule(hour = "*/1", persistent = false)
@@ -113,7 +122,7 @@ public class HitsManagement {
     }
 
     public long getHitsForURI(String uri) {
-        return this.hitStatistics.getCount(uri);
+        return this.hitCache.getCount(uri);
     }
 
     void storeURI(String uri) {
@@ -125,15 +134,15 @@ public class HitsManagement {
     }
 
     long storeHitStatistics(String uniqueAction) {
-        return this.hitStatistics.increase(uniqueAction);
+        return this.hitCache.increase(uniqueAction);
     }
 
     long storeTrending(String uniqueAction) {
-        return this.trending.increase(uniqueAction);
+        return this.trendingCache.increase(uniqueAction);
     }
 
     long storeReferer(String referer) {
-        return this.refererStatistics.increase(shortenReferer(referer, REFERER_MAX_LENGTH));
+        return this.refererCache.increase(shortenReferer(referer, REFERER_MAX_LENGTH));
     }
 
     String shortenReferer(String referer, int length) {
@@ -154,22 +163,24 @@ public class HitsManagement {
     }
 
     public long totalHits() {
-        return computeHits(this.hitStatistics.getCache());
+        return computeHits(this.hitCache.getCache());
     }
 
     public long totalTrending() {
-        return computeHits(this.trending.getCache());
+        return computeHits(this.trendingCache.getCache());
     }
 
     public List<Post> getTrending() {
         List<Post> trends = new ArrayList<>();
-        Map<String, AtomicLong> cache = trending.getCache();
+        Map<String, AtomicLong> cache = trendingCache.getCache();
         Set<Map.Entry<String, AtomicLong>> trendEntries = cache.entrySet();
-        for (Map.Entry<String, AtomicLong> trendEntry : trendEntries) {
-            long hits = trendEntry.getValue().get();
-            Post post = new Post(trendEntry.getKey(), hits);
+        trendEntries.stream().map((trendEntry) -> {
+            long hitsValue = trendEntry.getValue().get();
+            Post post = new Post(trendEntry.getKey(), hitsValue);
+            return post;
+        }).forEach((post) -> {
             trends.add(post);
-        }
+        });
         Collections.sort(trends, Collections.reverseOrder());
         return trends;
     }
@@ -184,10 +195,8 @@ public class HitsManagement {
     }
 
     void sendMonitoringData() {
-        int hitCacheSize = this.hitStatistics.getCacheSize();
-        int refererCacheSize = this.refererStatistics.getCacheSize();
+        int hitCacheSize = this.hitCache.getCacheSize();
         Diagnostics diagnostics = Diagnostics.with("hitCacheSize", hitCacheSize).
-                and("refererCacheSize", refererCacheSize).
                 and("numberOfRejectedRequests", this.numberOfRejectedRequests);
         monitoring.fire(diagnostics);
 
@@ -198,49 +207,49 @@ public class HitsManagement {
     }
 
     public List<CacheValue> topReferers(String excludeContaining, int maxNumber) {
-        return this.refererStatistics.getMostPopularValuesNotContaining(excludeContaining, maxNumber);
+        return this.refererCache.getMostPopularValuesNotContaining(excludeContaining, maxNumber);
     }
 
     public List<CacheValue> topReferers(int maxNumber) {
-        return this.refererStatistics.getMostPopularValues(maxNumber);
+        return this.refererCache.getMostPopularValues(maxNumber);
     }
 
     @Produces
-    @Cache(Cache.Name.REFERERS)
+    @Grid(Grid.Name.HITS)
     public HitsCache referersCache() {
-        return this.refererStatistics;
+        return this.refererCache;
     }
 
     @Produces
-    @Cache(Cache.Name.STATISTICS)
+    @Grid(Grid.Name.HITS)
     public HitsCache statisticsCache() {
-        return hitStatistics;
+        return hitCache;
     }
 
     @Produces
-    @Cache(Cache.Name.TRENDING)
+    @Grid(Grid.Name.TRENDING)
     public HitsCache trendingCache() {
-        return trending;
+        return trendingCache;
     }
 
     public List<DailyHits> getDailyHits() {
-        return this.dailyHits.getDailyHits();
+        return this.dailyHitCache.getDailyHits();
     }
 
     public void save(DailyHits dailyHits) {
-        this.dailyHits.save(dailyHits);
+        this.dailyHitCache.save(dailyHits);
 
     }
 
     public List<Hit> getMostPopularPosts(int max) {
-        return this.hitStatistics.getMostPopularValues(max).
+        return this.hitCache.getMostPopularValues(max).
                 parallelStream().
                 map(s -> new Hit(s.getRefererUri(), s.getCount())).
                 collect(Collectors.toList());
     }
 
     public List<Hit> getMostPopularPostsNotContaining(String exclude, int max) {
-        return this.hitStatistics.getMostPopularValuesNotContaining(exclude, max).
+        return this.hitCache.getMostPopularValuesNotContaining(exclude, max).
                 parallelStream().
                 map(s -> new Hit(s.getRefererUri(), s.getCount())).
                 collect(Collectors.toList());

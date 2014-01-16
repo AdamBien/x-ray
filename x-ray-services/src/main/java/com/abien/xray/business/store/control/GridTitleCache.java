@@ -1,6 +1,6 @@
 package com.abien.xray.business.store.control;
 
-import com.abien.xray.business.grid.control.Titles;
+import com.abien.xray.business.grid.control.Grid;
 import static com.abien.xray.business.store.entity.Post.EMPTY;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import javax.inject.Inject;
 public class GridTitleCache {
 
     @Inject
-    @Titles
+    @Grid(Grid.Name.TITLES)
     private ConcurrentMap<String, String> titles = null;
 
     public String get(String uri) {

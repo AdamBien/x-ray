@@ -2,7 +2,9 @@ package com.abien.xray.business.store.boundary;
 
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.store.control.HitsManagement;
+import com.abien.xray.business.store.entity.Hit;
 import com.abien.xray.business.store.entity.Post;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -16,20 +18,30 @@ import javax.ws.rs.core.MediaType;
 
 /**
  *
- * @author Adam Bien, blog.adam-bien.com
+ * @author blog.adam-bien.com
  */
-@Path("trending")
+@Path("mostpopular")
 @Stateless
 @Interceptors(PerformanceAuditor.class)
-public class Trending extends TitleFilter {
+public class TopHitsResource extends TitleFilter {
 
     @Inject
     HitsManagement hits;
 
     @GET
     @Produces({MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public List<Post> getTrendingPostsWithTitle(@QueryParam("max") @DefaultValue("10") int max) {
-        List<Post> mostPopularPosts = hits.getTrending();
+    public List<Post> totalHitsAsString(@QueryParam("max") @DefaultValue("10") int max) {
+        List<Post> mostPopularPosts = new LinkedList<>();
+        List<Hit> mostPopularPostsWithoutTitle = hits.getMostPopularPosts(max);
+        mostPopularPostsWithoutTitle.stream().forEach((hit) -> {
+            mostPopularPosts.add(convert(hit));
+        });
         return getPostsWithExistingTitle(mostPopularPosts, max);
+    }
+
+    Post convert(Hit hit) {
+        long count = hit.getCount();
+        String uri = hit.getActionId();
+        return new Post(uri, count);
     }
 }

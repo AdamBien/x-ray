@@ -1,6 +1,7 @@
 package com.abien.xray.business.store.control;
 
 import com.abien.xray.business.logging.boundary.XRayLogger;
+import com.abien.xray.business.store.control.GridTitleCache;
 import static com.abien.xray.business.store.entity.Post.EMPTY;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,10 +10,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
-import javax.ejb.AccessTimeout;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Schedule;
@@ -23,7 +22,6 @@ import javax.inject.Inject;
  * @author Adam Bien, blog.adam-bien.com
  */
 @Singleton
-@AccessTimeout(value = 20, unit = TimeUnit.SECONDS)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class TitleFetcher {
 
@@ -34,11 +32,11 @@ public class TitleFetcher {
     public static final String BASE_URL = "http://www.adam-bien.com/roller/abien";
 
     @Inject
-    TitleCache titles;
+    GridTitleCache titles;
 
     @PostConstruct
     public void initialize() {
-        this.bogusTitles = new ConcurrentLinkedQueue<String>();
+        this.bogusTitles = new ConcurrentLinkedQueue<>();
     }
 
     public String getTitle(String uri) {
