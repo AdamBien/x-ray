@@ -202,7 +202,7 @@ public class HitsManagement {
     }
 
     @Produces
-    @Grid(Grid.Name.HITS)
+    @Grid(Grid.Name.REFERERS)
     public HitsCache referersCache() {
         return this.refererCache;
     }
