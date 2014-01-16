@@ -25,10 +25,10 @@ public class HTTPRequestRESTInterceptorTest {
 
     @Test
     public void systemPropertiesAreOverwritingTheDefault() throws ServletException {
-        final String expected = "http://airhacks.com";
-        System.setProperty(HTTPRequestRESTInterceptor.XRAYURL, expected);
+        final String configured = "http://airhacks.com/";
+        System.setProperty(HTTPRequestRESTInterceptor.XRAYURL, configured);
         this.cut.init(mock(FilterConfig.class));
-        assertThat(this.cut.serviceURL, is(expected));
+        assertThat(this.cut.serviceURL, is(configured + "hits"));
     }
 
 }

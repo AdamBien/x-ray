@@ -48,6 +48,7 @@ public class HTTPRequestRESTInterceptor implements Filter {
     private volatile static long worstApplicationPerformance = -1;
     public final static int NR_OF_THREADS = 2;
     public final static int QUEUE_CAPACITY = 5;
+    private static final String PUT_HITS_RESOURCE = "hits";
 
     static {
         setupThreadPools();
@@ -59,7 +60,8 @@ public class HTTPRequestRESTInterceptor implements Filter {
         this.serviceURL = filterConfig.getInitParameter(SERVICE_URL_KEY);
         String customUri = System.getProperty(XRAYURL);
         if (customUri != null) {
-            this.serviceURL = customUri;
+            LOG.info("Extracted x-ray URI from custom properties: " + customUri);
+            this.serviceURL = customUri + PUT_HITS_RESOURCE;
             LOG.info("Overwriting the x-ray URI with system properties " + this.serviceURL);
         }
 
