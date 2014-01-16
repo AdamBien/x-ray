@@ -1,13 +1,10 @@
 package com.abien.xray.business.statistics.boundary;
 
 import com.abien.xray.business.HitsPer;
-
-import static com.abien.xray.business.HitsPer.Frequency.*;
-
+import static com.abien.xray.business.HitsPer.Frequency.MINUTE;
 import com.abien.xray.business.hits.control.HitsManagement;
-
-import javax.ejb.AccessTimeout;
-import javax.ejb.EJB;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.enterprise.event.Event;
@@ -21,7 +18,7 @@ import javax.ws.rs.Produces;
  */
 @Path("hitsperminute")
 @Singleton
-@AccessTimeout(2000)
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 @Produces({"text/plain"})
 public class MinutelyStatisticsCalculator {
 
@@ -35,7 +32,6 @@ public class MinutelyStatisticsCalculator {
     @Inject
     @HitsPer(MINUTE)
     Event<Long> minutelyEvent;
-
 
     @Schedule(minute = "*/1", hour = "*", persistent = false)
     public void computeStatistics() {
