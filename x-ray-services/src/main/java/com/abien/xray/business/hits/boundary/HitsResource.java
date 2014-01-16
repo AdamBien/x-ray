@@ -4,6 +4,7 @@ import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.interceptor.Interceptors;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonWriter;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -43,7 +45,7 @@ public class HitsResource {
 
     @Inject
     @Grid(Grid.Name.FIREHOSE)
-    Queue<JsonObject> firehose;
+    Queue<String> firehose;
 
     public static final String PREFIX = "/entry/";
 
@@ -62,7 +64,7 @@ public class HitsResource {
                 }
             });
             request.add("url", url);
-            this.firehose.add(request.build());
+            processRequest(request.build());
         }
         return Response.noContent().build();
     }
@@ -117,5 +119,13 @@ public class HitsResource {
     @Produces({MediaType.TEXT_PLAIN})
     public String totalHitsAsString() {
         return hits.totalHitsAsString();
+    }
+
+    void processRequest(JsonObject object) {
+        StringWriter stringWriter = new StringWriter();
+        JsonWriter jsonWriter = Json.createWriter(stringWriter);
+        jsonWriter.writeObject(object);
+        String serialized = stringWriter.getBuffer().toString();
+        this.firehose.add(serialized);
     }
 }

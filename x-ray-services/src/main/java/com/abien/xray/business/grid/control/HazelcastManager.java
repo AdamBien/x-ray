@@ -13,7 +13,6 @@ import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.inject.Produces;
-import javax.json.JsonObject;
 
 /**
  *
@@ -29,7 +28,7 @@ public class HazelcastManager {
     private IMap<String, Long> hits;
     private IMap<String, Long> trending;
     private IMap<Date, Long> daily;
-    private IQueue<JsonObject> firehose;
+    private IQueue<String> firehose;
     private IMap<String, Long> referers;
     private IMap<String, String> titles;
 
@@ -82,7 +81,7 @@ public class HazelcastManager {
 
     @Produces
     @Grid(Grid.Name.FIREHOSE)
-    public Queue<JsonObject> exposeFirehose() {
+    public Queue<String> exposeFirehose() {
         return this.firehose;
     }
 
