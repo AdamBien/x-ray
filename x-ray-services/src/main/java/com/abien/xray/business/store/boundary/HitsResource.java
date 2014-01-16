@@ -1,18 +1,21 @@
 package com.abien.xray.business.store.boundary;
 
+import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.store.control.HitsManagement;
 import com.abien.xray.business.store.control.URLPathExtractor;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -41,6 +44,10 @@ public class HitsResource {
     @Inject
     HitsManagement hits;
 
+    @Inject
+    @Grid(Grid.Name.FIREHOSE)
+    Map<String, JsonObject> firehose;
+
     public static final String PREFIX = "/entry/";
 
     @PUT
@@ -48,16 +55,16 @@ public class HitsResource {
     public Response updateStatistics(@Context HttpHeaders httpHeaders, String url) {
         if (!isEmpty(url)) {
             MultivaluedMap<String, String> headers = httpHeaders.getRequestHeaders();
-            Map<String, String> headerMap = new HashMap<>();
+            JsonObjectBuilder headerMap = Json.createObjectBuilder();
             headers.entrySet().stream().forEach((headerEntries) -> {
                 String headerName = headerEntries.getKey();
                 List<String> headerValuesList = headerEntries.getValue();
                 if (headerValuesList != null && !headerValuesList.isEmpty()) {
                     String headerValue = headerValuesList.get(0);
-                    headerMap.put(headerName, headerValue);
+                    headerMap.add(headerName, headerValue);
                 }
             });
-            processURL(url, headerMap);
+            submit(url, headerMap.build());
         }
         return Response.noContent().build();
     }
@@ -120,5 +127,9 @@ public class HitsResource {
     @Produces({MediaType.TEXT_PLAIN})
     public String totalHitsAsString() {
         return hits.totalHitsAsString();
+    }
+
+    void submit(String url, JsonObject build) {
+        firehose.put(url, build);
     }
 }
