@@ -88,8 +88,8 @@ public class HitsManagement {
              * userAgentStatistics.extractAndStoreReferer(headerMap);
              *
              */
-            if (urlFilter.ignore(uri) || httpHeaderFilter.ignore(headerMap)) {
-                LOG.log(Level.INFO, "updateStatistics - URL: {0} is rejected with headers {1}", new Object[]{uri, headerMap});
+            if (urlFilter.ignore(uri)) {//|| httpHeaderFilter.ignore(headerMap)) {
+                LOG.log(Level.INFO, "updateStatistics - URL: {0} is rejected by urlFilter with headers {1}", new Object[]{uri, headerMap});
                 numberOfRejectedRequests.incrementAndGet();
                 return;
             }

@@ -1,10 +1,9 @@
 package com.abien.xray.business.store.boundary;
 
-import com.abien.xray.business.store.control.HitsManagement;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
+import com.abien.xray.business.store.control.HitsManagement;
 import com.abien.xray.business.store.control.URLPathExtractor;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -14,8 +13,17 @@ import java.util.logging.Level;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
@@ -58,6 +66,7 @@ public class HitsResource {
     @Path("{uri}")
     @Produces(MediaType.TEXT_PLAIN)
     public String hitsForURI(@PathParam("uri") String uri) {
+        LOG.log(Level.INFO, "hitsForURI with {0}", new Object[]{uri});
         String decoded;
         try {
             decoded = URLDecoder.decode(uri, "UTF-8");
@@ -65,7 +74,10 @@ public class HitsResource {
             return "--";
         }
         String decodedURIWithPrefix = prependPrefix(decoded);
-        return String.valueOf(hits.getHitsForURI(decodedURIWithPrefix));
+        LOG.log(Level.INFO, "{0} decoded {1}", new Object[]{uri, decodedURIWithPrefix});
+        String nbrOfHits = String.valueOf(hits.getHitsForURI(decodedURIWithPrefix));
+        LOG.log(Level.INFO, "returning {0} for {1}", new Object[]{uri, nbrOfHits});
+        return nbrOfHits;
     }
 
     String prependPrefix(String post) {

@@ -25,7 +25,7 @@ public class ProductionLoggerProducerIT {
     @Deployment
     public static JavaArchive createTestArchive() {
         return ShrinkWrap.create(JavaArchive.class).
-                addClasses(LogUser.class, LoggerProducer.class, Configuration.class, DevNullLogger.class, DelegatingLogger.class).
+                addClasses(LogUser.class, LoggerProducer.class, Configuration.class, DevNullLogger.class, HazelcastLogger.class).
                 addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
