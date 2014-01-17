@@ -64,7 +64,7 @@ public class DailyStatisticsCalculator {
     @Path("yesterday")
     @Produces({"text/plain"})
     public String getYesterdaysHit() {
-        return String.valueOf(todayHits);
+        return String.valueOf(todayHits.get());
     }
 
     @GET
