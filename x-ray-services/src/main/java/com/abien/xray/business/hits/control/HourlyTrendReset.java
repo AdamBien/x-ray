@@ -2,8 +2,8 @@
  */
 package com.abien.xray.business.hits.control;
 
-import com.airhacks.xray.grid.control.Grid;
 import com.abien.xray.business.logging.boundary.XRayLogger;
+import com.airhacks.xray.grid.control.Grid;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import javax.ejb.Schedule;
@@ -22,7 +22,7 @@ public class HourlyTrendReset {
 
     @Inject
     @Grid(Grid.Name.TRENDING)
-    private ConcurrentMap<String, Long> trending;
+    private ConcurrentMap<String, String> trending;
 
     @Schedule(hour = "*/1", persistent = false)
     public void resetTrends() {
