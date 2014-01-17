@@ -4,9 +4,8 @@ import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.statistics.entity.DailyHits;
 import com.hazelcast.core.IAtomicLong;
 import java.util.List;
-import javax.ejb.AccessTimeout;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -22,7 +21,7 @@ import javax.ws.rs.core.MediaType;
 @Path("hitsperday")
 @Singleton
 @Startup
-@AccessTimeout(2000)
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class DailyStatisticsCalculator {
 
     @Inject
@@ -33,7 +32,6 @@ public class DailyStatisticsCalculator {
     @Inject
     private IAtomicLong yesterdayHits;
 
-    @Lock(LockType.WRITE)
     @Schedule(hour = "23", minute = "59", dayOfWeek = "*", dayOfMonth = "*", persistent = false)
     public void computeStatistics() {
         long totalHits = getTotalHits();
@@ -45,7 +43,6 @@ public class DailyStatisticsCalculator {
     @GET
     @Path("yesterday")
     @Produces({"text/plain"})
-    @Lock(LockType.READ)
     public String getYesterdaysHit() {
         return String.valueOf(todayHits);
     }
@@ -53,7 +50,6 @@ public class DailyStatisticsCalculator {
     @GET
     @Path("today")
     @Produces({"text/plain"})
-    @Lock(LockType.READ)
     public String getTodaysHit() {
         return String.valueOf(getTotalHits() - yesterdayHits.get());
     }
@@ -61,7 +57,6 @@ public class DailyStatisticsCalculator {
     @GET
     @Path("history")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Lock(LockType.READ)
     @SuppressWarnings("")
     public List<DailyHits> getHistory() {
         return this.hits.getDailyHits();

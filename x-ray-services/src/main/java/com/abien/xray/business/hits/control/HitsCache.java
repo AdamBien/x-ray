@@ -19,7 +19,7 @@ public class HitsCache {
      */
     private final Comparator<Map.Entry<String, String>> decreasing = (l, r) -> new Long(Long.parseLong(r.getValue())).compareTo(Long.parseLong(l.getValue()));
 
-    public HitsCache(ConcurrentMap hits) {
+    public HitsCache(ConcurrentMap<String, String> hits) {
         this.hits = hits;
     }
 
@@ -64,6 +64,10 @@ public class HitsCache {
                 limit(maxNumber).
                 map(f -> new CacheValue(f.getKey(), f.getValue())).
                 collect(Collectors.toList());
+    }
+
+    public long getTotalHits() {
+        return this.hits.entrySet().stream().mapToLong(v -> Long.parseLong(v.getValue())).sum();
     }
 
     public void clear() {

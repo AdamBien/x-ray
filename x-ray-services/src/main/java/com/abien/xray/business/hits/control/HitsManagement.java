@@ -156,11 +156,11 @@ public class HitsManagement {
     }
 
     public long totalHits() {
-        return computeHits(this.hitCache.getCache());
+        return this.hitCache.getTotalHits();
     }
 
     public long totalTrending() {
-        return computeHits(this.trendingCache.getCache());
+        return this.trendingCache.getTotalHits();
     }
 
     public List<Post> getTrending() {
@@ -176,10 +176,6 @@ public class HitsManagement {
         });
         Collections.sort(trends, Collections.reverseOrder());
         return trends;
-    }
-
-    private long computeHits(Map<String, String> hits) {
-        return hits.entrySet().stream().mapToLong(v -> Long.parseLong(v.getValue())).sum();
     }
 
     public String totalHitsAsString() {
