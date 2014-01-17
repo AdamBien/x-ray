@@ -1,6 +1,6 @@
 package com.abien.xray.business.hits.control;
 
-import com.abien.xray.business.grid.control.Grid;
+import com.airhacks.xray.grid.control.Grid;
 import com.abien.xray.business.hits.entity.CacheValue;
 import com.abien.xray.business.hits.entity.Hit;
 import com.abien.xray.business.hits.entity.Post;

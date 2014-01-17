@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>x-ray-assembly</artifactId>
-        <groupId>com.abien.greenfire</groupId>
+        <groupId>com.airhacks</groupId>
         <version>0.0.3-SNAPSHOT</version>
     </parent>
     <groupId>com.airhacks</groupId>

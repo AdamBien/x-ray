@@ -2,7 +2,7 @@
  */
 package com.abien.xray.business.hits.control;
 
-import com.abien.xray.business.grid.control.Grid;
+import com.airhacks.xray.grid.control.Grid;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import java.io.StringReader;

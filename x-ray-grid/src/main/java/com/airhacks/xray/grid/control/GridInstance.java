@@ -1,6 +1,6 @@
 /*
  */
-package com.abien.xray.business.grid.control;
+package com.airhacks.xray.grid.control;
 
 import java.lang.annotation.Annotation;
 

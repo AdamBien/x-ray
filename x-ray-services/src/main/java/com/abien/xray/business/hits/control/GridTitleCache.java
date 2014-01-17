@@ -1,6 +1,6 @@
 package com.abien.xray.business.hits.control;
 
-import com.abien.xray.business.grid.control.Grid;
+import com.airhacks.xray.grid.control.Grid;
 import static com.abien.xray.business.hits.entity.Post.EMPTY;
 import java.util.ArrayList;
 import java.util.List;

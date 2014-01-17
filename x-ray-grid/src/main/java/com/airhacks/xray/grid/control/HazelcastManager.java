@@ -1,4 +1,4 @@
-package com.abien.xray.business.grid.control;
+package com.airhacks.xray.grid.control;
 
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.Hazelcast;
@@ -6,7 +6,6 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.IQueue;
-import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentMap;
 import javax.annotation.PostConstruct;
@@ -27,11 +26,11 @@ public class HazelcastManager {
     private HazelcastInstance hazelcast;
     private Cluster cluster;
 
-    private IMap<String, Long> hits;
-    private IMap<String, Long> trending;
-    private IMap<Date, Long> daily;
     private IQueue<String> firehose;
-    private IMap<String, Long> referers;
+    private IMap<String, String> hits;
+    private IMap<String, String> trending;
+    private IMap<String, String> daily;
+    private IMap<String, String> referers;
     private IMap<String, String> titles;
 
     @PostConstruct
@@ -53,25 +52,25 @@ public class HazelcastManager {
 
     @Produces
     @Grid(Grid.Name.HITS)
-    public ConcurrentMap<String, Long> exposeHits() {
+    public ConcurrentMap<String, String> exposeHits() {
         return this.hits;
     }
 
     @Produces
     @Grid(Grid.Name.TRENDING)
-    public ConcurrentMap<String, Long> exposeTrending() {
+    public ConcurrentMap<String, String> exposeTrending() {
         return this.trending;
     }
 
     @Produces
     @Grid(Grid.Name.DAILY)
-    public ConcurrentMap<Date, Long> exposeDaily() {
+    public ConcurrentMap<String, String> exposeDaily() {
         return this.daily;
     }
 
     @Produces
     @Grid(Grid.Name.REFERERS)
-    public ConcurrentMap<String, Long> exposeReferers() {
+    public ConcurrentMap<String, String> exposeReferers() {
         return this.referers;
     }
 
