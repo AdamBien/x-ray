@@ -1,9 +1,12 @@
 package com.abien.xray.business.statistics.boundary;
 
 import com.abien.xray.business.hits.control.HitsManagement;
+import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.statistics.entity.DailyHits;
 import com.hazelcast.core.IAtomicLong;
 import java.util.List;
+import java.util.logging.Level;
+import javax.annotation.PostConstruct;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Schedule;
@@ -32,10 +35,27 @@ public class DailyStatisticsCalculator {
     @Inject
     private IAtomicLong yesterdayHits;
 
+    @Inject
+    XRayLogger LOG;
+
+    @PostConstruct
+    public void initializeYesterday() {
+        LOG.log(Level.INFO, "Initializing DailyStatisticsCalculator");
+        final long yesterdayHitsValue = yesterdayHits.get();
+        if (yesterdayHitsValue == 0) {
+            LOG.log(Level.INFO, "Yesterday's hits are 0, overwriting with: " + yesterdayHitsValue);
+            yesterdayHits.set(hits.totalHits());
+        }
+    }
+
     @Schedule(hour = "23", minute = "59", dayOfWeek = "*", dayOfMonth = "*", persistent = false)
-    public void computeStatistics() {
-        long totalHits = getTotalHits();
+    public void computeDailyHits() {
+        LOG.log(Level.INFO, "Computing daily hits");
+        long totalHits = hits.totalHits();
+        LOG.log(Level.INFO, "Total hits: " + totalHits);
+        LOG.log(Level.INFO, "Yesterday's hits were: " + yesterdayHits.get());
         todayHits.set(totalHits - yesterdayHits.get());
+        LOG.log(Level.INFO, "Today hits: " + todayHits.get());
         yesterdayHits.set(totalHits);
         hits.save(new DailyHits(todayHits.get()));
     }
@@ -51,7 +71,7 @@ public class DailyStatisticsCalculator {
     @Path("today")
     @Produces({"text/plain"})
     public String getTodaysHit() {
-        return String.valueOf(getTotalHits() - yesterdayHits.get());
+        return String.valueOf(hits.totalHits() - yesterdayHits.get());
     }
 
     @GET
@@ -60,10 +80,6 @@ public class DailyStatisticsCalculator {
     @SuppressWarnings("")
     public List<DailyHits> getHistory() {
         return this.hits.getDailyHits();
-    }
-
-    long getTotalHits() {
-        return hits.totalHits();
     }
 
 }
