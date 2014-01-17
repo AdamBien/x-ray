@@ -28,7 +28,7 @@ public class HitsCache {
         String hitCountAsString = hits.get(uri);
         AtomicLong hitCount = new AtomicLong(Long.parseLong(hitCountAsString));
         long value = hitCount.incrementAndGet();
-        hits.replace(uri, String.valueOf(hitCount));
+        hits.replace(uri, String.valueOf(value));
         return value;
     }
 
