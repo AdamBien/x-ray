@@ -21,9 +21,9 @@ public class CacheExposer {
 
     private HazelcastInstance hazelcast;
 
-    private IMap<String, Long> hits;
-    private IMap<String, Long> referers;
-    private IMap<String, Long> trending;
+    private IMap<String, String> hits;
+    private IMap<String, String> referers;
+    private IMap<String, String> trending;
 
     @PostConstruct
     public void initialize() {

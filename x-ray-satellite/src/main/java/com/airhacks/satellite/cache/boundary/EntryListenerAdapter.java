@@ -9,26 +9,26 @@ import com.hazelcast.core.EntryListener;
  *
  * @author adam-bien.com
  */
-public class EntryListenerAdapter implements EntryListener<String, Long> {
+public class EntryListenerAdapter implements EntryListener<String, String> {
 
     @Override
-    public void entryAdded(EntryEvent<String, Long> ee) {
+    public void entryAdded(EntryEvent<String, String> ee) {
         System.out.println("entryAdded: " + ee);
     }
 
     @Override
-    public void entryRemoved(EntryEvent<String, Long> ee) {
+    public void entryRemoved(EntryEvent<String, String> ee) {
         System.out.println("entryRemoved: " + ee);
     }
 
     @Override
-    public void entryUpdated(EntryEvent<String, Long> ee) {
+    public void entryUpdated(EntryEvent<String, String> ee) {
         System.out.println("entryUpdated: " + ee);
 
     }
 
     @Override
-    public void entryEvicted(EntryEvent<String, Long> ee) {
+    public void entryEvicted(EntryEvent<String, String> ee) {
         System.out.println("entryEvicted: " + ee);
     }
 
