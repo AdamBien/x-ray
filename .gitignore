@@ -14,15 +14,7 @@
 .settings
 x-ray-setup
 target
-HitsWithSOAP
-/HitsWithSoap/HitsWithSoap-war/dist/
-/HitsWithSoap/HitsWithSoap-war/build/
-/HitsWithSoap/build/
-/HitsWithSoap/dist/
-/HitsWithSoap/HitsWithSoap-ejb/dist/
-/HitsWithSoap/HitsWithSoap-ejb/build/
-/HitsWithSoap/HitsWithSoap-ejb/nbproject/private/
-/HitsWithSoap/HitsWithSoap-war/nbproject/private/
-/HitsWithSoap/nbproject/private/
 s101plugin.state
 /x-ray-services/src/main/webapp/META-INF/context.xml
+release.properties
+pom.xml.releaseBackup
