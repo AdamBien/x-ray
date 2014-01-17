@@ -4,11 +4,11 @@
     <parent>
         <groupId>com.airhacks</groupId>
         <artifactId>x-ray-assembly</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4-SNAPSHOT</version>
     </parent>
     <groupId>com.airhacks</groupId>
     <artifactId>x-ray-services-st</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4-SNAPSHOT</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>

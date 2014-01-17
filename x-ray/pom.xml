@@ -4,7 +4,7 @@
     <groupId>com.abien.xray</groupId>
     <artifactId>x-ray</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.3</version>
+    <version>0.0.4-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
