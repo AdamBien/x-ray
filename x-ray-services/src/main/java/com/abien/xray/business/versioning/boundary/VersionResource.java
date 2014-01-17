@@ -36,7 +36,7 @@ public class VersionResource {
     public JsonObject version() {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
         Properties properties = new Properties();
-        InputStream is = this.context.getResourceAsStream("/META-INF/maven/com.abien.xray/x-ray-services/pom.properties");
+        InputStream is = this.context.getResourceAsStream("/META-INF/maven/com.airhacks/x-ray-services/pom.properties");
 
         if (is != null) {
             try {
