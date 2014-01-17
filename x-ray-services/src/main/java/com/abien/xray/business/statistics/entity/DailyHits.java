@@ -14,19 +14,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class DailyHits {
 
     private long hit;
-    private Date date;
+    private long epoch;
 
     public DailyHits(long hit) {
         this.hit = hit;
+        this.epoch = System.currentTimeMillis();
     }
 
-    public DailyHits(Date timestamp, long hit) {
-        this(hit);
-        this.date = timestamp;
+    public DailyHits(String date, String hit) {
+        this.hit = Long.parseLong(hit);
+        this.epoch = Long.parseLong(date);
     }
 
     public Date getDate() {
-        return date;
+        return new Date(epoch);
+    }
+
+    public long getEpoch() {
+        return this.epoch;
     }
 
     public long getHit() {
@@ -35,6 +40,6 @@ public class DailyHits {
 
     @Override
     public String toString() {
-        return "DailyHits{" + "hit=" + hit + ", date=" + date + '}';
+        return "DailyHits{" + "hit=" + hit + ", epoch=" + epoch + '}';
     }
 }

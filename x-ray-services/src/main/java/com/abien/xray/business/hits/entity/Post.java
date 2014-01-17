@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Post implements Comparable<Post>{
+public class Post implements Comparable<Post> {
+
     private String uri;
     private String title;
     private long numberOfHits;
     public final static String EMPTY = "-";
-
 
     public Post(String uri, String title, long numberOfHits) {
         this.uri = uri;
@@ -28,6 +28,10 @@ public class Post implements Comparable<Post>{
         this.numberOfHits = numberOfHits;
     }
 
+    public Post(String uri, String numberOfHits) {
+        this(uri, Long.parseLong(numberOfHits));
+    }
+
     public Post() {   /* for JAXB*/ }
 
     public long getNumberOfHits() {
@@ -38,19 +42,19 @@ public class Post implements Comparable<Post>{
         return title;
     }
 
-    public String getShortenedTitle(int totalLength){
-        if(title == null){
+    public String getShortenedTitle(int totalLength) {
+        if (title == null) {
             return null;
         }
         int length = title.length();
-        if(length < totalLength){
+        if (length < totalLength) {
             return title;
         }
         String shortened = title.substring(0, totalLength - 5);
         return shortened + "[...]";
     }
 
-    public boolean isTitleEmpty(){
+    public boolean isTitleEmpty() {
         return (title == null || EMPTY.equals(title));
     }
 
@@ -69,10 +73,10 @@ public class Post implements Comparable<Post>{
 
     @Override
     public int compareTo(Post other) {
-        if(numberOfHits == other.numberOfHits){
+        if (numberOfHits == other.numberOfHits) {
             return 0;
         }
-        if(numberOfHits > other.numberOfHits){
+        if (numberOfHits > other.numberOfHits) {
             return 1;
         }
         return -1;

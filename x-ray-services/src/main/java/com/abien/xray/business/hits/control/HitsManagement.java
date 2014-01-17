@@ -1,6 +1,5 @@
 package com.abien.xray.business.hits.control;
 
-import com.airhacks.xray.grid.control.Grid;
 import com.abien.xray.business.hits.entity.CacheValue;
 import com.abien.xray.business.hits.entity.Hit;
 import com.abien.xray.business.hits.entity.Post;
@@ -8,11 +7,10 @@ import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.monitoring.entity.Diagnostics;
 import com.abien.xray.business.statistics.entity.DailyHits;
+import com.airhacks.xray.grid.control.Grid;
 import com.hazelcast.core.HazelcastInstance;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,19 +71,19 @@ public class HitsManagement {
 
     @Inject
     @Grid(Grid.Name.HITS)
-    private ConcurrentMap<String, Long> hits;
+    private ConcurrentMap<String, String> hits;
 
     @Inject
     @Grid(Grid.Name.DAILY)
-    private Map<Date, Long> daily;
+    private Map<String, String> daily;
 
     @Inject
     @Grid(Grid.Name.TRENDING)
-    private ConcurrentMap<String, Long> trending;
+    private ConcurrentMap<String, String> trending;
 
     @Inject
     @Grid(Grid.Name.REFERERS)
-    private ConcurrentMap<String, Long> referers;
+    private ConcurrentMap<String, String> referers;
 
     @PostConstruct
     public void preloadCache() {
@@ -167,10 +165,10 @@ public class HitsManagement {
 
     public List<Post> getTrending() {
         List<Post> trends = new ArrayList<>();
-        Map<String, AtomicLong> cache = trendingCache.getCache();
-        Set<Map.Entry<String, AtomicLong>> trendEntries = cache.entrySet();
+        Map<String, String> cache = trendingCache.getCache();
+        Set<Map.Entry<String, String>> trendEntries = cache.entrySet();
         trendEntries.stream().map((trendEntry) -> {
-            long hitsValue = trendEntry.getValue().get();
+            String hitsValue = trendEntry.getValue();
             Post post = new Post(trendEntry.getKey(), hitsValue);
             return post;
         }).forEach((post) -> {
@@ -180,13 +178,8 @@ public class HitsManagement {
         return trends;
     }
 
-    private long computeHits(Map<String, AtomicLong> hits) {
-        long totalCount = 0;
-        Collection<AtomicLong> individualHits = hits.values();
-        for (AtomicLong atomicLong : individualHits) {
-            totalCount += atomicLong.get();
-        }
-        return totalCount;
+    private long computeHits(Map<String, String> hits) {
+        return hits.entrySet().stream().mapToLong(v -> Long.parseLong(v.getValue())).sum();
     }
 
     public String totalHitsAsString() {

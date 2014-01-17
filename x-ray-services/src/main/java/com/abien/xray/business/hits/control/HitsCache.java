@@ -13,34 +13,35 @@ import java.util.stream.Collectors;
  */
 public class HitsCache {
 
-    private ConcurrentMap<String, AtomicLong> hits = null;
+    private ConcurrentMap<String, String> hits = null;
     /**
      * Left and right swapped on purpose -> decreasing order
      */
-    private Comparator<Map.Entry<String, AtomicLong>> decreasing = (l, r) -> new Long(r.getValue().get()).compareTo(l.getValue().get());
+    private final Comparator<Map.Entry<String, String>> decreasing = (l, r) -> new Long(Long.parseLong(r.getValue())).compareTo(Long.parseLong(l.getValue()));
 
     public HitsCache(ConcurrentMap hits) {
         this.hits = hits;
     }
 
     public long increase(String uri) {
-        hits.putIfAbsent(uri, new AtomicLong());
-        AtomicLong hitCount = hits.get(uri);
+        hits.putIfAbsent(uri, "0");
+        String hitCountAsString = hits.get(uri);
+        AtomicLong hitCount = new AtomicLong(Long.parseLong(hitCountAsString));
         long value = hitCount.incrementAndGet();
-        hits.replace(uri, hitCount);
+        hits.replace(uri, String.valueOf(hitCount));
         return value;
     }
 
     public long getCount(String uri) {
-        AtomicLong counter = hits.get(uri);
-        if (counter == null) {
+        String counterAsString = hits.get(uri);
+        if (counterAsString == null) {
             return 0;
         } else {
-            return counter.get();
+            return Long.parseLong(counterAsString);
         }
     }
 
-    public Map<String, AtomicLong> getCache() {
+    public Map<String, String> getCache() {
         return hits;
     }
 
@@ -53,7 +54,7 @@ public class HitsCache {
                 parallelStream().
                 filter(f -> !f.getKey().contains(excludeContaining)).
                 sorted(decreasing).
-                map(f -> new CacheValue(f.getKey(), f.getValue().get())).
+                map(f -> new CacheValue(f.getKey(), f.getValue())).
                 collect(Collectors.toList());
     }
 
@@ -61,7 +62,7 @@ public class HitsCache {
         return this.hits.entrySet().parallelStream().
                 sorted(decreasing).
                 limit(maxNumber).
-                map(f -> new CacheValue(f.getKey(), f.getValue().get())).
+                map(f -> new CacheValue(f.getKey(), f.getValue())).
                 collect(Collectors.toList());
     }
 

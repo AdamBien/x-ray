@@ -16,9 +16,9 @@ public class CacheValue {
     public CacheValue() {
     }
 
-    public CacheValue(String referer, long count) {
+    public CacheValue(String referer, String count) {
         this.uri = referer;
-        this.count = count;
+        this.count = Long.parseLong(count);
     }
 
     public String getRefererUri() {
