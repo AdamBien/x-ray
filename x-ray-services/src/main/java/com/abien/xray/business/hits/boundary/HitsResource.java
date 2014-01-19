@@ -1,9 +1,10 @@
 package com.abien.xray.business.hits.boundary;
 
-import com.airhacks.xray.grid.control.Grid;
 import com.abien.xray.business.hits.control.HitsManagement;
+import com.abien.xray.business.hits.control.JsonSerializer;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
+import com.airhacks.xray.grid.control.Grid;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -122,10 +123,8 @@ public class HitsResource {
     }
 
     void processRequest(JsonObject object) {
-        StringWriter stringWriter = new StringWriter();
-        JsonWriter jsonWriter = Json.createWriter(stringWriter);
-        jsonWriter.writeObject(object);
-        String serialized = stringWriter.getBuffer().toString();
+        String serialized = JsonSerializer.serialize(object);
         this.firehose.add(serialized);
     }
+
 }

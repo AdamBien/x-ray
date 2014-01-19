@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -28,6 +28,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.json.Json;
 import javax.json.JsonObject;
 
 /**
@@ -63,8 +64,6 @@ public class HitsManagement {
     private HitsCache trendingCache = null;
     private HitsCache refererCache;
 
-    private AtomicLong numberOfRejectedRequests = new AtomicLong(0);
-
     @Inject
     HazelcastInstance hazelcastInstance;
     private DailyHitCache dailyHitCache;
@@ -72,6 +71,10 @@ public class HitsManagement {
     @Inject
     @Grid(Grid.Name.HITS)
     private ConcurrentMap<String, String> hits;
+
+    @Inject
+    @Grid(Grid.Name.REJECTED)
+    private Queue<String> rejected;
 
     @Inject
     @Grid(Grid.Name.DAILY)
@@ -98,7 +101,7 @@ public class HitsManagement {
         try {
             if (urlFilter.ignore(uri)) {//|| httpHeaderFilter.ignore(headerMap)) {
                 LOG.log(Level.INFO, "updateStatistics - URL: {0} is rejected by urlFilter with headers {1}", new Object[]{uri, headerMap});
-                numberOfRejectedRequests.incrementAndGet();
+                this.rejected.add(serialize(uri, referer, headerMap));
                 return;
             }
             storeURI(uri);
@@ -229,6 +232,14 @@ public class HitsManagement {
                 parallelStream().
                 map(s -> new Hit(s.getRefererUri(), s.getCount())).
                 collect(Collectors.toList());
+    }
+
+    String serialize(String uri, String referer, JsonObject headerMap) {
+        JsonObject object = Json.createObjectBuilder().
+                add("uri", uri).
+                add("referer", referer).
+                add("header", headerMap).build();
+        return JsonSerializer.serialize(object);
     }
 
 }
