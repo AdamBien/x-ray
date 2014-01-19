@@ -26,6 +26,7 @@ public class HazelcastManager {
     private HazelcastInstance hazelcast;
     private Cluster cluster;
 
+    private IQueue<String> rejected;
     private IQueue<String> firehose;
     private IMap<String, String> hits;
     private IMap<String, String> trending;
@@ -43,6 +44,7 @@ public class HazelcastManager {
         this.referers = this.hazelcast.getMap("referers");
         this.firehose = this.hazelcast.getQueue("firehose");
         this.titles = this.hazelcast.getMap("titles");
+        this.rejected = this.hazelcast.getQueue("rejected");
     }
 
     @Produces
@@ -84,6 +86,12 @@ public class HazelcastManager {
     @Grid(Grid.Name.FIREHOSE)
     public Queue<String> exposeFirehose() {
         return this.firehose;
+    }
+
+    @Produces
+    @Grid(Grid.Name.REJECTED)
+    public Queue<String> exposeRejected() {
+        return this.rejected;
     }
 
     @Produces
