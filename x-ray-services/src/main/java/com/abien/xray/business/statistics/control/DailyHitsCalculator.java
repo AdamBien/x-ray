@@ -25,6 +25,8 @@ public class DailyHitsCalculator {
     @Inject
     IAtomicLong hitsAtMidnight;
 
+    AtomicLong yesterdayHits;
+
     @Inject
     XRayLogger LOG;
 
@@ -36,6 +38,7 @@ public class DailyHitsCalculator {
             LOG.log(Level.INFO, "Yesterday's hits are 0, overwriting with: " + yesterdayHitsValue);
             hitsAtMidnight.set(hits.totalHits());
         }
+        this.yesterdayHits = new AtomicLong(0);
     }
 
     @Schedule(hour = "23", minute = "59", dayOfWeek = "*", dayOfMonth = "*", persistent = false)
@@ -46,6 +49,7 @@ public class DailyHitsCalculator {
         LOG.log(Level.INFO, "Total hits: " + totalHits);
         LOG.log(Level.INFO, "Yesterday's hits were: " + hitsAtMidnight.get());
         todayHits.set(totalHits - hitsAtMidnight.get());
+        yesterdayHits.set(todayHits.get());
         LOG.log(Level.INFO, "Today hits: " + todayHits.get());
         hitsAtMidnight.set(totalHits);
         hits.save(new DailyHits(todayHits.get()));
@@ -57,6 +61,10 @@ public class DailyHitsCalculator {
 
     public long getTotalHits() {
         return this.hits.totalHits();
+    }
+
+    public long getYesterdayHits() {
+        return this.yesterdayHits.get();
     }
 
     public List<DailyHits> getDailyHits() {
