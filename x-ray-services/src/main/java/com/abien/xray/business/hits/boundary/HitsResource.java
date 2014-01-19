@@ -5,7 +5,6 @@ import com.abien.xray.business.hits.control.JsonSerializer;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.airhacks.xray.grid.control.Grid;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
@@ -17,7 +16,6 @@ import javax.interceptor.Interceptors;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonWriter;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -124,7 +122,10 @@ public class HitsResource {
 
     void processRequest(JsonObject object) {
         String serialized = JsonSerializer.serialize(object);
-        this.firehose.add(serialized);
+        boolean addedToQueue = this.firehose.offer(serialized);
+        if (!addedToQueue) {
+            LOG.log(Level.INFO, "Element was not added to queue!");
+        }
     }
 
 }
