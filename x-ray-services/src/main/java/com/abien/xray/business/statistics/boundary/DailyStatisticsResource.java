@@ -29,7 +29,7 @@ public class DailyStatisticsResource {
     @Path("yesterday")
     @Produces({"text/plain"})
     public String getYesterdaysHit() {
-        return String.valueOf(calculator.getTotalHits());
+        return String.valueOf(calculator.getYesterdayHits());
     }
 
     @GET
