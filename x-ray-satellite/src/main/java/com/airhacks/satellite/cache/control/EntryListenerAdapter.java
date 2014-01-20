@@ -1,6 +1,6 @@
 /*
  */
-package com.airhacks.satellite.cache.boundary;
+package com.airhacks.satellite.cache.control;
 
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
