@@ -2,7 +2,9 @@
  */
 package com.airhacks.satellite.cache.boundary;
 
+import com.airhacks.satellite.cache.control.Serializer;
 import com.hazelcast.core.IQueue;
+import java.io.IOException;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -11,13 +13,14 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
 /**
  *
  * @author adam-bien.com
  */
-public class QueueGridResource implements GridResource {
+public class QueueGridResource {
 
     IQueue<String> cache;
 
@@ -35,15 +38,13 @@ public class QueueGridResource implements GridResource {
     }
 
     @PUT
-    public void put(JsonObject jsonObject) {
-        jsonObject.entrySet().stream().forEach(e -> {
-            cache.add(jsonObject.toString());
-        });
+    public void put(JsonObject jsonObject) throws IOException {
+        cache.add(Serializer.serialize(jsonObject));
     }
 
     @DELETE
-    @Override
-    public void delete(String key) {
-        this.cache.remove(key);
+    @Path("{index}")
+    public void delete(JsonObject object) throws IOException {
+        this.cache.remove(Serializer.serialize(object));
     }
 }

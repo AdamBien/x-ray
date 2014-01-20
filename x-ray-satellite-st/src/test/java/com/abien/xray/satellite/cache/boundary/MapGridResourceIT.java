@@ -33,8 +33,6 @@ public class MapGridResourceIT {
     private static final String ROOT_TARGET = "http://localhost:8080/satellite/resources/grids/";
     private WebTarget tut;
     private static final int NBR_OF_ALL_GRIDS = 8;
-
-    private static final long WAIT_TIME = 8 * 1000l;
     private static final String MAP_STORE = "hits";
     private static final String MAP_CACHE_TYPE = "maps";
 
