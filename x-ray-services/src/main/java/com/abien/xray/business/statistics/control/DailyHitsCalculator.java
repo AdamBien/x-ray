@@ -10,13 +10,18 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Schedule;
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 
 /**
  *
  * @author adam-bien.com
  */
+@Singleton
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class DailyHitsCalculator {
 
     @Inject
