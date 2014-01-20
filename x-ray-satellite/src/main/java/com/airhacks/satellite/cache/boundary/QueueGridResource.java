@@ -37,6 +37,12 @@ public class QueueGridResource {
         return builder.build();
     }
 
+    @GET
+    @Path("size")
+    public String size() {
+        return String.valueOf(this.cache.size());
+    }
+
     @PUT
     public void put(JsonObject jsonObject) throws IOException {
         cache.add(Serializer.serialize(jsonObject));
