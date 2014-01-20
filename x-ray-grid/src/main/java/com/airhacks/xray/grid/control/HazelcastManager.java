@@ -6,8 +6,6 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.IQueue;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentMap;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
@@ -54,43 +52,43 @@ public class HazelcastManager {
 
     @Produces
     @Grid(Grid.Name.HITS)
-    public ConcurrentMap<String, String> exposeHits() {
+    public IMap<String, String> exposeHits() {
         return this.hits;
     }
 
     @Produces
     @Grid(Grid.Name.TRENDING)
-    public ConcurrentMap<String, String> exposeTrending() {
+    public IMap<String, String> exposeTrending() {
         return this.trending;
     }
 
     @Produces
     @Grid(Grid.Name.DAILY)
-    public ConcurrentMap<String, String> exposeDaily() {
+    public IMap<String, String> exposeDaily() {
         return this.daily;
     }
 
     @Produces
     @Grid(Grid.Name.REFERERS)
-    public ConcurrentMap<String, String> exposeReferers() {
+    public IMap<String, String> exposeReferers() {
         return this.referers;
     }
 
     @Produces
     @Grid(Grid.Name.TITLES)
-    public ConcurrentMap<String, String> titles() {
+    public IMap<String, String> titles() {
         return this.titles;
     }
 
     @Produces
     @Grid(Grid.Name.FIREHOSE)
-    public Queue<String> exposeFirehose() {
+    public IQueue<String> exposeFirehose() {
         return this.firehose;
     }
 
     @Produces
     @Grid(Grid.Name.REJECTED)
-    public Queue<String> exposeRejected() {
+    public IQueue<String> exposeRejected() {
         return this.rejected;
     }
 

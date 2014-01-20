@@ -16,8 +16,8 @@ public class GridInstance implements Grid {
         this.name = name;
     }
 
-    public GridInstance(String name) {
-        this(Name.valueOf(name));
+    public GridInstance(String stringValue) {
+        this(Name.valueOf(stringValue.trim().toUpperCase()));
     }
 
     @Override
