@@ -58,6 +58,12 @@ public class MapGridResource {
         return Response.ok(retVal).build();
     }
 
+    @GET
+    @Path("size")
+    public String size() {
+        return String.valueOf(this.cache.size());
+    }
+
     @DELETE
     @Path("{key}")
     public void delete(@PathParam("key") String key) {
