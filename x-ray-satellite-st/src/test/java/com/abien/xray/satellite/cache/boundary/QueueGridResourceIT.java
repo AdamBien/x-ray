@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -68,6 +69,19 @@ public class QueueGridResourceIT {
         JsonArray array = RESTSupport.convertToArrayFrom(rawContent);
         assertNotNull(array);
 
+    }
+
+    @Test
+    public void size() {
+        String size = this.tut.
+                path(QUEUE_CACHE_TYPE).
+                path(A_QUEUE_STORE).
+                path("size").
+                request(MediaType.TEXT_PLAIN).
+                get(String.class);
+        assertNotNull(size);
+        int sizeNbr = Integer.parseInt(size);
+        assertTrue(sizeNbr >= 0);
     }
 
     @Test
