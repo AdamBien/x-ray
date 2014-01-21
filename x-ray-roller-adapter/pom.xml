@@ -4,14 +4,14 @@
     <groupId>com.airhacks</groupId>
     <artifactId>x-ray-roller-adapter</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.4</version>
+    <version>0.0.5-SNAPSHOT</version>
     <name>x-ray-roller-adapter</name>
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
             <groupId>com.abien.xray</groupId>
             <artifactId>x-ray-client</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.5-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

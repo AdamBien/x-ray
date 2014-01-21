@@ -4,7 +4,7 @@
     <groupId>com.abien.xray</groupId>
     <artifactId>x-ray-client</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.4</version>
+    <version>0.0.5-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
