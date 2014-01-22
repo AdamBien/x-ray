@@ -1,7 +1,7 @@
 package com.abien.xray.business.monitoring;
 
 import com.abien.xray.business.logging.boundary.XRayLogger;
-import com.abien.xray.business.monitoring.boundary.MonitoringResource;
+import com.abien.xray.business.monitoring.boundary.HealthMonitor;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -19,7 +19,7 @@ public class PerformanceAuditor {
     private XRayLogger LOG;
 
     @Inject
-    MonitoringResource monitoring;
+    HealthMonitor monitoring;
 
     @AroundTimeout
     @AroundInvoke
