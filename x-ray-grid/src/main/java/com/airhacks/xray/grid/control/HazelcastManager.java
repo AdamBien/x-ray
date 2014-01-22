@@ -31,6 +31,7 @@ public class HazelcastManager {
     private IMap<String, String> daily;
     private IMap<String, String> referers;
     private IMap<String, String> titles;
+    private IMap<String, String> exceptions;
 
     @PostConstruct
     public void init() {
@@ -43,6 +44,7 @@ public class HazelcastManager {
         this.firehose = this.hazelcast.getQueue("firehose");
         this.titles = this.hazelcast.getMap("titles");
         this.rejected = this.hazelcast.getQueue("rejected");
+        this.exceptions = this.hazelcast.getMap("exceptions");
     }
 
     @Produces
@@ -78,6 +80,12 @@ public class HazelcastManager {
     @Grid(Grid.Name.TITLES)
     public IMap<String, String> titles() {
         return this.titles;
+    }
+
+    @Produces
+    @Grid(Grid.Name.EXCEPTIONS)
+    public IMap<String, String> exposeExceptions() {
+        return this.exceptions;
     }
 
     @Produces
