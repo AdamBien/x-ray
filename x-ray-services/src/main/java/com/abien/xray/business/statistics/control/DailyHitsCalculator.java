@@ -41,7 +41,13 @@ public class DailyHitsCalculator {
         final long yesterdayHitsValue = hitsAtMidnight.get();
         if (yesterdayHitsValue == 0) {
             LOG.log(Level.INFO, "Yesterday's hits are 0, overwriting with: " + yesterdayHitsValue);
-            hitsAtMidnight.set(hits.totalHits());
+            long totalHits = hits.totalHits();
+            if (totalHits < yesterdayHitsValue) {
+                LOG.log(Level.WARNING, "Total hits are lesser than total, resetting to 0");
+                hitsAtMidnight.set(0);
+            } else {
+                hitsAtMidnight.set(hits.totalHits());
+            }
         }
         this.yesterdayHits = new AtomicLong(0);
     }
