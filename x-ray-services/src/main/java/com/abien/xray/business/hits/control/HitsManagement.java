@@ -5,10 +5,8 @@ import com.abien.xray.business.hits.entity.Hit;
 import com.abien.xray.business.hits.entity.Post;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
-import com.abien.xray.business.monitoring.entity.Diagnostics;
 import com.abien.xray.business.statistics.entity.DailyHits;
 import com.airhacks.xray.grid.control.Grid;
-import com.hazelcast.core.HazelcastInstance;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,8 +39,6 @@ import javax.json.JsonObject;
 @Interceptors(PerformanceAuditor.class)
 public class HitsManagement {
 
-    public static final int REFERER_MAX_LENGTH = 250;
-
     @Inject
     XRayLogger LOG;
 
@@ -52,20 +48,12 @@ public class HitsManagement {
     URLFilter urlFilter;
 
     @Inject
-    HttpHeaderFilter httpHeaderFilter;
-
-    @Inject
-    Event<Diagnostics> monitoring;
-
-    @Inject
     Event<String> uriListener;
 
     private HitsCache hitCache = null;
     private HitsCache trendingCache = null;
     private HitsCache refererCache;
 
-    @Inject
-    HazelcastInstance hazelcastInstance;
     private DailyHitCache dailyHitCache;
 
     @Inject
@@ -99,7 +87,7 @@ public class HitsManagement {
     public void updateStatistics(String uri, String referer, JsonObject headerMap) {
         LOG.log(Level.INFO, "updateStatistics({0})", new Object[]{uri});
         try {
-            if (urlFilter.ignore(uri)) {//|| httpHeaderFilter.ignore(headerMap)) {
+            if (urlFilter.ignore(uri)) {
                 LOG.log(Level.INFO, "updateStatistics - URL: {0} is rejected by urlFilter with headers {1}", new Object[]{uri, headerMap});
                 this.rejected.add(serialize(uri, referer, headerMap));
                 return;
@@ -138,14 +126,7 @@ public class HitsManagement {
     }
 
     long storeReferer(String referer) {
-        return this.refererCache.increase(shortenReferer(referer, REFERER_MAX_LENGTH));
-    }
-
-    String shortenReferer(String referer, int length) {
-        if (referer != null && referer.length() > length) {
-            return referer.substring(0, length);
-        }
-        return referer;
+        return this.refererCache.increase(referer);
     }
 
     boolean isRelevantForTrend(String uniqueAction) {
@@ -222,13 +203,6 @@ public class HitsManagement {
 
     public List<Hit> getMostPopularPosts(int max) {
         return this.hitCache.getMostPopularValues(max).
-                parallelStream().
-                map(s -> new Hit(s.getRefererUri(), s.getCount())).
-                collect(Collectors.toList());
-    }
-
-    public List<Hit> getMostPopularPostsNotContaining(String exclude, int max) {
-        return this.hitCache.getMostPopularValuesNotContaining(exclude, max).
                 parallelStream().
                 map(s -> new Hit(s.getRefererUri(), s.getCount())).
                 collect(Collectors.toList());
