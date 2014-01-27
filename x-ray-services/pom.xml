@@ -5,6 +5,7 @@
         <groupId>com.airhacks</groupId>
         <artifactId>x-ray-assembly</artifactId>
         <version>0.0.5-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>com.airhacks</groupId>
     <artifactId>x-ray-services</artifactId>
