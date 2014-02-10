@@ -1,6 +1,7 @@
 package com.abien.xray.business.versioning.boundary;
 
 import static com.abien.xray.business.RESTSupport.convertToObjectFrom;
+import com.abien.xray.business.ServerLocation;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.ws.rs.client.Client;
@@ -19,7 +20,7 @@ import org.junit.Test;
  */
 public class VersionResourceIT {
 
-    private static final String ROOT_TARGET = "http://localhost:8080/x-ray/resources/version/";
+    private static final String ROOT_TARGET = ServerLocation.getLocation() + "/x-ray/resources/version/";
     private WebTarget tut;
 
     @Before

@@ -2,6 +2,7 @@
  */
 package com.abien.xray.scenarios;
 
+import com.abien.xray.business.ServerLocation;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import javax.ws.rs.client.Client;
@@ -23,7 +24,7 @@ import org.junit.Test;
 public class UpdateURIIT {
 
     public final static String HEADER_PREFIX = "xray_";
-    private static final String ROOT_TARGET = "http://localhost:8080/x-ray/resources/hits/";
+    private static final String ROOT_TARGET = ServerLocation.getLocation() + "/x-ray/resources/hits/";
     private WebTarget tut;
     private final static long WAIT_TIME = 8 * 1000;
 
