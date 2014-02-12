@@ -1,6 +1,7 @@
 package com.abien.xray.satellite.versioning.boundary;
 
 import static com.abien.xray.satellite.RESTSupport.convertToObjectFrom;
+import com.abien.xray.satellite.ServerLocation;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.ws.rs.client.Client;
@@ -19,7 +20,7 @@ import org.junit.Test;
  */
 public class VersionResourceIT {
 
-    private static final String ROOT_TARGET = "http://localhost:8080/satellite/resources/version/";
+    private static final String ROOT_TARGET = ServerLocation.getLocation() + "/satellite/resources/version/";
     private WebTarget tut;
 
     @Before

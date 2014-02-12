@@ -3,6 +3,7 @@
 package com.abien.xray.satellite.cache.boundary;
 
 import com.abien.xray.satellite.RESTSupport;
+import com.abien.xray.satellite.ServerLocation;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import javax.json.Json;
@@ -30,7 +31,7 @@ import org.junit.Test;
  */
 public class MapGridResourceIT {
 
-    private static final String ROOT_TARGET = "http://localhost:8080/satellite/resources/grids/";
+    private static final String ROOT_TARGET = ServerLocation.getLocation() + "/satellite/resources/grids/";
     private WebTarget tut;
     private static final int NBR_OF_ALL_GRIDS = 8;
     private static final String MAP_STORE = "hits";
