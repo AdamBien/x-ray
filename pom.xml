@@ -29,6 +29,7 @@
         <module>x-ray-roller-adapter</module>
         <module>x-ray-services-st</module>
         <module>x-ray-satellite</module>
+        <module>x-ray-satellite-st</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:AdamBien/x-ray.git</connection>
