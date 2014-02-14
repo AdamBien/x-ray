@@ -25,6 +25,7 @@ public class VersionResourceIT {
 
     @Before
     public void initClient() {
+        System.out.println("------------ Communicating with: " + ROOT_TARGET);
         Client client = ClientBuilder.newClient();
         this.tut = client.target(ROOT_TARGET);
     }

@@ -33,7 +33,7 @@ public class MapGridResourceIT {
 
     private static final String ROOT_TARGET = ServerLocation.getLocation() + "/satellite/resources/grids/";
     private WebTarget tut;
-    private static final int NBR_OF_ALL_GRIDS = 8;
+    private static final int NBR_OF_ALL_GRIDS = 10;
     private static final String MAP_STORE = "hits";
     private static final String MAP_CACHE_TYPE = "maps";
 
