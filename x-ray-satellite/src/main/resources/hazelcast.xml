@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast>
+    <map name="*">
+        <backup-count>1</backup-count>
+        <async-backup-count>1</async-backup-count>
+        <map-store enabled="true">
+            <factory-class-name>com.airhacks.xray.persistence.control.MapDBStoreFactory</factory-class-name>
+            <write-delay-seconds>1</write-delay-seconds>
+        </map-store>
+    </map>
+</hazelcast>
