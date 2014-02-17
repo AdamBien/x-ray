@@ -1,4 +1,4 @@
-package com.abien.xray.business.versioning.boundary;
+package com.airhacks.satellite.versioning.boundary;
 
 import java.io.IOException;
 import java.io.InputStream;
