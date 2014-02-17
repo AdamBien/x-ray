@@ -1,6 +1,6 @@
 /*
  */
-package com.airhacks.xray.grid.persistence;
+package com.airhacks.xray.persistence.control;
 
 import com.hazelcast.core.MapLoader;
 import com.hazelcast.core.MapStoreFactory;
