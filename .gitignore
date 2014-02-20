@@ -1,8 +1,3 @@
-.hg
-.hgignore
-.hgtags
-.idea
-.sonar-ide.properties
 *.log
 *.iml
 *.ipr
@@ -14,7 +9,8 @@
 .settings
 x-ray-setup
 target
-s101plugin.state
-/x-ray-services/src/main/webapp/META-INF/context.xml
+context.xml
 release.properties
 pom.xml.releaseBackup
+nbproject
+jboss-web.xml
