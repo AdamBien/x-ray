@@ -1,7 +1,7 @@
-package com.abien.xray.satellite.versioning.boundary;
+package com.abien.airhacks.satellite.versioning.boundary;
 
-import static com.abien.xray.satellite.RESTSupport.convertToObjectFrom;
-import com.abien.xray.satellite.ServerLocation;
+import static com.abien.airhacks.satellite.RESTSupport.convertToObjectFrom;
+import com.abien.airhacks.satellite.ServerLocation;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.ws.rs.client.Client;

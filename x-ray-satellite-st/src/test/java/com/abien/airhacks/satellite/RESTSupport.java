@@ -1,7 +1,7 @@
 /*
  *//*
  */
-package com.abien.xray.satellite;
+package com.abien.airhacks.satellite;
 
 import java.io.StringReader;
 import javax.json.Json;

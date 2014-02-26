@@ -1,6 +1,6 @@
 /*
  */
-package com.abien.xray.satellite;
+package com.abien.airhacks.satellite;
 
 /**
  *

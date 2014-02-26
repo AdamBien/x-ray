@@ -1,9 +1,9 @@
 /*
  */
-package com.abien.xray.satellite.cache.boundary;
+package com.abien.airhacks.satellite.cache.boundary;
 
-import com.abien.xray.satellite.RESTSupport;
-import com.abien.xray.satellite.ServerLocation;
+import com.abien.airhacks.satellite.RESTSupport;
+import com.abien.airhacks.satellite.ServerLocation;
 import java.io.UnsupportedEncodingException;
 import javax.json.Json;
 import javax.json.JsonArray;
