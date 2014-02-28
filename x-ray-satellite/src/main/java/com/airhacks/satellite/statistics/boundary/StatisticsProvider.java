@@ -46,9 +46,9 @@ public class StatisticsProvider {
 
     JsonObject convert(IMap<String, String> map) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        String serviceName = map.getServiceName();
+        String name = map.getName();
         LocalMapStats stats = map.getLocalMapStats();
-        return builder.add("serviceName", serviceName).
+        return builder.add("name", name).
                 add("backupCount", stats.getBackupCount()).
                 add("backupEntryCount", stats.getBackupEntryCount()).
                 add("backupEntryMemoryCost", stats.getBackupEntryMemoryCost()).
@@ -75,9 +75,9 @@ public class StatisticsProvider {
 
     JsonObject convert(IQueue<String> map) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        String serviceName = map.getServiceName();
+        String name = map.getName();
         LocalQueueStats stats = map.getLocalQueueStats();
-        return builder.add("serviceName", serviceName).
+        return builder.add("name", name).
                 add("avgAge", stats.getAvgAge()).
                 add("backupItemCount", stats.getBackupItemCount()).
                 add("emptyPollOperationCount", stats.getEmptyPollOperationCount()).
