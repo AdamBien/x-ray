@@ -36,10 +36,12 @@ public class Backup {
             throw new UnknownCacheException("Cache: " + name + " does not exist");
         }
         IMap<String, String> map = mapInstance.get();
+        generator.writeStartObject();
         map.forEach((key, value) -> {
             generator.write(key, value);
         }
         );
+        generator.writeEnd();
     }
 
     public Set<String> mapCaches() {

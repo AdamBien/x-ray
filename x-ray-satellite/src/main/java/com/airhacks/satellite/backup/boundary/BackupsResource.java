@@ -43,7 +43,7 @@ public class BackupsResource {
 
     @GET
     @Path("{name}")
-    public Response mapBackup(@PathParam("name") String name, @Context HttpServletResponse response) throws IOException {
+    public Response mapBackupDownload(@PathParam("name") String name, @Context HttpServletResponse response) throws IOException {
         ServletOutputStream outputStream = response.getOutputStream();
         try {
             sp.writeMapToStream(name, outputStream);
