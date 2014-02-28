@@ -49,7 +49,7 @@ public class Backup {
 
         try (JsonGenerator generator = Json.createGenerator(stream)) {
             IMap<String, String> map = get(name);
-            generator.writeStartObject();
+            generator.writeStartObject(map.getName());
             map.forEach((key, value) -> {
                 generator.write(key, value);
             }
