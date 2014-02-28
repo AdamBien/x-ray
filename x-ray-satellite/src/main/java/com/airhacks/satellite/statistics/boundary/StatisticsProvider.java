@@ -37,7 +37,11 @@ public class StatisticsProvider {
     }
 
     public JsonArray queueStatistics() {
-        return null;
+        JsonArrayBuilder builder = Json.createArrayBuilder();
+        queueCaches.forEach(cache -> {
+            builder.add(convert(cache));
+        });
+        return builder.build();
     }
 
     JsonObject convert(IMap<String, String> map) {
