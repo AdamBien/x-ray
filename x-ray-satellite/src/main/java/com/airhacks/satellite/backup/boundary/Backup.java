@@ -2,7 +2,6 @@ package com.airhacks.satellite.backup.boundary;
 
 import com.airhacks.xray.grid.control.GridInstance;
 import com.hazelcast.core.IMap;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,23 +45,17 @@ public class Backup {
 
     }
 
-    public int writeMapToStream(String name, OutputStream stream) {
+    public void writeMapToStream(String name, OutputStream stream) {
 
-        JsonGenerator generator = Json.createGenerator(stream);
-        GridInstance selector = new GridInstance(name);
-        Instance<IMap<String, String>> mapInstance = mapCaches.select(selector);
-        IMap<String, String> map = mapInstance.get();
-        generator.writeStartObject();
-        map.forEach((key, value) -> {
-            generator.write(key, value);
-        }
-        );
-        generator.writeEnd();
-        try {
-            stream.flush();
-            return map.size();
-        } catch (IOException ex) {
-            throw new IllegalStateException("Cannot flush", ex);
+        try (JsonGenerator generator = Json.createGenerator(stream)) {
+            IMap<String, String> map = get(name);
+            generator.writeStartObject();
+            map.forEach((key, value) -> {
+                generator.write(key, value);
+            }
+            );
+            generator.writeEnd();
+            generator.flush();
         }
     }
 
