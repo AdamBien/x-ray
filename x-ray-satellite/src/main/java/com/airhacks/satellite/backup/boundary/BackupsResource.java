@@ -1,6 +1,5 @@
 package com.airhacks.satellite.backup.boundary;
 
-import com.airhacks.satellite.backup.UnknownCacheException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
@@ -9,13 +8,12 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
@@ -43,13 +41,19 @@ public class BackupsResource {
 
     @GET
     @Path("{name}")
-    public Response mapBackupDownload(@PathParam("name") String name, @Context HttpServletResponse response) throws IOException {
-        ServletOutputStream outputStream = response.getOutputStream();
-        try {
-            sp.writeMapToStream(name, outputStream);
-        } catch (UnknownCacheException ex) {
-            return Response.status(Response.Status.NOT_FOUND).header("x-error", ex.getMessage()).build();
+    public Response mapBackupDownload(@PathParam("name") String name) throws IOException {
+        if (!sp.cacheExists(name)) {
+            return Response.status(Response.Status.OK).
+                    header("x-error", "Cache with name: " + name + " does not exist!").
+                    build();
         }
-        return Response.ok().build();
+        int backupSize = sp.size(name);
+        StreamingOutput output = outputStream -> {
+            sp.writeMapToStream(name, outputStream);
+            outputStream.flush();
+            outputStream.close();
+        };
+
+        return Response.ok(output).header("x-number-of-objects", backupSize).build();
     }
 }
