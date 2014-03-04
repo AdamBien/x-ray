@@ -1,6 +1,7 @@
 package com.airhacks.satellite.backup.boundary;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.net.URI;
 import java.util.Set;
 import javax.ejb.Stateless;
@@ -9,6 +10,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
@@ -25,35 +27,42 @@ import javax.ws.rs.core.UriInfo;
 public class BackupsResource {
 
     @Inject
-    Backup sp;
+    Backup backup;
 
     @GET
     public JsonObject mapCaches(@Context UriInfo info) {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        URI path = info.getAbsolutePath();
-
-        Set<String> mapCaches = sp.mapCaches();
+        URI absolute = info.getAbsolutePath();
+        Set<String> mapCaches = backup.mapCaches();
         mapCaches.forEach(name
-                -> objectBuilder.add(name, UriBuilder.fromUri(path).path(name).build().getPath())
+                -> objectBuilder.add(name, UriBuilder.
+                        fromUri(absolute).path(name).build().getPath())
         );
         return objectBuilder.build();
     }
 
     @GET
     @Path("{name}")
-    public Response mapBackupDownload(@PathParam("name") String name) throws IOException {
-        if (!sp.cacheExists(name)) {
+    public Response download(@PathParam("name") String name) throws IOException {
+        if (!backup.cacheExists(name)) {
             return Response.status(Response.Status.OK).
                     header("x-error", "Cache with name: " + name + " does not exist!").
                     build();
         }
-        int backupSize = sp.size(name);
+        int backupSize = backup.size(name);
         StreamingOutput output = outputStream -> {
-            sp.writeMapToStream(name, outputStream);
+            backup.writeMapToStream(name, outputStream);
             outputStream.flush();
             outputStream.close();
         };
 
         return Response.ok(output).header("x-number-of-objects", backupSize).build();
+    }
+
+    @PUT
+    @Path("{name}")
+    public Response upload(@PathParam("name") String name, Reader reader) {
+        this.backup.store(name, reader);
+        return Response.ok().build();
     }
 }

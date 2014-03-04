@@ -3,7 +3,9 @@ package com.airhacks.satellite.backup.boundary;
 import com.airhacks.xray.grid.control.GridInstance;
 import com.hazelcast.core.IMap;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
@@ -11,6 +13,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.stream.JsonGenerator;
+import javax.json.stream.JsonParser;
 
 /**
  * @author airhacks.com
@@ -49,11 +52,13 @@ public class Backup {
 
         try (JsonGenerator generator = Json.createGenerator(stream)) {
             IMap<String, String> map = get(name);
+            generator.writeStartObject();
             generator.writeStartObject(map.getName());
             map.forEach((key, value) -> {
                 generator.write(key, value);
             }
             );
+            generator.writeEnd();
             generator.writeEnd();
             generator.flush();
         }
@@ -63,6 +68,34 @@ public class Backup {
         Set<String> names = new HashSet<>();
         mapCaches.forEach(map -> names.add(map.getName()));
         return names;
+    }
+
+    public void store(String cacheName, Reader reader) {
+        IMap<String, String> cache = get(cacheName);
+        parse(reader, cache);
+    }
+
+    void parse(Reader reader, Map<String, String> cache) {
+        JsonParser parser = Json.createParser(reader);
+        String key = null, value = null;
+        while (parser.hasNext()) {
+            JsonParser.Event event = parser.next();
+            switch (event) {
+                case START_OBJECT:
+                    break;
+                case END_OBJECT:
+                    cache.put(key, value);
+                    break;
+                case KEY_NAME:
+                    key = parser.getString();
+                    break;
+                case VALUE_STRING:
+                    value = parser.getString();
+                    break;
+                default:
+
+            }
+        }
     }
 
 }
