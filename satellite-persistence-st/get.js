@@ -1,7 +1,7 @@
 #!/usr/bin/jjs -fv
 var satellite = $ENV["SATELLITE_SERVER"];
 print("Satellite server is running at ${satellite}");
-var target = "${satellite}/satellite/resources/grids/maps/hits/COUNTER";
+var target = "${satellite}/satellite/resources/grids/maps/exceptions/COUNTER";
 print("Target uri is ${target}");
 var command = "curl -v ${target}"
 print("Executing ${command}");
