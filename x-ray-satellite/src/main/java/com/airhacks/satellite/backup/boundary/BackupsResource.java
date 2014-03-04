@@ -61,8 +61,8 @@ public class BackupsResource {
 
     @PUT
     @Path("{name}")
-    public Response upload(@PathParam("name") String name, Reader reader) {
-        this.backup.store(name, reader);
-        return Response.ok().build();
+    public Response restore(@PathParam("name") String name, Reader reader) {
+        int restoredObjects = this.backup.store(name, reader);
+        return Response.ok().header("x-number-of-objects", restoredObjects).build();
     }
 }

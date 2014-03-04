@@ -70,9 +70,11 @@ public class Backup {
         return names;
     }
 
-    public void store(String cacheName, Reader reader) {
+    public int store(String cacheName, Reader reader) {
         IMap<String, String> cache = get(cacheName);
+        int beforeSize = cache.size();
         parse(reader, cache);
+        return cache.size() - beforeSize;
     }
 
     void parse(Reader reader, Map<String, String> cache) {
