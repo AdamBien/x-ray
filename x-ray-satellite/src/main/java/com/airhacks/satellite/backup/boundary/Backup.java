@@ -86,13 +86,13 @@ public class Backup {
                 case START_OBJECT:
                     break;
                 case END_OBJECT:
-                    cache.put(key, value);
                     break;
                 case KEY_NAME:
                     key = parser.getString();
                     break;
                 case VALUE_STRING:
                     value = parser.getString();
+                    cache.put(key, value);
                     break;
                 default:
 
