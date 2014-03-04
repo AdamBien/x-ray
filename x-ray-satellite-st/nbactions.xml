@@ -54,7 +54,7 @@
             </goals>
             <properties>
                 <test>${packageClassName}</test>
-                <SATELLITE_SERVER>http://localhost:5681</SATELLITE_SERVER>
+                <SATELLITE_SERVER>http://localhost:8080</SATELLITE_SERVER>
             </properties>
         </action>
     </actions>
