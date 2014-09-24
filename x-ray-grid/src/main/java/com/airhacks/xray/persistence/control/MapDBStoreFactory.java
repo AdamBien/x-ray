@@ -17,7 +17,7 @@ public class MapDBStoreFactory implements MapStoreFactory<String, String> {
     @Override
     public MapLoader<String, String> newMapStore(String storeName, Properties props) {
         System.out.println("Creating MapDBStore " + storeName + " with props = " + props);
-        return new MapDBStore(storeName, props);
+        return new HashMapStore(storeName, props);
     }
 
 }
