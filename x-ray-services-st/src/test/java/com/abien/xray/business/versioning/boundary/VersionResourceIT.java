@@ -20,7 +20,7 @@ import org.junit.Test;
  */
 public class VersionResourceIT {
 
-    private static final String ROOT_TARGET = ServerLocation.getLocation() + "/x-ray/resources/version/";
+    private static final String ROOT_TARGET = ServerLocation.getLocation() + "/x-ray-services/resources/version/";
     private WebTarget tut;
 
     @Before
