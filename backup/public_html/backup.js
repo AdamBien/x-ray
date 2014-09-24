@@ -1,19 +1,37 @@
 #!/usr/bin/jjs -fv
+var satellite = $ARG[0];
+var folder = $ARG[1];
+if (!satellite || !folder) {
+    print('use: backup.js -- http://192.168.0.42:5680 backup');
+    exit();
 
-var satellite = $ENV["SATELLITE_SERVER"];
+}
 print("Satellite server is running at ${satellite}");
 var target = "${satellite}/satellite/resources/backups/";
 print("Target uri is ${target}");
 var Files = Java.type("java.nio.file.Files");
 var Paths = Java.type("java.nio.file.Paths");
+var File = Java.type("java.io.File");
 
 startBackup();
+
+function startBackup() {
+    var rawResult = fetchContents(target);
+    var backupLinks = JSON.parse(rawResult);
+    var link;
+    for (name in backupLinks) {
+        link = backupLinks[name];
+        backup(name, link);
+    }
+}
+
 
 function backup(name, link) {
     var absolutePath = "${satellite}${link}";
     var rawResult = fetchContents(absolutePath);
+    new File("${folder}").mkdirs();
     print("--------------");
-    Files.write(Paths.get("./${name}.backup"), rawResult.bytes);
+    Files.write(Paths.get("${folder}/${name}.backup"), rawResult.bytes);
     print("--------------");
 
 }
@@ -27,12 +45,3 @@ function fetchContents(link) {
     return rawResult;
 }
 
-function startBackup() {
-    var rawResult = fetchContents(target);
-    var backupLinks = JSON.parse(rawResult);
-    var link;
-    for (name in backupLinks) {
-        link = backupLinks[name];
-        backup(name, link);
-    }
-}
