@@ -4,6 +4,7 @@ package com.airhacks.satellite.cache.control;
 
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
+import com.hazelcast.core.MapEvent;
 
 /**
  *
@@ -30,6 +31,14 @@ public class EntryListenerAdapter implements EntryListener<String, String> {
     @Override
     public void entryEvicted(EntryEvent<String, String> ee) {
         System.out.println("entryEvicted: " + ee);
+    }
+
+    @Override
+    public void mapEvicted(MapEvent event) {
+    }
+
+    @Override
+    public void mapCleared(MapEvent event) {
     }
 
 }
