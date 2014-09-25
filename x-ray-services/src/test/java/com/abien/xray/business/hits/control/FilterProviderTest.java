@@ -27,4 +27,25 @@ public class FilterProviderTest {
         assertTrue(result);
     }
 
+    @Test
+    public void predicateFromNullScript() {
+        Predicate<Map.Entry<String, String>> predicate = this.cut.createFromNashornScript(null);
+        boolean result = predicate.test(null);
+        assertTrue(result);
+    }
+
+    @Test
+    public void predicateFromEmptyScript() {
+        Predicate<Map.Entry<String, String>> predicate = this.cut.createFromNashornScript("");
+        boolean result = predicate.test(null);
+        assertTrue(result);
+    }
+
+    @Test
+    public void predicateFromIncorrectScript() {
+        Predicate<Map.Entry<String, String>> predicate = this.cut.createFromNashornScript("false");
+        boolean result = predicate.test(null);
+        assertTrue(result);
+    }
+
 }

@@ -3,6 +3,7 @@
 package com.abien.xray.business.statistics.control;
 
 import com.hazelcast.core.IAtomicLong;
+import com.hazelcast.core.IFunction;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.LongBinaryOperator;
 import java.util.function.LongUnaryOperator;
@@ -125,6 +126,26 @@ public class HazelcastAtomicLong implements IAtomicLong {
 
     @Override
     public void destroy() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void alter(IFunction<Long, Long> function) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public long alterAndGet(IFunction<Long, Long> function) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public long getAndAlter(IFunction<Long, Long> function) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public <R> R apply(IFunction<Long, R> function) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

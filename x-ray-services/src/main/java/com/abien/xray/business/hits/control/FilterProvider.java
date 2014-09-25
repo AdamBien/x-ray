@@ -6,7 +6,6 @@ import javax.annotation.PostConstruct;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 /**
  *
@@ -23,13 +22,22 @@ public class FilterProvider {
     }
 
     public Predicate<Map.Entry<String, String>> createFromNashornScript(String script) {
+        Predicate filter = f -> true;
+
+        if (script == null || script.isEmpty()) {
+            return filter;
+        }
         try {
             this.nashorn.eval(script);
-        } catch (ScriptException ex) {
-            throw new IllegalStateException("Cannot eval script", ex);
+            Invocable invocable = (Invocable) this.nashorn;
+            Predicate predicate = invocable.getInterface(Predicate.class);
+            if (predicate != null) {
+                filter = predicate;
+            }
+        } catch (Exception ex) {
+            System.out.println("Cannot eval script " + ex.getMessage());
         }
-        Invocable invocable = (Invocable) this.nashorn;
-        Predicate filter = invocable.getInterface(Predicate.class);
+
         return filter;
     }
 

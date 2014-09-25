@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -58,8 +59,9 @@ public class HitsCache {
                 collect(Collectors.toList());
     }
 
-    public List<CacheValue> getMostPopularValues(int maxNumber) {
+    public List<CacheValue> getMostPopularValues(int maxNumber, Predicate<Map.Entry<String, String>> filter) {
         return this.hits.entrySet().parallelStream().
+                filter(filter).
                 sorted(decreasing).
                 limit(maxNumber).
                 map(f -> new CacheValue(f.getKey(), f.getValue())).

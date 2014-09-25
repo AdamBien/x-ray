@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -69,12 +70,19 @@ public class HitsManagement {
     private Map<String, String> daily;
 
     @Inject
+    @Grid(Grid.Name.FILTERS)
+    private Map<String, String> filters;
+
+    @Inject
     @Grid(Grid.Name.TRENDING)
     private ConcurrentMap<String, String> trending;
 
     @Inject
     @Grid(Grid.Name.REFERERS)
     private ConcurrentMap<String, String> referers;
+
+    @Inject
+    private FilterProvider provider;
 
     @PostConstruct
     public void preloadCache() {
@@ -171,7 +179,7 @@ public class HitsManagement {
     }
 
     public List<CacheValue> topReferers(int maxNumber) {
-        return this.refererCache.getMostPopularValues(maxNumber);
+        return this.refererCache.getMostPopularValues(maxNumber, f -> true);
     }
 
     @Produces
@@ -202,7 +210,9 @@ public class HitsManagement {
     }
 
     public List<Hit> getMostPopularPosts(int max) {
-        return this.hitCache.getMostPopularValues(max).
+        String script = this.filters.get("mostPopularPosts");
+        Predicate<Map.Entry<String, String>> filter = this.provider.createFromNashornScript(script);
+        return this.hitCache.getMostPopularValues(max, filter).
                 parallelStream().
                 map(s -> new Hit(s.getRefererUri(), s.getCount())).
                 collect(Collectors.toList());

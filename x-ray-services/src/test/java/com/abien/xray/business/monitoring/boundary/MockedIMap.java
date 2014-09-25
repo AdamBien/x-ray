@@ -4,9 +4,13 @@ package com.abien.xray.business.monitoring.boundary;
 
 import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.EntryView;
+import com.hazelcast.core.ExecutionCallback;
 import com.hazelcast.core.IMap;
 import com.hazelcast.map.EntryProcessor;
 import com.hazelcast.map.MapInterceptor;
+import com.hazelcast.mapreduce.JobTracker;
+import com.hazelcast.mapreduce.aggregation.Aggregation;
+import com.hazelcast.mapreduce.aggregation.Supplier;
 import com.hazelcast.monitor.LocalMapStats;
 import com.hazelcast.query.Predicate;
 import java.util.Collection;
@@ -369,6 +373,61 @@ public class MockedIMap implements IMap<String, String> {
 
     @Override
     public void destroy() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void loadAll(boolean replaceExistingValues) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void loadAll(Set<String> keys, boolean replaceExistingValues) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String addLocalEntryListener(EntryListener<String, String> listener, Predicate<String, String> predicate, boolean includeValue) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String addLocalEntryListener(EntryListener<String, String> listener, Predicate<String, String> predicate, String key, boolean includeValue) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void evictAll() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Map<String, Object> executeOnKeys(Set<String> keys, EntryProcessor entryProcessor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void submitToKey(String key, EntryProcessor entryProcessor, ExecutionCallback callback) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Future submitToKey(String key, EntryProcessor entryProcessor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Map<String, Object> executeOnEntries(EntryProcessor entryProcessor, Predicate predicate) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public <SuppliedValue, Result> Result aggregate(Supplier<String, String, SuppliedValue> supplier, Aggregation<String, SuppliedValue, Result> aggregation) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public <SuppliedValue, Result> Result aggregate(Supplier<String, String, SuppliedValue> supplier, Aggregation<String, SuppliedValue, Result> aggregation, JobTracker jobTracker) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
