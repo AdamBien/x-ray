@@ -33,7 +33,7 @@ public class Backup {
         return get(name).size();
     }
 
-    IMap<String, String> get(String name) {
+    public IMap<String, String> get(String name) {
         GridInstance nameInstance;
         try {
             nameInstance = new GridInstance(name);

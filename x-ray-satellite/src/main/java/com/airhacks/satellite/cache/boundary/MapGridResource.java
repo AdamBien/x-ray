@@ -5,7 +5,6 @@ package com.airhacks.satellite.cache.boundary;
 import com.airhacks.satellite.cache.control.Serializer;
 import com.hazelcast.core.IMap;
 import java.io.IOException;
-import java.io.StringReader;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -54,7 +53,7 @@ public class MapGridResource {
         if (serialized == null) {
             return Response.noContent().build();
         }
-        JsonObject retVal = Json.createReader(new StringReader(serialized)).readObject();
+        JsonObject retVal = Serializer.deserialize(serialized);
         return Response.ok(retVal).build();
     }
 

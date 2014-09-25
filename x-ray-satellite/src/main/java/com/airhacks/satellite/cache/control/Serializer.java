@@ -3,6 +3,7 @@
 package com.airhacks.satellite.cache.control;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -21,6 +22,10 @@ public class Serializer {
             stringWriter.flush();
             return stringWriter.getBuffer().toString();
         }
+    }
+
+    public static JsonObject deserialize(String flat) {
+        return Json.createReader(new StringReader(flat)).readObject();
     }
 
 }
