@@ -210,12 +210,22 @@ public class HitsManagement {
     }
 
     public List<Hit> getMostPopularPosts(int max) {
-        String script = this.filters.get("mostPopularPosts");
+        String script = getScriptContent();
         Predicate<Map.Entry<String, String>> filter = this.provider.createFromNashornScript(script);
         return this.hitCache.getMostPopularValues(max, filter).
                 parallelStream().
                 map(s -> new Hit(s.getRefererUri(), s.getCount())).
                 collect(Collectors.toList());
+    }
+
+    String getScriptContent() {
+        String scriptAsJson = this.filters.get("mostPopularPosts");
+        JsonObject object = JsonSerializer.deserialize(scriptAsJson);
+        String script = null;
+        if (object != null) {
+            script = object.getString("script");
+        }
+        return script;
     }
 
     String serialize(String uri, String referer, JsonObject headerMap) {

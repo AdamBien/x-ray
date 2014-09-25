@@ -3,6 +3,7 @@
 package com.abien.xray.business.hits.control;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -27,4 +28,10 @@ public class JsonSerializer {
         return representation;
     }
 
+    public static JsonObject deserialize(String flat) {
+        if (flat == null || flat.isEmpty()) {
+            return null;
+        }
+        return Json.createReader(new StringReader(flat)).readObject();
+    }
 }
