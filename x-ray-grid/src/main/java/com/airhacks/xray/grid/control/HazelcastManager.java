@@ -6,6 +6,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.IQueue;
+import com.hazelcast.core.ISet;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
@@ -34,6 +35,7 @@ public class HazelcastManager {
     private IMap<String, String> exceptions;
     private IMap<String, String> diagnostics;
     private IMap<String, String> methods;
+    private ISet<String> filters;
 
     @PostConstruct
     public void init() {
@@ -49,11 +51,18 @@ public class HazelcastManager {
         this.exceptions = this.hazelcast.getMap("exceptions");
         this.diagnostics = this.hazelcast.getMap("diagnostics");
         this.methods = this.hazelcast.getMap("methods");
+        this.filters = this.hazelcast.getSet("filters");
     }
 
     @Produces
     public HazelcastInstance create() {
         return this.hazelcast;
+    }
+
+    @Produces
+    @Grid(Grid.Name.FILTERS)
+    public ISet<String> exposeFilters() {
+        return this.filters;
     }
 
     @Produces
