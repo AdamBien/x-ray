@@ -1,8 +1,11 @@
 package com.abien.xray.business.hits.control;
 
+import com.abien.xray.business.logging.boundary.XRayLogger;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -14,6 +17,9 @@ import javax.script.ScriptEngineManager;
 public class FilterProvider {
 
     private ScriptEngine nashorn;
+
+    @Inject
+    XRayLogger LOG;
 
     @PostConstruct
     public void initEngine() {
@@ -29,13 +35,15 @@ public class FilterProvider {
         }
         try {
             this.nashorn.eval(script);
+            LOG.log(Level.INFO, "Script {0} evaluated", new Object[]{script});
             Invocable invocable = (Invocable) this.nashorn;
             Predicate predicate = invocable.getInterface(Predicate.class);
             if (predicate != null) {
+                LOG.log(Level.INFO, "Predicate successfully created from script");
                 filter = predicate;
             }
         } catch (Exception ex) {
-            System.out.println("Cannot eval script " + ex.getMessage());
+            LOG.log(Level.WARNING, "Filter cannot be executed: {0}", new Object[]{ex});
         }
 
         return filter;
