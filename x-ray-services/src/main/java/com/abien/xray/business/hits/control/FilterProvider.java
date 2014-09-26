@@ -35,12 +35,14 @@ public class FilterProvider {
         }
         try {
             this.nashorn.eval(script);
-            LOG.log(Level.INFO, "Script {0} evaluated", new Object[]{script});
+            LOG.log(Level.FINE, "Script {0} evaluated", new Object[]{script});
             Invocable invocable = (Invocable) this.nashorn;
             Predicate predicate = invocable.getInterface(Predicate.class);
             if (predicate != null) {
-                LOG.log(Level.INFO, "Predicate successfully created from script");
+                LOG.log(Level.FINE, "Predicate successfully created from script");
                 filter = predicate;
+            } else {
+                LOG.log(Level.FINE, "Could not create predicate, using default filter");
             }
         } catch (Exception ex) {
             LOG.log(Level.WARNING, "Filter cannot be executed: {0}", new Object[]{ex});

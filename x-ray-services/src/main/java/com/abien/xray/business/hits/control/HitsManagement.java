@@ -213,17 +213,20 @@ public class HitsManagement {
         String script = getScriptContent();
         Predicate<Map.Entry<String, String>> filter = this.provider.createFromNashornScript(script);
         return this.hitCache.getMostPopularValues(max, filter).
-                parallelStream().
+                stream().
                 map(s -> new Hit(s.getRefererUri(), s.getCount())).
                 collect(Collectors.toList());
     }
 
     String getScriptContent() {
         String scriptAsJson = this.filters.get("mostPopularPosts");
+        LOG.log(Level.FINE, "Got script {0}", new Object[]{scriptAsJson});
         JsonObject object = JsonSerializer.deserialize(scriptAsJson);
         String script = null;
         if (object != null) {
             script = object.getString("script");
+            LOG.log(Level.FINE, "Script {0} extracted", new Object[]{script});
+
         }
         return script;
     }

@@ -58,4 +58,10 @@ public class Hit {
     public void invalidate() {
         this.valid = false;
     }
+
+    @Override
+    public String toString() {
+        return "Hit{" + "actionId=" + actionId + ", count=" + count + ", valid=" + valid + '}';
+    }
+
 }
