@@ -16,7 +16,7 @@ public class TitleFilter {
     TitleFetcher cache;
 
     List<Post> getPostsWithExistingTitle(List<Post> mostPopularPosts, int max) {
-        List<Post> mostPopularPostsWithTitle = new ArrayList<Post>();
+        List<Post> mostPopularPostsWithTitle = new ArrayList<>();
         for (Post post : mostPopularPosts) {
             if (isBogus(post)) {
                 continue;
