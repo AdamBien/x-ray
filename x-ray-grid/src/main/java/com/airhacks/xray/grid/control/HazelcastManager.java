@@ -1,17 +1,18 @@
 package com.airhacks.xray.grid.control;
 
-import com.hazelcast.core.Cluster;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IAtomicLong;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.IQueue;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingDeque;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.cache.Cache;
+import javax.cache.CacheManager;
+import javax.cache.Caching;
+import javax.cache.configuration.Configuration;
+import javax.cache.configuration.MutableConfiguration;
+import javax.cache.spi.CachingProvider;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.InjectionPoint;
 
 /**
  *
@@ -21,118 +22,119 @@ import javax.enterprise.inject.spi.InjectionPoint;
 @Singleton
 public class HazelcastManager {
 
-    private HazelcastInstance hazelcast;
-    private Cluster cluster;
-
-    private IQueue<String> rejected;
-    private IQueue<String> firehose;
-    private IMap<String, String> hits;
-    private IMap<String, String> trending;
-    private IMap<String, String> daily;
-    private IMap<String, String> referers;
-    private IMap<String, String> titles;
-    private IMap<String, String> exceptions;
-    private IMap<String, String> diagnostics;
-    private IMap<String, String> methods;
-    private IMap<String, String> filters;
+    private Queue<String> rejected;
+    private Queue<String> firehose;
+    private Cache<String, String> exceptions;
+    private Cache<String, String> hits;
+    private Cache<String, String> trending;
+    private Cache<String, String> daily;
+    private Cache<String, String> referers;
+    private Cache<String, String> titles;
+    private Cache<String, String> diagnostics;
+    private Cache<String, String> methods;
+    private Cache<String, String> filters;
+    private CachingProvider cachingProvider;
+    private CacheManager cacheManager;
+    static final int MAX_QUEUE_CAPACITY = 1000;
 
     @PostConstruct
     public void init() {
-        this.hazelcast = Hazelcast.newHazelcastInstance();
-        this.cluster = this.hazelcast.getCluster();
-        this.hits = this.hazelcast.getMap("hits");
-        this.trending = this.hazelcast.getMap("trending");
-        this.daily = this.hazelcast.getMap("daily");
-        this.referers = this.hazelcast.getMap("referers");
-        this.firehose = this.hazelcast.getQueue("firehose");
-        this.titles = this.hazelcast.getMap("titles");
-        this.rejected = this.hazelcast.getQueue("rejected");
-        this.exceptions = this.hazelcast.getMap("exceptions");
-        this.diagnostics = this.hazelcast.getMap("diagnostics");
-        this.methods = this.hazelcast.getMap("methods");
-        this.filters = this.hazelcast.getMap("filters");
+        this.cachingProvider = Caching.getCachingProvider();
+        this.cacheManager = cachingProvider.getCacheManager();
+        Configuration configuration = getConfiguration();
+
+        this.firehose = new LinkedBlockingDeque<>(MAX_QUEUE_CAPACITY);
+        this.rejected = new LinkedBlockingDeque<>(MAX_QUEUE_CAPACITY);
+        this.hits = this.cacheManager.createCache("hits", configuration);
+        this.trending = this.cacheManager.createCache("trending", configuration);
+        this.daily = this.cacheManager.createCache("daily", configuration);
+        this.referers = this.cacheManager.createCache("referers", configuration);
+        this.titles = this.cacheManager.createCache("titles", configuration);
+        this.exceptions = this.cacheManager.createCache("exceptions", configuration);
+        this.diagnostics = this.cacheManager.createCache("diagnostics", configuration);
+        this.methods = this.cacheManager.createCache("methods", configuration);
+        this.filters = this.cacheManager.createCache("filters", configuration);
     }
 
-    @Produces
-    public HazelcastInstance create() {
-        return this.hazelcast;
+    public Configuration<String, String> getConfiguration() {
+        MutableConfiguration<String, String> configuration = new MutableConfiguration<>();
+        configuration.setStoreByValue(false).
+                setTypes(String.class, String.class).
+                setManagementEnabled(true).
+                setStatisticsEnabled(true);
+        return configuration;
     }
 
     @Produces
     @Grid(Grid.Name.FILTERS)
-    public IMap<String, String> exposeFilters() {
+    public Cache<String, String> exposeFilters() {
         return this.filters;
     }
 
     @Produces
     @Grid(Grid.Name.HITS)
-    public IMap<String, String> exposeHits() {
+    public Cache<String, String> exposeHits() {
         return this.hits;
     }
 
     @Produces
     @Grid(Grid.Name.TRENDING)
-    public IMap<String, String> exposeTrending() {
+    public Cache<String, String> exposeTrending() {
         return this.trending;
     }
 
     @Produces
     @Grid(Grid.Name.DAILY)
-    public IMap<String, String> exposeDaily() {
+    public Cache<String, String> exposeDaily() {
         return this.daily;
     }
 
     @Produces
     @Grid(Grid.Name.REFERERS)
-    public IMap<String, String> exposeReferers() {
+    public Cache<String, String> exposeReferers() {
         return this.referers;
     }
 
     @Produces
     @Grid(Grid.Name.TITLES)
-    public IMap<String, String> titles() {
+    public Cache<String, String> titles() {
         return this.titles;
     }
 
     @Produces
     @Grid(Grid.Name.EXCEPTIONS)
-    public IMap<String, String> exposeExceptions() {
+    public Cache<String, String> exposeExceptions() {
         return this.exceptions;
     }
 
     @Produces
     @Grid(Grid.Name.DIAGNOSTICS)
-    public IMap<String, String> exposeDiagnostics() {
+    public Cache<String, String> exposeDiagnostics() {
         return this.diagnostics;
     }
 
     @Produces
     @Grid(Grid.Name.METHODS)
-    public IMap<String, String> exposeMethods() {
+    public Cache<String, String> exposeMethods() {
         return this.methods;
     }
 
     @Produces
     @Grid(Grid.Name.FIREHOSE)
-    public IQueue<String> exposeFirehose() {
+    public Queue<String> exposeFirehose() {
         return this.firehose;
     }
 
     @Produces
     @Grid(Grid.Name.REJECTED)
-    public IQueue<String> exposeRejected() {
+    public Queue<String> exposeRejected() {
         return this.rejected;
-    }
-
-    @Produces
-    public IAtomicLong exposeLong(InjectionPoint ip) {
-        String name = ip.getMember().getName();
-        return hazelcast.getAtomicLong(name);
     }
 
     @PreDestroy
     public void shutdown() {
-        Hazelcast.shutdownAll();
+        this.cacheManager.close();
+        this.cachingProvider.close();
     }
 
 }
