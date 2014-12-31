@@ -7,20 +7,17 @@ import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.statistics.entity.DailyHits;
 import com.airhacks.xray.grid.control.Grid;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
+import javax.cache.Cache;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Event;
@@ -33,7 +30,6 @@ import javax.json.JsonObject;
 /**
  * @author Adam Bien, blog.adam-bien.com
  */
-@LocalBean
 @Startup
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
@@ -59,7 +55,7 @@ public class HitsManagement {
 
     @Inject
     @Grid(Grid.Name.HITS)
-    private ConcurrentMap<String, String> hits;
+    private Cache<String, String> hits;
 
     @Inject
     @Grid(Grid.Name.REJECTED)
@@ -67,19 +63,19 @@ public class HitsManagement {
 
     @Inject
     @Grid(Grid.Name.DAILY)
-    private Map<String, String> daily;
+    private Cache<String, String> daily;
 
     @Inject
     @Grid(Grid.Name.FILTERS)
-    private Map<String, String> filters;
+    private Cache<String, String> filters;
 
     @Inject
     @Grid(Grid.Name.TRENDING)
-    private ConcurrentMap<String, String> trending;
+    private Cache<String, String> trending;
 
     @Inject
     @Grid(Grid.Name.REFERERS)
-    private ConcurrentMap<String, String> referers;
+    private Cache<String, String> referers;
 
     @Inject
     private FilterProvider provider;
@@ -156,16 +152,12 @@ public class HitsManagement {
     }
 
     public List<Post> getTrending() {
-        List<Post> trends = new ArrayList<>();
-        Map<String, String> cache = trendingCache.getCache();
-        Set<Map.Entry<String, String>> trendEntries = cache.entrySet();
-        trendEntries.stream().map((trendEntry) -> {
+        Cache<String, String> cache = trendingCache.getCache();
+        List<Post> trends = StreamSupport.stream(cache.spliterator(), false).map((trendEntry) -> {
             String hitsValue = trendEntry.getValue();
             Post post = new Post(trendEntry.getKey(), hitsValue);
             return post;
-        }).forEach((post) -> {
-            trends.add(post);
-        });
+        }).collect(Collectors.toList());
         Collections.sort(trends, Collections.reverseOrder());
         return trends;
     }
@@ -211,7 +203,7 @@ public class HitsManagement {
 
     public List<Hit> getMostPopularPosts(int max) {
         String script = getScriptContent();
-        Predicate<Map.Entry<String, String>> filter = this.provider.createFromNashornScript(script);
+        Predicate<Cache.Entry<String, String>> filter = this.provider.createFromNashornScript(script);
         return this.hitCache.getMostPopularValues(max, filter).
                 stream().
                 map(s -> new Hit(s.getRefererUri(), s.getCount())).

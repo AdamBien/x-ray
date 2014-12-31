@@ -10,5 +10,7 @@ public interface XRayLogger {
 
     public void log(Level level, String string, Object[] object);
 
-    public void log(Level level, String message);
+    public default void log(Level level, String message) {
+        this.log(level, message, null);
+    }
 }

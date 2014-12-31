@@ -1,8 +1,8 @@
 package com.abien.xray.business.hits.control;
 
 import com.abien.xray.business.logging.boundary.XRayLogger;
-import java.util.Map;
 import java.util.function.Predicate;
+import javax.cache.Cache;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -26,36 +26,36 @@ public class FilterProviderTest {
 
     @Test
     public void createPredicate() {
-        Predicate<Map.Entry<String, String>> predicate = this.cut.createFromNashornScript("function test(i){return false;}");
+        Predicate<Cache.Entry<String, String>> predicate = this.cut.createFromNashornScript("function test(i){return false;}");
         boolean result = predicate.test(null);
         assertFalse(result);
     }
 
     @Test
     public void predicateFromNullScript() {
-        Predicate<Map.Entry<String, String>> predicate = this.cut.createFromNashornScript(null);
+        Predicate<Cache.Entry<String, String>> predicate = this.cut.createFromNashornScript(null);
         boolean result = predicate.test(null);
         assertTrue(result);
     }
 
     @Test
     public void predicateFromEmptyScript() {
-        Predicate<Map.Entry<String, String>> predicate = this.cut.createFromNashornScript("");
+        Predicate<Cache.Entry<String, String>> predicate = this.cut.createFromNashornScript("");
         boolean result = predicate.test(null);
         assertTrue(result);
     }
 
     @Test
     public void predicateFromIncorrectScript() {
-        Predicate<Map.Entry<String, String>> predicate = this.cut.createFromNashornScript("false");
+        Predicate<Cache.Entry<String, String>> predicate = this.cut.createFromNashornScript("false");
         boolean result = predicate.test(null);
         assertTrue(result);
     }
 
     @Test
     public void functionWithMapEntry() {
-        Predicate<Map.Entry<String, String>> predicate = this.cut.createFromNashornScript("function test(i){return i.key.endsWith('duke');}");
-        boolean result = predicate.test(new Map.Entry<String, String>() {
+        Predicate<Cache.Entry<String, String>> predicate = this.cut.createFromNashornScript("function test(i){return i.key.endsWith('duke');}");
+        boolean result = predicate.test(new Cache.Entry<String, String>() {
 
             @Override
             public String getKey() {
@@ -68,8 +68,8 @@ public class FilterProviderTest {
             }
 
             @Override
-            public String setValue(String value) {
-                return "value";
+            public <T> T unwrap(Class<T> clazz) {
+                return null;
             }
         });
         assertTrue(result);

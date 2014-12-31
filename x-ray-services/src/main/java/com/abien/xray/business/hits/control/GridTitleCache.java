@@ -1,12 +1,11 @@
 package com.abien.xray.business.hits.control;
 
-import com.airhacks.xray.grid.control.Grid;
 import static com.abien.xray.business.hits.entity.Post.EMPTY;
-import java.util.ArrayList;
+import com.airhacks.xray.grid.control.Grid;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import javax.cache.Cache;
 import javax.inject.Inject;
 
 /**
@@ -17,7 +16,7 @@ public class GridTitleCache {
 
     @Inject
     @Grid(Grid.Name.TITLES)
-    private ConcurrentMap<String, String> titles = null;
+    private Cache<String, String> titles;
 
     public String get(String uri) {
         return this.titles.get(uri);
@@ -28,15 +27,10 @@ public class GridTitleCache {
     }
 
     public List<String> getURIsWithoutTitle() {
-        List<String> uris = new ArrayList<String>();
-        Set<Entry<String, String>> titleSet = this.titles.entrySet();
-        for (Entry<String, String> entry : titleSet) {
-            if (EMPTY.equals(entry.getValue())) {
-                String key = entry.getKey();
-                uris.add(key);
-            }
-        }
-        return uris;
+        return StreamSupport.stream(this.titles.spliterator(), false).
+                filter(entry -> EMPTY.equals(entry.getValue())).
+                map(e -> e.getKey()).
+                collect(Collectors.toList());
     }
 
     public void remove(String uri) {

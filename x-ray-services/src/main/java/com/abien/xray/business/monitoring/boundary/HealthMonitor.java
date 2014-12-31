@@ -2,15 +2,16 @@ package com.abien.xray.business.monitoring.boundary;
 
 import com.abien.xray.business.monitoring.entity.Diagnostics;
 import com.airhacks.xray.grid.control.Grid;
-import com.hazelcast.core.IAtomicLong;
-import com.hazelcast.core.IMap;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.cache.Cache;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.LocalBean;
@@ -41,24 +42,24 @@ public class HealthMonitor implements HealthMonitorMXBean {
 
     @Inject
     @Grid(Grid.Name.METHODS)
-    IMap<String, String> methods;
+    Cache<String, String> methods;
 
     @Inject
     @Grid(Grid.Name.DIAGNOSTICS)
-    IMap<String, String> diagnostics;
+    Cache<String, String> diagnostics;
 
     @Inject
     @Grid(Grid.Name.EXCEPTIONS)
-    IMap<String, String> exceptions;
+    Cache<String, String> exceptions;
 
-    @Inject
-    IAtomicLong totalExceptionCount;
+    AtomicLong totalExceptionCount;
 
     @Resource
     SessionContext sc;
 
     @PostConstruct
     public void registerInJMX() {
+        this.totalExceptionCount = new AtomicLong();
         try {
             objectName = new ObjectName("XRayMonitoring:type=" + this.getClass().getName());
             platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -70,16 +71,16 @@ public class HealthMonitor implements HealthMonitorMXBean {
 
     @Override
     public Map<String, String> getDiagnostics() {
-        return diagnostics;
+        return StreamSupport.stream(diagnostics.spliterator(), false).collect(Collectors.toMap(f -> f.getKey(), f -> f.getValue()));
     }
 
     public void add(String methodName, long performance) {
-        this.methods.putAsync(methodName, String.valueOf(performance));
+        this.methods.put(methodName, String.valueOf(performance));
     }
 
     public void exceptionOccurred(String methodName, Exception e) {
         totalExceptionCount.incrementAndGet();
-        this.exceptions.putAsync(methodName, e.toString());
+        this.exceptions.put(methodName, e.toString());
     }
 
     public void onNewDiagnostics(@Observes Diagnostics diagnostics) {
@@ -112,7 +113,7 @@ public class HealthMonitor implements HealthMonitorMXBean {
 
     @Override
     public List<String> getSlowestMethods() {
-        return this.methods.entrySet().stream().sorted((left, right) -> {
+        return StreamSupport.stream(this.methods.spliterator(), false).sorted((left, right) -> {
             return new Long(Long.parseLong(right.getValue())).compareTo(Long.parseLong(left.getValue()));
         }).map(e -> e.getKey() + " :" + e.getValue() + " ms").
                 collect(Collectors.toList());

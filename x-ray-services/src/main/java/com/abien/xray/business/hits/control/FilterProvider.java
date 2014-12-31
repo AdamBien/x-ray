@@ -1,10 +1,10 @@
 package com.abien.xray.business.hits.control;
 
 import com.abien.xray.business.logging.boundary.XRayLogger;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
+import javax.cache.Cache;
 import javax.inject.Inject;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -27,7 +27,7 @@ public class FilterProvider {
         this.nashorn = manager.getEngineByName("javascript");
     }
 
-    public Predicate<Map.Entry<String, String>> createFromNashornScript(String script) {
+    public Predicate<Cache.Entry<String, String>> createFromNashornScript(String script) {
         Predicate filter = f -> true;
 
         if (script == null || script.isEmpty()) {

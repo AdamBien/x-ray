@@ -5,7 +5,6 @@ package com.abien.xray.business.statistics.control;
 import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.statistics.entity.DailyHits;
-import com.hazelcast.core.IAtomicLong;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
@@ -27,8 +26,7 @@ public class DailyHitsCalculator {
     @Inject
     HitsManagement hits;
 
-    @Inject
-    IAtomicLong hitsAtMidnight;
+    AtomicLong hitsAtMidnight;
 
     AtomicLong yesterdayHits;
 
@@ -37,6 +35,7 @@ public class DailyHitsCalculator {
 
     @PostConstruct
     public void initializeYesterday() {
+        hitsAtMidnight = new AtomicLong();
         LOG.log(Level.INFO, "Initializing DailyStatisticsCalculator");
         final long yesterdayHitsValue = hitsAtMidnight.get();
         if (yesterdayHitsValue == 0) {

@@ -4,6 +4,7 @@ package com.abien.xray.business.statistics.control;
 
 import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.logging.boundary.XRayLogger;
+import java.util.concurrent.atomic.AtomicLong;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
@@ -24,7 +25,7 @@ public class DailyHitsCalculatorTest {
         this.cut = new DailyHitsCalculator();
         this.cut.LOG = mock(XRayLogger.class);
         this.cut.hits = mock(HitsManagement.class);
-        this.cut.hitsAtMidnight = new HazelcastAtomicLong();
+        this.cut.hitsAtMidnight = new AtomicLong();
         this.cut.initializeYesterday();
 
     }
