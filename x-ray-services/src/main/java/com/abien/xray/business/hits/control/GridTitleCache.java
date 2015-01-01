@@ -1,7 +1,7 @@
 package com.abien.xray.business.hits.control;
 
+import com.abien.xray.business.grid.control.Grid;
 import static com.abien.xray.business.hits.entity.Post.EMPTY;
-import com.airhacks.xray.grid.control.Grid;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;

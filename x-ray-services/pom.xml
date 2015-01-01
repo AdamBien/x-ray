@@ -20,10 +20,21 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.airhacks</groupId>
-            <artifactId>x-ray-grid</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+            <version>3.3.3</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>1.0.6</version>
         </dependency>
         <dependency>
             <groupId>com.airhacks</groupId>

@@ -2,8 +2,8 @@
  */
 package com.abien.xray.business.hits.control;
 
+import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.logging.boundary.XRayLogger;
-import com.airhacks.xray.grid.control.Grid;
 import java.util.logging.Level;
 import javax.cache.Cache;
 import javax.ejb.Schedule;

@@ -1,7 +1,7 @@
 package com.abien.xray.business.monitoring.boundary;
 
+import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.monitoring.entity.Diagnostics;
-import com.airhacks.xray.grid.control.Grid;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
