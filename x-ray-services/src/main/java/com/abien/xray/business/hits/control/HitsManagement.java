@@ -1,5 +1,6 @@
 package com.abien.xray.business.hits.control;
 
+import com.abien.xray.business.cache.boundary.ResultCache;
 import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.hits.entity.CacheValue;
 import com.abien.xray.business.hits.entity.Hit;
@@ -80,6 +81,9 @@ public class HitsManagement {
     @Inject
     private FilterProvider provider;
 
+    @Inject
+    private ResultCache<Long> totalHitsCache;
+
     @PostConstruct
     public void preloadCache() {
         this.hitCache = new HitsCache(this.hits);
@@ -144,7 +148,7 @@ public class HitsManagement {
     }
 
     public long totalHits() {
-        return this.hitCache.getTotalHits();
+        return this.totalHitsCache.getCachedValueOr(this.hitCache::getTotalHits, 0l);
     }
 
     public long totalTrending() {
