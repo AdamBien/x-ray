@@ -48,22 +48,15 @@ public class DailyHitsCalculatorTest {
     }
 
     @Test
-    public void dailyComputationWithYesterdayNull() {
-        this.cut.initializeYesterday();
+    public void dailyComputationWithEmptyDayHistory() {
 
         final long total = 5l;
         when(this.cut.hits.totalHits()).thenReturn(total);
+        this.cut.initializeYesterday();
 
         long todayHits = this.cut.getTodayHits();
-        assertThat(todayHits, is(total));
+        assertThat(todayHits, is(0l));
 
-        this.cut.computeDailyHits();
-
-        long afterMidnight = this.cut.getTodayHits();
-        assertThat(afterMidnight, is(0l));
-
-        long yesterdayHits = this.cut.totalHitsAtMidnight.get();
-        assertThat(yesterdayHits, is(todayHits));
     }
 
     @Test

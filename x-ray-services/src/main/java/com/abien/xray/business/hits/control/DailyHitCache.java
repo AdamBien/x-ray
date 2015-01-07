@@ -28,6 +28,6 @@ public class DailyHitCache {
     }
 
     public void save(DailyHits hit) {
-        this.dailyHits.put(String.valueOf(hit.getEpoch()), String.valueOf(hit.getHit()));
+        this.dailyHits.put(String.valueOf(hit.getDateAsString()), String.valueOf(hit.getHit()));
     }
 }

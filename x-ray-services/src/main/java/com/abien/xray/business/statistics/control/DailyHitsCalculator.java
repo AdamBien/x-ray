@@ -49,7 +49,6 @@ public class DailyHitsCalculator {
         if (this.yesterdayHits.get() == 0) {
             LOG.log(Level.INFO, "Yesterday's hits are 0");
             this.totalHitsAtMidnight.set(hits.totalHits());
-            this.yesterdayHits.set(0);
         } else {
             this.totalHitsAtMidnight.set(getTotalHits() - this.yesterdayHits.get());
         }
