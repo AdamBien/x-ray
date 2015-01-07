@@ -2,13 +2,16 @@
  */
 package com.abien.xray.business.statistics.control;
 
+import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.statistics.entity.DailyHits;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
+import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
+import javax.cache.Cache;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Schedule;
@@ -26,16 +29,16 @@ public class DailyHitsCalculator {
     @Inject
     HitsManagement hits;
 
-    AtomicLong hitsAtMidnight;
-
-    AtomicLong yesterdayHits;
-
     @Inject
     XRayLogger LOG;
 
+    @Inject
+    @Grid(Grid.Name.DAILY)
+    Cache<String, String> days;
+
     @PostConstruct
     public void initializeYesterday() {
-        hitsAtMidnight = new AtomicLong();
+        hitsAtMidnight = getHitsAtMidnight();
         LOG.log(Level.INFO, "Initializing DailyStatisticsCalculator");
         final long yesterdayHitsValue = hitsAtMidnight.get();
         if (yesterdayHitsValue == 0) {
@@ -79,6 +82,14 @@ public class DailyHitsCalculator {
 
     public List<DailyHits> getDailyHits() {
         return this.hits.getDailyHits();
+    }
+
+    public long getYesterdayHits() {
+        return StreamSupport.stream(this.days.spliterator(), false).
+                map(h -> Long.parseLong(h.getKey())).
+                sorted().
+                findFirst().
+                orElse(0);
     }
 
 }
