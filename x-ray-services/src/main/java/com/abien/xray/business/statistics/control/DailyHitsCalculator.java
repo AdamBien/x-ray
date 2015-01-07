@@ -6,6 +6,8 @@ import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.statistics.entity.DailyHits;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
@@ -34,24 +36,23 @@ public class DailyHitsCalculator {
 
     @Inject
     @Grid(Grid.Name.DAILY)
-    Cache<String, String> days;
+    Cache<String, String> dailyHistory;
+
+    AtomicLong totalHitsAtMidnight;
+    AtomicLong yesterdayHits;
 
     @PostConstruct
     public void initializeYesterday() {
-        hitsAtMidnight = getHitsAtMidnight();
+        this.totalHitsAtMidnight = new AtomicLong();
+        this.yesterdayHits = new AtomicLong(getYesterdayHitsFromHistory());
         LOG.log(Level.INFO, "Initializing DailyStatisticsCalculator");
-        final long yesterdayHitsValue = hitsAtMidnight.get();
-        if (yesterdayHitsValue == 0) {
-            LOG.log(Level.INFO, "Yesterday's hits are 0, overwriting with: " + yesterdayHitsValue);
-            long totalHits = hits.totalHits();
-            if (totalHits < yesterdayHitsValue) {
-                LOG.log(Level.WARNING, "Total hits are lesser than total, resetting to 0");
-                hitsAtMidnight.set(0);
-            } else {
-                hitsAtMidnight.set(hits.totalHits());
-            }
+        if (this.yesterdayHits.get() == 0) {
+            LOG.log(Level.INFO, "Yesterday's hits are 0");
+            this.totalHitsAtMidnight.set(hits.totalHits());
+            this.yesterdayHits.set(0);
+        } else {
+            this.totalHitsAtMidnight.set(getTotalHits() - this.yesterdayHits.get());
         }
-        this.yesterdayHits = new AtomicLong(0);
     }
 
     @Schedule(hour = "23", minute = "59", dayOfWeek = "*", dayOfMonth = "*", persistent = false)
@@ -60,16 +61,16 @@ public class DailyHitsCalculator {
         LOG.log(Level.INFO, "Computing daily hits");
         long totalHits = hits.totalHits();
         LOG.log(Level.INFO, "Total hits: " + totalHits);
-        LOG.log(Level.INFO, "Yesterday's hits were: " + hitsAtMidnight.get());
-        todayHits.set(totalHits - hitsAtMidnight.get());
+        LOG.log(Level.INFO, "Yesterday's hits were: " + totalHitsAtMidnight.get());
+        todayHits.set(totalHits - totalHitsAtMidnight.get());
         yesterdayHits.set(todayHits.get());
         LOG.log(Level.INFO, "Today hits: " + todayHits.get());
-        hitsAtMidnight.set(totalHits);
+        totalHitsAtMidnight.set(totalHits);
         hits.save(new DailyHits(todayHits.get()));
     }
 
     public long getTodayHits() {
-        return hits.totalHits() - hitsAtMidnight.get();
+        return hits.totalHits() - totalHitsAtMidnight.get();
     }
 
     public long getTotalHits() {
@@ -84,12 +85,25 @@ public class DailyHitsCalculator {
         return this.hits.getDailyHits();
     }
 
-    public long getYesterdayHits() {
-        return StreamSupport.stream(this.days.spliterator(), false).
-                map(h -> Long.parseLong(h.getKey())).
+    public LocalDate getYesterdayDate() {
+        return StreamSupport.stream(this.dailyHistory.spliterator(), true).
+                map(h -> LocalDate.parse(h.getKey())).
                 sorted().
                 findFirst().
-                orElse(0);
+                orElse(null);
     }
 
+    long getYesterdayHitsFromHistory() {
+        LocalDate yesterdayDate = getYesterdayDate();
+        if (yesterdayDate == null) {
+            return 0;
+        }
+        String dateAsString = yesterdayDate.format(DateTimeFormatter.ISO_DATE);
+        String yesterdayHit = this.dailyHistory.get(dateAsString);
+        if (yesterdayHit == null) {
+            return 0;
+        } else {
+            return Long.parseLong(yesterdayHit);
+        }
+    }
 }

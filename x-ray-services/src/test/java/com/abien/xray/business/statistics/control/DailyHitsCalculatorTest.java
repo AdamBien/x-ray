@@ -2,8 +2,14 @@
  */
 package com.abien.xray.business.statistics.control;
 
+import com.abien.xray.business.CacheMock;
 import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.logging.boundary.XRayLogger;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -20,19 +26,32 @@ public class DailyHitsCalculatorTest {
 
     DailyHitsCalculator cut;
 
+    Map<String, String> data;
+    static final long YESTERDAY_HIT = 2;
+
     @Before
     public void initAndMock() {
+        this.data = new HashMap<>();
         this.cut = new DailyHitsCalculator();
         this.cut.LOG = mock(XRayLogger.class);
         this.cut.hits = mock(HitsManagement.class);
-        this.cut.hitsAtMidnight = new AtomicLong();
-        this.cut.initializeYesterday();
+        this.cut.totalHitsAtMidnight = new AtomicLong();
+        this.cut.dailyHistory = new CacheMock(this.data);
+    }
+
+    public void populate() {
+        LocalDate today = LocalDate.of(2014, Month.JANUARY, 3);
+        LocalDate yesterday = LocalDate.of(2014, Month.JANUARY, 2);
+        this.data.put(yesterday.format(DateTimeFormatter.ISO_DATE), String.valueOf(YESTERDAY_HIT));
+        this.data.put(today.format(DateTimeFormatter.ISO_DATE), "3");
 
     }
 
     @Test
     public void dailyComputationWithYesterdayNull() {
-        final long total = 1l;
+        this.cut.initializeYesterday();
+
+        final long total = 5l;
         when(this.cut.hits.totalHits()).thenReturn(total);
 
         long todayHits = this.cut.getTodayHits();
@@ -43,17 +62,19 @@ public class DailyHitsCalculatorTest {
         long afterMidnight = this.cut.getTodayHits();
         assertThat(afterMidnight, is(0l));
 
-        long yesterdayHits = this.cut.hitsAtMidnight.get();
+        long yesterdayHits = this.cut.totalHitsAtMidnight.get();
         assertThat(yesterdayHits, is(todayHits));
     }
 
     @Test
     public void dailyComputationWithMidnightSet() {
+        this.populate();
+        this.cut.initializeYesterday();
         final long total = 12;
         when(this.cut.hits.totalHits()).thenReturn(total);
         final int atMidnightTotal = 8;
 
-        this.cut.hitsAtMidnight.set(atMidnightTotal);
+        this.cut.totalHitsAtMidnight.set(atMidnightTotal);
 
         long expected = (total - atMidnightTotal);
 
@@ -65,24 +86,17 @@ public class DailyHitsCalculatorTest {
         long afterMidnight = this.cut.getTodayHits();
         assertThat(afterMidnight, is(0l));
 
-        long yesterdayHits = this.cut.hitsAtMidnight.get();
+        long yesterdayHits = this.cut.totalHitsAtMidnight.get();
         assertThat(yesterdayHits, is(total));
     }
 
     @Test
-    public void yesterdayComputation() {
-        final long total = 12;
-        when(this.cut.hits.totalHits()).thenReturn(total);
-        final int atMidnightTotal = 8;
-        this.cut.hitsAtMidnight.set(atMidnightTotal);
+    public void getYesterdayHitsFromHistory() {
+        this.populate();
+        this.cut.initializeYesterday();
 
-        long todayHits = this.cut.getTodayHits();
-        long yesterdayHits = this.cut.getYesterdayHits();
-        assertThat(yesterdayHits, is(0l));
-
-        this.cut.computeDailyHits();
-
-        long yesterdayAfterMidnight = this.cut.getYesterdayHits();
-        assertThat(todayHits, is(yesterdayAfterMidnight));
+        long actual = this.cut.getYesterdayHitsFromHistory();
+        assertThat(actual, is(YESTERDAY_HIT));
     }
+
 }

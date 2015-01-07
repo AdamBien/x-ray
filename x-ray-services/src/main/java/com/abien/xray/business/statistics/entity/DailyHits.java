@@ -1,6 +1,7 @@
 package com.abien.xray.business.statistics.entity;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,24 +15,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class DailyHits {
 
     private long hit;
-    private long epoch;
+    private LocalDate date;
 
     public DailyHits(long hit) {
         this.hit = hit;
-        this.epoch = System.currentTimeMillis();
+        this.date = LocalDate.now();
     }
 
     public DailyHits(String date, String hit) {
+        this.date = LocalDate.parse(date);
         this.hit = Long.parseLong(hit);
-        this.epoch = Long.parseLong(date);
     }
 
-    public Date getDate() {
-        return new Date(epoch);
+    public String getDateAsString() {
+        return date.format(DateTimeFormatter.ISO_DATE);
     }
 
-    public long getEpoch() {
-        return this.epoch;
+    public LocalDate getDate() {
+        return date;
     }
 
     public long getHit() {
@@ -40,6 +41,7 @@ public class DailyHits {
 
     @Override
     public String toString() {
-        return "DailyHits{" + "hit=" + hit + ", epoch=" + epoch + '}';
+        return "DailyHits{" + "hit=" + hit + ", date=" + date + '}';
     }
+
 }
