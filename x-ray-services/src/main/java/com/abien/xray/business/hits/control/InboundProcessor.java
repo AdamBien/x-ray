@@ -2,15 +2,12 @@
  */
 package com.abien.xray.business.hits.control;
 
-import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
+import com.airhacks.porcupine.execution.control.Managed;
 import java.io.StringReader;
-import java.util.Queue;
+import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.json.Json;
@@ -20,14 +17,8 @@ import javax.json.JsonObject;
  *
  * @author adam-bien.com
  */
-@Startup
-@Singleton
 @Interceptors(PerformanceAuditor.class)
-public class InboundQueueProcessor {
-
-    @Inject
-    @Grid(Grid.Name.FIREHOSE)
-    private Queue<String> firehose;
+public class InboundProcessor {
 
     @Inject
     URLPathExtractor extractor;
@@ -38,23 +29,18 @@ public class InboundQueueProcessor {
     @Inject
     HitsManagement management;
 
-    @Schedule(hour = "*", minute = "*", second = "*/5", persistent = false)
-    public void processRequests() {
-        LOG.log(Level.INFO, "Processing queue with depth {0}", new Object[]{firehose.size()});
-        String content = null;
-        while ((content = firehose.poll()) != null) {
-            processURL(content);
-        }
+    @Managed
+    ExecutorService inbound;
+
+    public void processURL(String payload) {
+        inbound.execute(() -> {
+            JsonObject object = Json.createReader(new StringReader(payload)).readObject();
+            this.processURL(object.getString("url"), object);
+        });
+
     }
 
-    void processURL(String payload
-    ) {
-        JsonObject object = Json.createReader(new StringReader(payload)).readObject();
-        this.processURL(object.getString("url"), object);
-    }
-
-    void processURL(String url, JsonObject headerMap
-    ) {
+    void processURL(String url, JsonObject headerMap) {
         String uniqueAction = extractor.extractPathSegmentFromURL(url);
         LOG.log(Level.INFO, "updateStatistics({0}) - extracted uniqueAction: {1}", new Object[]{url, uniqueAction});
         String referer = extractor.extractReferer(url);

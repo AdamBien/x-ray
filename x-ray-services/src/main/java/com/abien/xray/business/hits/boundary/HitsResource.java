@@ -1,14 +1,13 @@
 package com.abien.xray.business.hits.boundary;
 
-import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.hits.control.HitsManagement;
+import com.abien.xray.business.hits.control.InboundProcessor;
 import com.abien.xray.business.hits.control.JsonSerializer;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
-import java.util.Queue;
 import java.util.logging.Level;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -43,8 +42,7 @@ public class HitsResource {
     HitsManagement hits;
 
     @Inject
-    @Grid(Grid.Name.FIREHOSE)
-    Queue<String> firehose;
+    InboundProcessor ip;
 
     public static final String PREFIX = "/entry/";
 
@@ -122,10 +120,7 @@ public class HitsResource {
 
     void processRequest(JsonObject object) {
         String serialized = JsonSerializer.serialize(object);
-        boolean addedToQueue = this.firehose.offer(serialized);
-        if (!addedToQueue) {
-            LOG.log(Level.INFO, "Element was not added to queue!");
-        }
+        ip.processURL(serialized);
     }
 
 }

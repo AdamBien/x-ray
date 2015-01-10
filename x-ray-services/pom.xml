@@ -48,6 +48,11 @@
             <version>1.0.4</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.airhacks</groupId>
+            <artifactId>porcupine</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
