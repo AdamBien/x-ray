@@ -29,6 +29,7 @@ public class InboundProcessor {
     @Inject
     HitsManagement management;
 
+    @Inject
     @Managed
     ExecutorService inbound;
 

@@ -49,7 +49,7 @@ public class Configuration {
                 put("debug", "true");
             }
         };
-        this.unconfiguredFields = new HashSet<String>();
+        this.unconfiguredFields = new HashSet<>();
         mergeWithCustomConfiguration();
     }
 

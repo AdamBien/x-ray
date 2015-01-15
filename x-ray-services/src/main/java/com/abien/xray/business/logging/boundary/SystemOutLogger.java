@@ -1,6 +1,5 @@
 package com.abien.xray.business.logging.boundary;
 
-import com.hazelcast.logging.ILogger;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 import javax.enterprise.inject.Alternative;
@@ -9,16 +8,16 @@ import javax.enterprise.inject.Alternative;
  * @author blog.adam-bien.com
  */
 @Alternative
-public class HazelcastLogger implements XRayLogger {
+public class SystemOutLogger implements XRayLogger {
 
-    private final ILogger logger;
+    private final String origin;
 
-    HazelcastLogger(ILogger logger) {
-        this.logger = logger;
+    public SystemOutLogger(String name) {
+        this.origin = name;
     }
 
     public void log(Level level, String message, Object[] params) {
-        logger.log(level, serialize(message, params));
+        System.out.println(this.origin + ":" + getLevelAsString(level) + serialize(message, params));
     }
 
     String serialize(String message, Object[] params) {
@@ -27,7 +26,11 @@ public class HazelcastLogger implements XRayLogger {
 
     @Override
     public void log(Level level, String message) {
-        logger.log(level, message);
+        System.out.println(this.origin + ":" + getLevelAsString(level) + message);
+    }
+
+    String getLevelAsString(Level level) {
+        return level.getName() + ":";
     }
 
 }
