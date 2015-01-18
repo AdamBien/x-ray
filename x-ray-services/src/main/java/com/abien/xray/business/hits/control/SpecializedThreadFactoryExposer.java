@@ -3,8 +3,8 @@ package com.abien.xray.business.hits.control;
 import com.airhacks.porcupine.execution.control.ThreadFactoryExposer;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Specializes;
-import javax.ws.rs.Produces;
 
 /**
  *
