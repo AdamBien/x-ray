@@ -30,7 +30,7 @@ public class InboundProcessor {
     HitsManagement management;
 
     @Inject
-    @Managed(corePoolSize = 0, maxPoolSize = Integer.MAX_VALUE, keepAliveTime = 30, pipelineName = "inbound-processor", queueCapacity = 100)
+    @Managed(corePoolSize = 100, maxPoolSize = 100, keepAliveTime = 30, pipelineName = "inbound-processor", queueCapacity = 0)
     ExecutorService inbound;
 
     public void processURL(String payload) {
