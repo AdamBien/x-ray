@@ -109,6 +109,11 @@ public class HitsManagement {
         }
     }
 
+    public void updateHitsForURI(String uri, String hit) {
+        this.hits.put(uri, String.valueOf(hit));
+    }
+
+
     public long getCount(String uri) {
         return this.hitCache.getCount(uri);
     }
