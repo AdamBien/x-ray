@@ -125,6 +125,7 @@ public class HitsManagement {
         }
     }
 
+
     long storeHitStatistics(String uniqueAction) {
         return this.hitCache.increase(uniqueAction);
     }

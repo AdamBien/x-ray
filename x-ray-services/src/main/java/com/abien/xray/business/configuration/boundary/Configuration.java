@@ -1,6 +1,5 @@
 package com.abien.xray.business.configuration.boundary;
 
-import com.abien.xray.business.configuration.control.ConfigurationProvider;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,9 +8,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.InjectionPoint;
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -36,9 +33,6 @@ public class Configuration {
     private Map<String, String> configuration;
     private Set<String> unconfiguredFields;
 
-    @Inject
-    private Instance<ConfigurationProvider> configurationProvider;
-
     @PostConstruct
     public void fetchConfiguration() {
         this.configuration = new HashMap<String, String>() {
@@ -46,22 +40,10 @@ public class Configuration {
                 put("hitsFlushRate", "1");
                 put("referersFlushRate", "1");
                 put("scavengerRuns", "Mon,Wed,Fri");
-                put("debug", "true");
+                put("debug", "false");
             }
         };
         this.unconfiguredFields = new HashSet<>();
-        mergeWithCustomConfiguration();
-    }
-
-    public boolean doesCustomConfigurationExist() {
-        return !configurationProvider.isUnsatisfied();
-    }
-
-    void mergeWithCustomConfiguration() {
-        for (ConfigurationProvider provider : configurationProvider) {
-            Map<String, String> customConfiguration = provider.getConfiguration();
-            this.configuration.putAll(customConfiguration);
-        }
     }
 
     @javax.enterprise.inject.Produces

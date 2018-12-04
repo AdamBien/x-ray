@@ -23,7 +23,7 @@ public class ResultCacheTest {
     public void init() {
         this.cut = new ResultCache<>();
         this.longStream = LongStream.range(1, 10).iterator();
-        this.cut.mes = new ManagedExecutorServiceMock(Executors.newCachedThreadPool());
+        this.cut.resultCachePool = Executors.newCachedThreadPool();
     }
 
     @Test

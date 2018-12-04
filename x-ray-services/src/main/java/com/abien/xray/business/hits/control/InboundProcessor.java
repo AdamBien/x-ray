@@ -4,10 +4,13 @@ package com.abien.xray.business.hits.control;
 
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.monitoring.PerformanceAuditor;
-import com.airhacks.porcupine.execution.control.Managed;
+import com.airhacks.porcupine.execution.boundary.Dedicated;
 import java.io.StringReader;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.json.Json;
@@ -17,6 +20,8 @@ import javax.json.JsonObject;
  *
  * @author adam-bien.com
  */
+@Singleton
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 @Interceptors(PerformanceAuditor.class)
 public class InboundProcessor {
 
@@ -30,7 +35,7 @@ public class InboundProcessor {
     HitsManagement management;
 
     @Inject
-    @Managed(corePoolSize = 100, maxPoolSize = 100, keepAliveTime = 30, pipelineName = "inbound-processor", queueCapacity = 0)
+    @Dedicated
     ExecutorService inbound;
 
     public void processURL(String payload) {

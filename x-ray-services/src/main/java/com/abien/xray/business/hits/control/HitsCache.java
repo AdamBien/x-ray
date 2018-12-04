@@ -33,6 +33,10 @@ public class HitsCache {
         return value;
     }
 
+    public void updateHitsForURI(String uri, String hit) {
+        this.hits.put(uri, String.valueOf(hit));
+    }
+
     public long getCount(String uri) {
         String counterAsString = hits.get(uri);
         if (counterAsString == null) {
