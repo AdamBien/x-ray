@@ -6,35 +6,25 @@ import com.abien.xray.business.hits.entity.CacheValue;
 import com.abien.xray.business.hits.entity.Hit;
 import com.abien.xray.business.hits.entity.Post;
 import com.abien.xray.business.logging.boundary.XRayLogger;
-import com.abien.xray.business.monitoring.PerformanceAuditor;
 import com.abien.xray.business.statistics.entity.DailyHits;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
-import javax.cache.Cache;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 import javax.json.Json;
 import javax.json.JsonObject;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
  */
-@Startup
-@Singleton
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
-@Interceptors(PerformanceAuditor.class)
 public class HitsManagement {
 
     @Inject
@@ -64,15 +54,15 @@ public class HitsManagement {
 
     @Inject
     @Grid(Grid.Name.DAILY)
-    private Cache<String, String> daily;
+    private Map<String, String> daily;
 
     @Inject
     @Grid(Grid.Name.FILTERS)
-    private Cache<String, String> filters;
+    private Map<String, String> filters;
 
     @Inject
     @Grid(Grid.Name.TRENDING)
-    private Cache<String, String> trending;
+    private Map<String, String> trending;
 
     @Inject
     @Grid(Grid.Name.REFERERS)
@@ -213,7 +203,7 @@ public class HitsManagement {
 
     public List<Hit> getMostPopularPosts(int max) {
         String script = getScriptContent();
-        Predicate<Cache.Entry<String, String>> filter = this.provider.createFromNashornScript(script);
+        Predicate<Map.Entry<String, String>> filter = this.provider.createFromNashornScript(script);
         return this.hitCache.getMostPopularValues(max, filter).
                 stream().
                 map(s -> new Hit(s.getRefererUri(), s.getCount())).
