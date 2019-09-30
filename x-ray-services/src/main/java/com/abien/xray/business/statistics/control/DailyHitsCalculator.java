@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
-import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -81,7 +80,8 @@ public class DailyHitsCalculator {
     }
 
     public LocalDate getYesterdayDate() {
-        return StreamSupport.stream(this.dailyHistory.entrySet().spliterator(), true).
+        return this.dailyHistory.entrySet().
+                stream().
                 map(h -> LocalDate.parse(h.getKey())).
                 sorted().
                 findFirst().
