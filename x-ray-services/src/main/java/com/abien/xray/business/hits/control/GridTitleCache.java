@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 /**
  *
  * @author Adam Bien <blog.adam-bien.com>
  */
+@Dependent
 public class GridTitleCache {
 
     @Inject

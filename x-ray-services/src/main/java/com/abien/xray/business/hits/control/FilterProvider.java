@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -14,6 +15,7 @@ import javax.script.ScriptEngineManager;
  *
  * @author airhacks.com
  */
+@Dependent
 public class FilterProvider {
 
     private ScriptEngine nashorn;
