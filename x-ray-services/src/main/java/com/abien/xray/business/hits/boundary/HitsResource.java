@@ -4,14 +4,12 @@ import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.hits.control.InboundProcessor;
 import com.abien.xray.business.hits.control.JsonSerializer;
 import com.abien.xray.business.logging.boundary.XRayLogger;
-import com.abien.xray.business.monitoring.PerformanceAuditor;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.logging.Level;
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -30,9 +28,8 @@ import javax.ws.rs.core.Response;
 /**
  * @author Adam Bien, blog.adam-bien.com
  */
+@ApplicationScoped
 @Path("hits")
-@Stateless
-@Interceptors(PerformanceAuditor.class)
 public class HitsResource {
 
     @Inject

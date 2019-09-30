@@ -5,10 +5,7 @@ import com.abien.xray.business.hits.control.HitsManagement;
 
 import static com.abien.xray.business.HitsPer.Frequency.*;
 
-import javax.ejb.AccessTimeout;
-import javax.ejb.EJB;
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -19,8 +16,7 @@ import javax.ws.rs.Produces;
  * @author Adam Bien, blog.adam-bien.com
  */
 @Path("hitsperhour")
-@Singleton
-@AccessTimeout(2000)
+@ApplicationScoped
 @Produces({"text/plain"})
 public class HourlyStatisticsCalculator {
 
@@ -35,7 +31,7 @@ public class HourlyStatisticsCalculator {
     @HitsPer(HOUR)
     Event<Long> hourlyEvent;
 
-    @Schedule(hour = "*/1", persistent = false)
+    //@Schedule(hour = "*/1", persistent = false)
     public void computeStatistics() {
         long totalHits = hits.totalHits();
         currentRate = totalHits - lastMeasurement;

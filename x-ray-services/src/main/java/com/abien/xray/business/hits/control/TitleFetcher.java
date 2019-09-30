@@ -1,8 +1,7 @@
 package com.abien.xray.business.hits.control;
 
-import com.abien.xray.business.logging.boundary.XRayLogger;
-import com.abien.xray.business.hits.control.GridTitleCache;
 import static com.abien.xray.business.hits.entity.Post.EMPTY;
+import com.abien.xray.business.logging.boundary.XRayLogger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,17 +11,13 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
  */
-@Singleton
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
+@ApplicationScoped
 public class TitleFetcher {
 
     @Inject
@@ -51,7 +46,7 @@ public class TitleFetcher {
         return title;
     }
 
-    @Schedule(minute = "*/1", hour = "*", persistent = false)
+    //@Schedule(minute = "*/1", hour = "*", persistent = false)
     public void fetchTitles() {
         List<String> emptyUris = this.titles.getURIsWithoutTitle();
         for (String key : emptyUris) {

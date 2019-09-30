@@ -6,8 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -24,8 +23,7 @@ import javax.ws.rs.core.UriInfo;
 /**
  * User: blog.adam-bien.com Date: 14.02.11 Time: 19:06
  */
-@Startup
-@Singleton
+@ApplicationScoped
 @Path("configuration")
 @Produces(TEXT_PLAIN)
 public class Configuration {

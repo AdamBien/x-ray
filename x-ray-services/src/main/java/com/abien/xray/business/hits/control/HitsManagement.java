@@ -46,7 +46,7 @@ public class HitsManagement {
 
     @Inject
     @Grid(Grid.Name.HITS)
-    private Cache<String, String> hits;
+    private Map<String, String> hits;
 
     @Inject
     @Grid(Grid.Name.REJECTED)
@@ -66,7 +66,7 @@ public class HitsManagement {
 
     @Inject
     @Grid(Grid.Name.REFERERS)
-    private Cache<String, String> referers;
+    private Map<String, String> referers;
 
     @Inject
     private FilterProvider provider;
@@ -152,8 +152,8 @@ public class HitsManagement {
     }
 
     public List<Post> getTrending() {
-        Cache<String, String> cache = trendingCache.getCache();
-        List<Post> trends = StreamSupport.stream(cache.spliterator(), false).map((trendEntry) -> {
+        Map<String, String> cache = trendingCache.getCache();
+        List<Post> trends = StreamSupport.stream(cache.entrySet().spliterator(), false).map((trendEntry) -> {
             String hitsValue = trendEntry.getValue();
             Post post = new Post(trendEntry.getKey(), hitsValue);
             return post;

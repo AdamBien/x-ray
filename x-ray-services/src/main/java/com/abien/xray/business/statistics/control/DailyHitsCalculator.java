@@ -9,23 +9,19 @@ import com.abien.xray.business.statistics.entity.DailyHits;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
-import javax.cache.Cache;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 /**
  *
  * @author adam-bien.com
  */
-@Singleton
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
+@ApplicationScoped
 public class DailyHitsCalculator {
 
     @Inject
@@ -36,7 +32,7 @@ public class DailyHitsCalculator {
 
     @Inject
     @Grid(Grid.Name.DAILY)
-    Cache<String, String> dailyHistory;
+    Map<String, String> dailyHistory;
 
     AtomicLong totalHitsAtMidnight;
     AtomicLong yesterdayHits;
@@ -54,7 +50,7 @@ public class DailyHitsCalculator {
         }
     }
 
-    @Schedule(hour = "23", minute = "59", dayOfWeek = "*", dayOfMonth = "*", persistent = false)
+    //@Schedule(hour = "23", minute = "59", dayOfWeek = "*", dayOfMonth = "*", persistent = false)
     public void computeDailyHits() {
         AtomicLong todayHits = new AtomicLong(0);
         LOG.log(Level.INFO, "Computing daily hits");
@@ -85,7 +81,7 @@ public class DailyHitsCalculator {
     }
 
     public LocalDate getYesterdayDate() {
-        return StreamSupport.stream(this.dailyHistory.spliterator(), true).
+        return StreamSupport.stream(this.dailyHistory.entrySet().spliterator(), true).
                 map(h -> LocalDate.parse(h.getKey())).
                 sorted().
                 findFirst().

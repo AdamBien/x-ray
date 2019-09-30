@@ -3,9 +3,9 @@ package com.abien.xray.business.hits.control;
 import com.abien.xray.business.grid.control.Grid;
 import static com.abien.xray.business.hits.entity.Post.EMPTY;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import javax.cache.Cache;
 import javax.inject.Inject;
 
 /**
@@ -16,7 +16,7 @@ public class GridTitleCache {
 
     @Inject
     @Grid(Grid.Name.TITLES)
-    private Cache<String, String> titles;
+    private Map<String, String> titles;
 
     public String get(String uri) {
         return this.titles.get(uri);
@@ -27,7 +27,7 @@ public class GridTitleCache {
     }
 
     public List<String> getURIsWithoutTitle() {
-        return StreamSupport.stream(this.titles.spliterator(), false).
+        return StreamSupport.stream(this.titles.entrySet().spliterator(), false).
                 filter(entry -> EMPTY.equals(entry.getValue())).
                 map(e -> e.getKey()).
                 collect(Collectors.toList());

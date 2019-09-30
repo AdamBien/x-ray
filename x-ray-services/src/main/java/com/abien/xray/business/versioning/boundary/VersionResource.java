@@ -6,16 +6,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -23,20 +21,18 @@ import javax.ws.rs.core.Response;
  *
  * @author adam-bien.com
  */
-@Stateless
+@RequestScoped
 @Path("version")
 @Produces(MediaType.TEXT_PLAIN)
 public class VersionResource {
 
     public static final Logger LOG = Logger.getLogger(VersionResource.class.getName());
-    @Context
-    ServletContext context;
 
     @GET
     public JsonObject version() {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
         Properties properties = new Properties();
-        InputStream is = this.context.getResourceAsStream("/META-INF/maven/com.airhacks/x-ray-services/pom.properties");
+        InputStream is = null; //this.context.getResourceAsStream("/META-INF/maven/com.airhacks/x-ray-services/pom.properties");
 
         if (is != null) {
             try {

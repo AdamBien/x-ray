@@ -2,10 +2,8 @@
 package com.abien.xray.business.hits.boundary;
 
 import com.abien.xray.business.hits.control.HitsManagement;
-import com.abien.xray.business.monitoring.PerformanceAuditor;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 import javax.json.JsonObject;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -15,9 +13,8 @@ import javax.ws.rs.core.Response;
  *
  * @author airhacks.com
  */
-@Stateless
+@RequestScoped
 @Path("imports")
-@Interceptors(PerformanceAuditor.class)
 public class ImportsResource {
 
     @Inject

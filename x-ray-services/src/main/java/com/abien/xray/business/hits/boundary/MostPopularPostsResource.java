@@ -1,13 +1,9 @@
 package com.abien.xray.business.hits.boundary;
 
 import com.abien.xray.business.hits.entity.Post;
-import com.abien.xray.business.monitoring.PerformanceAuditor;
 import java.util.List;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Singleton;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -19,10 +15,8 @@ import javax.ws.rs.core.MediaType;
  *
  * @author blog.adam-bien.com
  */
+@RequestScoped
 @Path("mostpopular")
-@Singleton
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
-@Interceptors(PerformanceAuditor.class)
 public class MostPopularPostsResource {
 
     @Inject

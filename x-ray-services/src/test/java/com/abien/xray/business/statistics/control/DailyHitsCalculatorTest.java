@@ -2,7 +2,6 @@
  */
 package com.abien.xray.business.statistics.control;
 
-import com.abien.xray.business.CacheMock;
 import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import java.time.LocalDate;
@@ -36,7 +35,7 @@ public class DailyHitsCalculatorTest {
         this.cut.LOG = mock(XRayLogger.class);
         this.cut.hits = mock(HitsManagement.class);
         this.cut.totalHitsAtMidnight = new AtomicLong();
-        this.cut.dailyHistory = new CacheMock(this.data);
+        this.cut.dailyHistory = new HashMap<>();
     }
 
     public void populate() {
