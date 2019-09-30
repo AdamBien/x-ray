@@ -1,17 +1,11 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.airhacks</groupId>
-        <artifactId>x-ray-assembly</artifactId>
-        <version>0.0.5-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
     <groupId>com.airhacks</groupId>
     <artifactId>x-ray-services</artifactId>
     <packaging>war</packaging>
     <version>0.0.5-SNAPSHOT</version>
-    <url>http://x-ray.adam-bien.com</url>
+    <url>http://adam-bien.com</url>
     <dependencies>
         <dependency>
             <groupId>org.eclipse.microprofile</groupId>
@@ -19,7 +13,7 @@
             <version>3.0</version>
             <type>pom</type>
             <scope>provided</scope>
-        </dependency>        
+        </dependency>                
         <dependency>
             <groupId>com.airhacks</groupId>
             <artifactId>jaxrs-cors</artifactId>
@@ -37,6 +31,18 @@
             <artifactId>porcupine-spy</artifactId>
             <version>0.0.4</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>        
     </dependencies>
     <build>
         <finalName>x-ray</finalName>
