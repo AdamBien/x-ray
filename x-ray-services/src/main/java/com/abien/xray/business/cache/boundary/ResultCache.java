@@ -1,9 +1,10 @@
 package com.abien.xray.business.cache.boundary;
 
-import com.airhacks.porcupine.execution.boundary.Dedicated;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 /**
@@ -15,8 +16,13 @@ public class ResultCache<T> {
     private T recentResult;
 
     @Inject
-    @Dedicated
     ExecutorService resultCachePool;
+
+    @PostConstruct
+    public void init() {
+        this.resultCachePool = Executors.newFixedThreadPool(10);
+    }
+
 
     public T getCachedValueOr(Supplier<T> slowCalculation, T defaultValue) {
         CompletableFuture.supplyAsync(slowCalculation, resultCachePool).

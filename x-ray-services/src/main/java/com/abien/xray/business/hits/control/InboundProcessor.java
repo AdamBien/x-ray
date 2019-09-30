@@ -3,10 +3,11 @@
 package com.abien.xray.business.hits.control;
 
 import com.abien.xray.business.logging.boundary.XRayLogger;
-import com.airhacks.porcupine.execution.boundary.Dedicated;
 import java.io.StringReader;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.Json;
@@ -29,8 +30,13 @@ public class InboundProcessor {
     HitsManagement management;
 
     @Inject
-    @Dedicated
     ExecutorService inbound;
+
+    @PostConstruct
+    public void initExecutor() {
+        this.inbound = Executors.newFixedThreadPool(10);
+    }
+
 
     public void processURL(String payload) {
         inbound.execute(() -> {
