@@ -82,13 +82,5 @@ public class DailyHitsCalculatorTest {
         assertThat(yesterdayHits, is(total));
     }
 
-    @Test
-    public void getYesterdayHitsFromHistory() {
-        this.populate();
-        this.cut.initializeYesterday();
-
-        long actual = this.cut.getYesterdayHitsFromHistory();
-        assertThat(actual, is(YESTERDAY_HIT));
-    }
 
 }
