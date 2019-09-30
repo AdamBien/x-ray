@@ -8,28 +8,13 @@
     <name>x-ray-assembly</name>
     <url>http://maven.apache.org</url>
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <modules>
         <module>x-ray</module>
-        <module>x-ray-grid</module>
         <module>x-ray-services</module>
         <module>x-ray-client</module>
         <module>x-ray-roller-adapter</module>
         <module>x-ray-services-st</module>
-        <module>x-ray-satellite</module>
-        <module>x-ray-satellite-st</module>
     </modules>
     <build>
         <plugins>
