@@ -17,7 +17,6 @@ public class ResultCache<T> {
 
     private T recentResult;
 
-    @Inject
     ExecutorService resultCachePool;
 
     @PostConstruct

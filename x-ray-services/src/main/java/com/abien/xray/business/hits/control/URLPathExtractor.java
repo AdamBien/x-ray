@@ -1,9 +1,12 @@
 package com.abien.xray.business.hits.control;
 
+import javax.enterprise.context.Dependent;
+
 /**
  *
  * @author abien
  */
+@Dependent
 public class URLPathExtractor {
 
     private String begin = null;

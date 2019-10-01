@@ -29,7 +29,6 @@ public class InboundProcessor {
     @Inject
     HitsManagement management;
 
-    @Inject
     ExecutorService inbound;
 
     @PostConstruct

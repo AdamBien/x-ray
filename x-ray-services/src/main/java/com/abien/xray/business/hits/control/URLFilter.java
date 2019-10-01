@@ -1,9 +1,12 @@
 package com.abien.xray.business.hits.control;
 
+import javax.enterprise.context.Dependent;
+
 /**
  *
  * @author Adam Bien, blog.adam-bien.com
  */
+@Dependent
 public class URLFilter {
     public final static String[] MUST_NOT_ENDS_WITH = {".css",".gif",".jpg",".js"};
     public final static String[] BLACK_LIST = {"/roller/CommentAuthenticatorServlet"};

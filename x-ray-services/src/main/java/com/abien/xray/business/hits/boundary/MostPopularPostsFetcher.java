@@ -7,12 +7,15 @@ import com.abien.xray.business.hits.entity.Post;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 /**
  *
  * @author airhacks.com
  */
+@Dependent
 public class MostPopularPostsFetcher extends TitleFilter {
 
     @Inject

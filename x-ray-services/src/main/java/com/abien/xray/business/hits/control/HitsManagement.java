@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -25,6 +26,7 @@ import javax.json.JsonObject;
 /**
  * @author Adam Bien, blog.adam-bien.com
  */
+@Dependent
 public class HitsManagement {
 
     @Inject

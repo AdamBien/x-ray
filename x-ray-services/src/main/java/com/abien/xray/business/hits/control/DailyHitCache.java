@@ -12,7 +12,6 @@ import javax.enterprise.context.Dependent;
  *
  * @author adam-bien.com
  */
-@Dependent
 public class DailyHitCache {
 
     private final Comparator<Map.Entry<String, String>> decreasing = (l, r) -> l.getValue().compareTo(r.getValue());
