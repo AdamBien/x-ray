@@ -24,7 +24,7 @@ public class InboundProcessor {
     URLPathExtractor extractor;
 
     @Inject
-    private XRayLogger LOG;
+    XRayLogger LOG;
 
     @Inject
     HitsManagement management;

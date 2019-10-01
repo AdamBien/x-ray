@@ -33,7 +33,7 @@ import javax.ws.rs.core.Response;
 public class HitsResource {
 
     @Inject
-    private XRayLogger LOG;
+    XRayLogger LOG;
 
     @Inject
     HitsManagement hits;

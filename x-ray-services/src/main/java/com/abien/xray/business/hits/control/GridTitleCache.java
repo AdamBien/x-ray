@@ -18,7 +18,7 @@ public class GridTitleCache {
 
     @Inject
     @Grid(Grid.Name.TITLES)
-    private Map<String, String> titles;
+    Map<String, String> titles;
 
     public String get(String uri) {
         return this.titles.get(uri);

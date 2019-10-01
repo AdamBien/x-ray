@@ -52,29 +52,29 @@ public class HitsManagement {
 
     @Inject
     @Grid(Grid.Name.REJECTED)
-    private Queue<String> rejected;
+    Queue<String> rejected;
 
     @Inject
     @Grid(Grid.Name.DAILY)
-    private Map<String, String> daily;
+    Map<String, String> daily;
 
     @Inject
     @Grid(Grid.Name.FILTERS)
-    private Map<String, String> filters;
+    Map<String, String> filters;
 
     @Inject
     @Grid(Grid.Name.TRENDING)
-    private Map<String, String> trending;
+    Map<String, String> trending;
 
     @Inject
     @Grid(Grid.Name.REFERERS)
-    private Map<String, String> referers;
+    Map<String, String> referers;
 
     @Inject
-    private FilterProvider provider;
+    FilterProvider provider;
 
     @Inject
-    private ResultCache<Long> totalHitsCache;
+    ResultCache<Long> totalHitsCache;
 
     @PostConstruct
     public void preloadCache() {

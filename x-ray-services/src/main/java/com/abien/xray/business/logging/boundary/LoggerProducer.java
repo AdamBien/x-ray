@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 public class LoggerProducer {
 
     @Inject
-    private boolean debug;
+    boolean debug;
 
     @Produces
     public XRayLogger getLogger(InjectionPoint ip) {
