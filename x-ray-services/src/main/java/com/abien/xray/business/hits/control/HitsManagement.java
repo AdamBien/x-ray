@@ -48,7 +48,7 @@ public class HitsManagement {
 
     @Inject
     @Grid(Grid.Name.HITS)
-    private Map<String, String> hits;
+    Map<String, String> hits;
 
     @Inject
     @Grid(Grid.Name.REJECTED)
