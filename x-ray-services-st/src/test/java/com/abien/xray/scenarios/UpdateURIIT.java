@@ -24,7 +24,7 @@ import org.junit.Test;
 public class UpdateURIIT {
 
     public final static String HEADER_PREFIX = "xray_";
-    private static final String ROOT_TARGET = ServerLocation.getLocation() + "/x-ray-services/resources/hits/";
+    private static final String ROOT_TARGET = ServerLocation.getLocation() + "/x-ray/resources/hits/";
     private WebTarget tut;
     private final static long WAIT_TIME = 8 * 1000;
 
