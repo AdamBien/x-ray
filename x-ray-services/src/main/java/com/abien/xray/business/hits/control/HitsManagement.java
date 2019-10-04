@@ -1,24 +1,25 @@
 package com.abien.xray.business.hits.control;
 
 import com.abien.xray.business.cache.boundary.ResultCache;
-import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.hits.entity.CacheValue;
 import com.abien.xray.business.hits.entity.Hit;
 import com.abien.xray.business.hits.entity.Post;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.statistics.entity.DailyHits;
+import io.quarkus.scheduler.Scheduled;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -26,7 +27,7 @@ import javax.json.JsonObject;
 /**
  * @author Adam Bien, blog.adam-bien.com
  */
-@Dependent
+@ApplicationScoped
 public class HitsManagement {
 
     @Inject
@@ -46,28 +47,11 @@ public class HitsManagement {
 
     private DailyHitCache dailyHitCache;
 
-    @Inject
-    @Grid(Grid.Name.HITS)
     Map<String, String> hits;
-
-    @Inject
-    @Grid(Grid.Name.REJECTED)
     Queue<String> rejected;
-
-    @Inject
-    @Grid(Grid.Name.DAILY)
     Map<String, String> daily;
-
-    @Inject
-    @Grid(Grid.Name.FILTERS)
     Map<String, String> filters;
-
-    @Inject
-    @Grid(Grid.Name.TRENDING)
     Map<String, String> trending;
-
-    @Inject
-    @Grid(Grid.Name.REFERERS)
     Map<String, String> referers;
 
     @Inject
@@ -76,12 +60,27 @@ public class HitsManagement {
     @Inject
     ResultCache<Long> totalHitsCache;
 
+    final static String HOUR = "1h";
+
     @PostConstruct
     public void preloadCache() {
+        this.hits = new ConcurrentHashMap<>();
+        this.daily = new ConcurrentHashMap<>();
+        this.filters = new ConcurrentHashMap<>();
+        this.trending = new ConcurrentHashMap<>();
+        this.referers = new ConcurrentHashMap<>();
+        this.rejected = new LinkedList<>();
+
         this.hitCache = new HitsCache(this.hits);
         this.trendingCache = new HitsCache(this.trending);
         this.refererCache = new HitsCache(this.referers);
         this.dailyHitCache = new DailyHitCache(this.daily);
+    }
+
+    @Scheduled(every = HOUR)
+    public void resetTrends() {
+        LOG.log(Level.INFO, "Resetting trends");
+        trending.clear();
     }
 
     public void updateStatistics(String uri, String referer, JsonObject headerMap) {
@@ -176,24 +175,6 @@ public class HitsManagement {
         return this.refererCache.getMostPopularValues(maxNumber, f -> true);
     }
 
-    @Produces
-    @Grid(Grid.Name.REFERERS)
-    public HitsCache referersCache() {
-        return this.refererCache;
-    }
-
-    @Produces
-    @Grid(Grid.Name.HITS)
-    public HitsCache statisticsCache() {
-        return hitCache;
-    }
-
-    @Produces
-    @Grid(Grid.Name.TRENDING)
-    public HitsCache trendingCache() {
-        return trendingCache;
-    }
-
     public List<DailyHits> getDailyHits() {
         return this.dailyHitCache.getDailyHits();
     }
@@ -231,6 +212,10 @@ public class HitsManagement {
                 add("referer", referer).
                 add("header", headerMap).build();
         return JsonSerializer.serialize(object);
+    }
+
+    public Map<String, String> getDaily() {
+        return this.daily;
     }
 
 }

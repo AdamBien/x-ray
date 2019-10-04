@@ -35,7 +35,6 @@ public class DailyHitsCalculatorTest {
         this.cut.LOG = mock(XRayLogger.class);
         this.cut.hits = mock(HitsManagement.class);
         this.cut.totalHitsAtMidnight = new AtomicLong();
-        this.cut.dailyHistory = new HashMap<>();
     }
 
     public void populate() {

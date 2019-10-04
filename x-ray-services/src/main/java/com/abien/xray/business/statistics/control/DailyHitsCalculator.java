@@ -2,7 +2,6 @@
  */
 package com.abien.xray.business.statistics.control;
 
-import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.statistics.entity.DailyHits;
@@ -29,10 +28,6 @@ public class DailyHitsCalculator {
 
     @Inject
     XRayLogger LOG;
-
-    @Inject
-    @Grid(Grid.Name.DAILY)
-    Map<String, String> dailyHistory;
 
     AtomicLong totalHitsAtMidnight;
     AtomicLong yesterdayHits;
@@ -81,7 +76,7 @@ public class DailyHitsCalculator {
     }
 
     public LocalDate getYesterdayDate() {
-        return this.dailyHistory.entrySet().
+        return this.getDailyHistory().entrySet().
                 stream().
                 map(h -> LocalDate.parse(h.getKey())).
                 sorted().
@@ -95,11 +90,15 @@ public class DailyHitsCalculator {
             return 0;
         }
         String dateAsString = yesterdayDate.format(DateTimeFormatter.ISO_DATE);
-        String yesterdayHit = this.dailyHistory.get(dateAsString);
+        String yesterdayHit = this.getDailyHistory().get(dateAsString);
         if (yesterdayHit == null) {
             return 0;
         } else {
             return Long.parseLong(yesterdayHit);
         }
+    }
+
+    Map<String, String> getDailyHistory() {
+        return this.hits.getDaily();
     }
 }
