@@ -6,6 +6,7 @@ import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.statistics.entity.DailyHits;
+import io.quarkus.scheduler.Scheduled;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -49,7 +50,7 @@ public class DailyHitsCalculator {
         }
     }
 
-    //@Schedule(hour = "23", minute = "59", dayOfWeek = "*", dayOfMonth = "*", persistent = false)
+    @Scheduled(cron = "23 59 * * *")
     public void computeDailyHits() {
         AtomicLong todayHits = new AtomicLong(0);
         LOG.log(Level.INFO, "Computing daily hits");
