@@ -4,6 +4,7 @@ package com.abien.xray.business.hits.control;
 
 import com.abien.xray.business.grid.control.Grid;
 import com.abien.xray.business.logging.boundary.XRayLogger;
+import io.quarkus.scheduler.Scheduled;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.enterprise.context.ApplicationScoped;
@@ -17,13 +18,15 @@ import javax.inject.Inject;
 public class HourlyTrendReset {
 
     @Inject
-    private XRayLogger LOG;
+    XRayLogger LOG;
 
     @Inject
     @Grid(Grid.Name.TRENDING)
-    private Map<String, String> trending;
+    Map<String, String> trending;
 
-    //@Schedule(hour = "*/1", persistent = false)
+    final static String DURATION = "1h";
+
+    @Scheduled(every = HourlyTrendReset.DURATION)
     public void resetTrends() {
         LOG.log(Level.INFO, "Resetting trends");
         trending.clear();
