@@ -1,24 +1,28 @@
 package com.abien.xray.business.hits.control;
 
-import com.abien.xray.business.grid.control.Grid;
 import static com.abien.xray.business.hits.entity.Post.EMPTY;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 
 /**
  *
  * @author Adam Bien <blog.adam-bien.com>
  */
-@Dependent
+@ApplicationScoped
 public class GridTitleCache {
 
-    @Inject
-    @Grid(Grid.Name.TITLES)
     Map<String, String> titles;
+
+    @PostConstruct
+    public void initCache() {
+        this.titles = new ConcurrentHashMap<>();
+    }
+
 
     public String get(String uri) {
         return this.titles.get(uri);
