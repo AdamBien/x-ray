@@ -1,10 +1,9 @@
 package com.abien.xray.business.statistics.boundary;
 
 import com.abien.xray.business.HitsPer;
-import com.abien.xray.business.hits.control.HitsManagement;
-
 import static com.abien.xray.business.HitsPer.Frequency.*;
-
+import com.abien.xray.business.hits.control.HitsManagement;
+import io.quarkus.scheduler.Scheduled;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -31,7 +30,9 @@ public class HourlyStatisticsCalculator {
     @HitsPer(HOUR)
     Event<Long> hourlyEvent;
 
-    //@Schedule(hour = "*/1", persistent = false)
+    final static String DURATION = "1h";
+
+    @Scheduled(every = DURATION)
     public void computeStatistics() {
         long totalHits = hits.totalHits();
         currentRate = totalHits - lastMeasurement;
