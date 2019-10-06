@@ -44,14 +44,14 @@ public class HitsManagementIT {
     @Test
     public void putAndCount() throws UnsupportedEncodingException {
         long id = System.nanoTime();
-        String uri = URLEncoder.encode("/entry/NEW" + id,"UTF-8");
+        String rawURL = "/entry/NEW" + id;
+        String uri = URLEncoder.encode(rawURL,"UTF-8");
 
         String numberOfHits = this.tut.path(uri).request(MediaType.TEXT_PLAIN).get(String.class);
         assertThat(numberOfHits, is("0"));
 
-        Response response = this.tut.request(MediaType.TEXT_PLAIN).put(Entity.text(uri));
+        Response response = this.tut.request(MediaType.TEXT_PLAIN).put(Entity.text(rawURL));
         assertThat(response.getStatus(), is(204));
-        
 
         numberOfHits = this.tut.path(uri).request(MediaType.TEXT_PLAIN).get(String.class);
         assertThat(numberOfHits, is("1"));
