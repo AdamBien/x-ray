@@ -5,6 +5,8 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 /**
  * @author blog.adam-bien.com
  */
@@ -12,6 +14,7 @@ import javax.inject.Singleton;
 public class LoggerProducer {
 
     @Inject
+    @ConfigProperty(name="debug",defaultValue="false")
     boolean debug;
 
     @Produces
