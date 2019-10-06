@@ -28,8 +28,8 @@ public class ImportsResource {
         if (!checkNumber(hits)) {
             return Response.status(400).header("reason", hits + " is not a number").build();
         }
-        this.management.updateHitsForURI(id, hits);
-        return Response.noContent().build();
+        long newHitsValue = this.management.updateHitsForURI(id, Long.parseLong(hits));
+        return Response.ok(newHitsValue).build();
     }
 
     boolean checkNumber(String numberCandidate) {
