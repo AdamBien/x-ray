@@ -29,7 +29,7 @@ public class HitsCache {
         long hitsAsLong = hits.get(uri);
         AtomicLong hitCount = new AtomicLong(hitsAsLong);
         long value = hitCount.incrementAndGet();
-        hits.replace(uri, value);
+        hits.put(uri, value);
         return value;
     }
 
