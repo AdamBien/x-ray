@@ -5,6 +5,8 @@ import com.abien.xray.business.hits.entity.Hit;
 import com.abien.xray.business.hits.entity.Post;
 import com.abien.xray.business.logging.boundary.XRayLogger;
 import com.abien.xray.business.statistics.entity.DailyHits;
+
+import io.netty.handler.logging.LogLevel;
 import io.quarkus.scheduler.Scheduled;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -126,6 +128,7 @@ public class HitsManagement {
 
 
     long storeHitStatistics(String uniqueAction) {
+        LOG.log(Level.INFO, "Storing: " + uniqueAction);
         return this.hitCache.increase(uniqueAction);
     }
 
