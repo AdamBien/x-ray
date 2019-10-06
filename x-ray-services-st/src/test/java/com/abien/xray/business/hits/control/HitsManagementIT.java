@@ -33,9 +33,9 @@ public class HitsManagementIT {
     }
 
     @Test
-    public void getNotExistingURI() {
+    public void getNotExistingURI() throws UnsupportedEncodingException {
         String numberOfHits = this.tut.
-        path(URLEncoder.encode("/entry/NOTEXISTS")).
+        path(URLEncoder.encode("/entry/NOTEXISTS","UTF-8")).
                 request(MediaType.TEXT_PLAIN).
         get(String.class);
         assertThat(numberOfHits, is("0"));
