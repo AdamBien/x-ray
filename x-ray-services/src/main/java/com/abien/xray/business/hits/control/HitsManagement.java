@@ -220,4 +220,8 @@ public class HitsManagement {
         return this.daily;
     }
 
+    public Map<String, Long> getHits() {
+        return this.hits;
+    }
+
 }
