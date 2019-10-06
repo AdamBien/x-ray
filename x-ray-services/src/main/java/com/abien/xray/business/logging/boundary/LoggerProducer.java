@@ -14,7 +14,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 public class LoggerProducer {
 
     @Inject
-    @ConfigProperty(name="debug",defaultValue="false")
+    @ConfigProperty(name="debug")
     boolean debug;
 
     @Produces
