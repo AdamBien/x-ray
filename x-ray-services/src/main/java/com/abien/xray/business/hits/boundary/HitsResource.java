@@ -24,6 +24,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
@@ -45,8 +46,14 @@ public class HitsResource {
 
     @PUT
     @Consumes({MediaType.TEXT_PLAIN})
-    public Response updateStatistics(@Context HttpHeaders httpHeaders, String url) {
-        if (!isEmpty(url)) {
+    public Response updateStatistics(@Context HttpHeaders httpHeaders, String encodedUrl) {
+        String url = null;
+        if (!isEmpty(encodedUrl)) {
+            try {
+                url = URLDecoder.decode(encodedUrl, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                return Response.status(Status.BAD_REQUEST).header("Encoding problems:", e.toString()).build();
+            }
             MultivaluedMap<String, String> headers = httpHeaders.getRequestHeaders();
             JsonObjectBuilder request = Json.createObjectBuilder();
             headers.entrySet().stream().forEach((headerEntries) -> {
