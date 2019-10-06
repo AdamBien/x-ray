@@ -29,7 +29,7 @@ public class FilterProvider {
         this.nashorn = manager.getEngineByName("javascript");
     }
 
-    public Predicate<Map.Entry<String, String>> createFromNashornScript(String script) {
+    public Predicate<Map.Entry<String, Long>> createFromNashornScript(String script) {
         Predicate filter = f -> true;
 
         if (script == null || script.isEmpty()) {

@@ -4,49 +4,47 @@ import com.abien.xray.business.hits.entity.CacheValue;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * User: blog.adam-bien.com Date: 17.02.11 Time: 21:11
  */
 public class HitsCache {
 
-    private Map<String, String> hits = null;
+    private Map<String, Long> hits = null;
     /**
      * Left and right swapped on purpose -> decreasing order
      */
-    private final Comparator<Map.Entry<String, String>> decreasing = (l, r) -> new Long(Long.parseLong(r.getValue())).compareTo(Long.parseLong(l.getValue()));
+    private final Comparator<Map.Entry<String, Long>> decreasing = (l, r) -> r.getValue().compareTo(l.getValue());
 
-    public HitsCache(Map<String, String> hits) {
+    public HitsCache(Map<String, Long> hits) {
         this.hits = hits;
     }
 
     public long increase(String uri) {
-        hits.putIfAbsent(uri, "0");
-        String hitCountAsString = hits.get(uri);
-        AtomicLong hitCount = new AtomicLong(Long.parseLong(hitCountAsString));
+        hits.putIfAbsent(uri, 0l);
+        long hitsAsLong = hits.get(uri);
+        AtomicLong hitCount = new AtomicLong(hitsAsLong);
         long value = hitCount.incrementAndGet();
-        hits.replace(uri, String.valueOf(value));
+        hits.replace(uri, value);
         return value;
     }
 
-    public void updateHitsForURI(String uri, String hit) {
-        this.hits.put(uri, String.valueOf(hit));
+    public void updateHitsForURI(String uri, long hits) {
+        this.hits.put(uri, hits);
     }
 
     public long getCount(String uri) {
-        String counterAsString = hits.get(uri);
-        if (counterAsString == null) {
+        if (hits.isEmpty()) {
             return 0;
-        } else {
-            return Long.parseLong(counterAsString);
         }
+        return hits.get(uri);
     }
 
-    public Map<String, String> getCache() {
+    public Map<String, Long> getCache() {
         return hits;
     }
 
@@ -55,15 +53,15 @@ public class HitsCache {
     }
 
     public List<CacheValue> getMostPopularValuesNotContaining(String excludeContaining, int maxNumber) {
-        return StreamSupport.stream(this.hits.entrySet().spliterator(), true).
+        return this.hits.entrySet().stream().
                 filter(f -> !f.getKey().contains(excludeContaining)).
                 sorted(decreasing).
                 map(f -> new CacheValue(f.getKey(), f.getValue())).
                 collect(Collectors.toList());
     }
 
-    public List<CacheValue> getMostPopularValues(int maxNumber, Predicate<Map.Entry<String, String>> filter) {
-        return StreamSupport.stream(this.hits.entrySet().spliterator(), true).
+    public List<CacheValue> getMostPopularValues(int maxNumber, Predicate<Entry<String, Long>> filter) {
+        return this.hits.entrySet().stream().
                 filter(filter).
                 sorted(decreasing).
                 limit(maxNumber).
@@ -72,7 +70,7 @@ public class HitsCache {
     }
 
     public long getTotalHits() {
-        return StreamSupport.stream(this.hits.entrySet().spliterator(), false).mapToLong(v -> Long.parseLong(v.getValue())).sum();
+        return this.hits.values().stream().mapToLong(l -> l).sum();
     }
 
     public void clear() {

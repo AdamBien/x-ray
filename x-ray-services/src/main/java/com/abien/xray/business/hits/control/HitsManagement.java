@@ -46,12 +46,13 @@ public class HitsManagement {
 
     private DailyHitCache dailyHitCache;
 
-    Map<String, String> hits;
-    Queue<String> rejected;
-    Map<String, String> daily;
+    Map<String, Long> hits;
+    Map<String, Long> daily;
+    Map<String, Long> trending;
+
     Map<String, String> filters;
-    Map<String, String> trending;
-    Map<String, String> referers;
+    Map<String, Long> referers;
+    Queue<String> rejected;
 
     @Inject
     FilterProvider provider;
@@ -99,10 +100,13 @@ public class HitsManagement {
         }
     }
 
-    public void updateHitsForURI(String uri, String hit) {
-        this.hits.put(uri, String.valueOf(hit));
+    public long updateHitsForURI(String uri, long hit) {
+        return this.hits.merge(uri, hit, this::add);
     }
 
+    long add(long old, long current) {
+        return old + current;
+    }
 
     public long getCount(String uri) {
         return this.hitCache.getCount(uri);
@@ -152,10 +156,9 @@ public class HitsManagement {
     }
 
     public List<Post> getTrending() {
-        Map<String, String> cache = trendingCache.getCache();
+        Map<String, Long> cache = trendingCache.getCache();
         List<Post> trends = StreamSupport.stream(cache.entrySet().spliterator(), false).map((trendEntry) -> {
-            String hitsValue = trendEntry.getValue();
-            Post post = new Post(trendEntry.getKey(), hitsValue);
+            Post post = new Post(trendEntry.getKey(), trendEntry.getValue());
             return post;
         }).collect(Collectors.toList());
         Collections.sort(trends, Collections.reverseOrder());
@@ -185,7 +188,7 @@ public class HitsManagement {
 
     public List<Hit> getMostPopularPosts(int max) {
         String script = getScriptContent();
-        Predicate<Map.Entry<String, String>> filter = this.provider.createFromNashornScript(script);
+        Predicate<Map.Entry<String, Long>> filter = this.provider.createFromNashornScript(script);
         return this.hitCache.getMostPopularValues(max, filter).
                 stream().
                 map(s -> new Hit(s.getRefererUri(), s.getCount())).
@@ -213,7 +216,7 @@ public class HitsManagement {
         return JsonSerializer.serialize(object);
     }
 
-    public Map<String, String> getDaily() {
+    public Map<String, Long> getDaily() {
         return this.daily;
     }
 

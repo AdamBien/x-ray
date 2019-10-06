@@ -22,9 +22,9 @@ public class DailyHits {
         this.date = LocalDate.now();
     }
 
-    public DailyHits(String date, String hit) {
+    public DailyHits(String date, long hit) {
         this.date = LocalDate.parse(date);
-        this.hit = Long.parseLong(hit);
+        this.hit = hit;
     }
 
     public String getDateAsString() {

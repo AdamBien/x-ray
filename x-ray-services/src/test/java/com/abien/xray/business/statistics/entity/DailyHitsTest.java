@@ -21,7 +21,7 @@ public class DailyHitsTest {
     @Test
     public void dateParsingAndRetrieval() {
         final String expected = "2015-01-07";
-        DailyHits hits = new DailyHits(expected, "1");
+        DailyHits hits = new DailyHits(expected, 1);
         String actual = hits.getDateAsString();
         assertThat(actual, is(expected));
     }

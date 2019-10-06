@@ -90,15 +90,10 @@ public class DailyHitsCalculator {
             return 0;
         }
         String dateAsString = yesterdayDate.format(DateTimeFormatter.ISO_DATE);
-        String yesterdayHit = this.getDailyHistory().get(dateAsString);
-        if (yesterdayHit == null) {
-            return 0;
-        } else {
-            return Long.parseLong(yesterdayHit);
-        }
+        return this.getDailyHistory().get(dateAsString);
     }
 
-    Map<String, String> getDailyHistory() {
+    Map<String, Long> getDailyHistory() {
         return this.hits.getDaily();
     }
 }
