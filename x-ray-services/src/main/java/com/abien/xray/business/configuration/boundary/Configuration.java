@@ -72,15 +72,6 @@ public class Configuration {
         return Integer.parseInt(stringValue);
     }
 
-    @javax.enterprise.inject.Produces
-    public boolean getBoolean(InjectionPoint point) {
-        String stringValue = getString(point);
-        if (stringValue == null) {
-            return false;
-        }
-        return Boolean.parseBoolean(stringValue);
-    }
-
     public Set<String> getUnconfiguredFields() {
         return this.unconfiguredFields;
     }
