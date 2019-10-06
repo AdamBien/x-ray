@@ -1,4 +1,4 @@
-package com.abien.xray.business.cache.boundary;
+package com.abien.xray.business.hits.control;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;

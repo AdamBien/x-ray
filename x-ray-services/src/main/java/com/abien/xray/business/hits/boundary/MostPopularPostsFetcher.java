@@ -1,6 +1,6 @@
 package com.abien.xray.business.hits.boundary;
 
-import com.abien.xray.business.cache.boundary.ResultCache;
+import com.abien.xray.business.hits.control.ResultCache;
 import com.abien.xray.business.hits.control.HitsManagement;
 import com.abien.xray.business.hits.entity.Hit;
 import com.abien.xray.business.hits.entity.Post;
