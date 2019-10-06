@@ -38,10 +38,7 @@ public class HitsCache {
     }
 
     public long getCount(String uri) {
-        if (hits.isEmpty()) {
-            return 0;
-        }
-        return hits.get(uri);
+        return hits.getOrDefault(uri,0l);
     }
 
     public Map<String, Long> getCache() {
