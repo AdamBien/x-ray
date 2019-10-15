@@ -1,5 +1,5 @@
 
-package com.abien.xray.business.hits.boundary;
+package com.abien.xray.business.imports.boundary;
 
 import com.abien.xray.business.hits.control.HitsManagement;
 import javax.enterprise.context.RequestScoped;
