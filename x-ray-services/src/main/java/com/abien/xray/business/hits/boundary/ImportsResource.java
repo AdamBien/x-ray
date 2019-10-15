@@ -5,8 +5,11 @@ import com.abien.xray.business.hits.control.HitsManagement;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.JsonObject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -22,6 +25,8 @@ public class ImportsResource {
 
     @PUT
     @Path("hits")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response update(JsonObject input) {
         String id = input.getString("id");
         String hits = input.getString("hits");
