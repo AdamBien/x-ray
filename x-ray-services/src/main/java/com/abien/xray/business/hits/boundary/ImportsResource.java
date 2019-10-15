@@ -11,6 +11,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.microprofile.metrics.MetricRegistry;
+import org.eclipse.microprofile.metrics.annotation.RegistryType;
 
 /**
  *
@@ -23,6 +25,10 @@ public class ImportsResource {
     @Inject
     HitsManagement management;
 
+    @Inject
+    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+    MetricRegistry registry;
+
     @PUT
     @Path("hits")
     @Produces(MediaType.TEXT_PLAIN)
@@ -31,8 +37,10 @@ public class ImportsResource {
         String id = input.getString("id");
         String hits = input.getString("hits");
         if (!checkNumber(hits)) {
+            registry.counter("conversion_errors").inc();
             return Response.status(400).header("reason", hits + " is not a number").build();
         }
+        registry.counter("imported_hits").inc();
         long newHitsValue = this.management.updateHitsForURI(id, Long.parseLong(hits));
         return Response.ok(newHitsValue).build();
     }
