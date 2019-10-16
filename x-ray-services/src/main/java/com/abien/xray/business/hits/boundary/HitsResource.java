@@ -25,6 +25,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.eclipse.microprofile.metrics.MetricRegistry;
+import org.eclipse.microprofile.metrics.annotation.Metered;
+import org.eclipse.microprofile.metrics.annotation.RegistryType;
 
 /**
  * @author Adam Bien, blog.adam-bien.com
@@ -42,9 +45,15 @@ public class HitsResource {
     @Inject
     InboundProcessor ip;
 
+    @Inject
+    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+    MetricRegistry registry;
+
+
     public static final String PREFIX = "/entry/";
 
     @PUT
+    @Metered
     @Consumes({MediaType.TEXT_PLAIN})
     public Response updateStatistics(@Context HttpHeaders httpHeaders, String encodedUrl) {
         String url = null;
@@ -52,6 +61,7 @@ public class HitsResource {
             try {
                 url = URLDecoder.decode(encodedUrl, "UTF-8");
             } catch (UnsupportedEncodingException e) {
+                registry.counter("encoding_error").inc();
                 return Response.status(Status.BAD_REQUEST).header("Encoding problems:", e.toString()).build();
             }
             MultivaluedMap<String, String> headers = httpHeaders.getRequestHeaders();
@@ -66,6 +76,7 @@ public class HitsResource {
             });
             request.add("url", url);
             processRequest(request.build());
+            registry.counter("request_processed").inc();
         }
         return Response.noContent().build();
     }
