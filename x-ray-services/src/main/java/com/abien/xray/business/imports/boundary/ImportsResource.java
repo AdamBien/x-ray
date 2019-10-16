@@ -34,7 +34,7 @@ public class ImportsResource {
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response update(JsonObject input) {
-        String id = input.getString("id");
+        String id = prependEntry(input.getString("id"));
         String hits = input.getString("hits");
         if (!checkNumber(hits)) {
             registry.counter("conversion_errors").inc();
@@ -52,6 +52,13 @@ public class ImportsResource {
         } catch (Exception ex) {
             return false;
         }
+    }
+
+    String prependEntry(String id) {
+        if (!id.startsWith("/entry")) {
+            return "/entry/" + id;
+        }
+        return id;
     }
 
 }
