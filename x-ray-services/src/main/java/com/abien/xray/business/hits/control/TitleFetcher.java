@@ -1,7 +1,9 @@
 package com.abien.xray.business.hits.control;
 
+import static com.abien.xray.business.hits.control.HitsManagement.HOUR;
 import static com.abien.xray.business.hits.entity.Post.EMPTY;
 import com.abien.xray.business.logging.boundary.XRayLogger;
+import io.quarkus.scheduler.Scheduled;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +48,7 @@ public class TitleFetcher {
         return title;
     }
 
-    //@Schedule(minute = "*/1", hour = "*", persistent = false)
+    @Scheduled(every = HOUR)
     public void fetchTitles() {
         List<String> emptyUris = this.titles.getURIsWithoutTitle();
         for (String key : emptyUris) {
