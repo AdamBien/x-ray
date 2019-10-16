@@ -1,20 +1,16 @@
 package com.abien.xray.business.hits.control;
 
-import static org.junit.Assert.assertThat;
-
+import com.abien.xray.business.ServerLocation;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import static org.hamcrest.CoreMatchers.is;
-import com.abien.xray.business.ServerLocation;
-
+import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,9 +49,13 @@ public class HitsManagementIT {
         Response response = this.tut.request(MediaType.TEXT_PLAIN).put(Entity.text(rawURL));
         assertThat(response.getStatus(), is(204));
 
-        numberOfHits = this.tut.path(uri).request(MediaType.TEXT_PLAIN).get(String.class);
+        numberOfHits = this.numberOfHits(uri);
         assertThat(numberOfHits, is("1"));
 
+    }
+
+    public String numberOfHits(String uri) {
+        return this.tut.path(uri).request(MediaType.TEXT_PLAIN).get(String.class);
     }
 
     
