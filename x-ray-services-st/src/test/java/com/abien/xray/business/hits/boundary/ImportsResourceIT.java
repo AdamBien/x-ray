@@ -1,6 +1,9 @@
 package com.abien.xray.business.hits.boundary;
 
 import com.abien.xray.business.ServerLocation;
+import com.abien.xray.business.hits.control.HitsManagementIT;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
@@ -26,7 +29,7 @@ public class ImportsResourceIT {
     }
     
     @Test
-    public void importHitAndIncreaseCounter() {
+    public void importHitAndIncreaseCounter() throws UnsupportedEncodingException {
         String articleName = "popular" + System.currentTimeMillis();
         JsonObject article = Json.createObjectBuilder().
                 add("id", articleName).
@@ -42,6 +45,16 @@ public class ImportsResourceIT {
         hit = response.readEntity(Integer.class);
         assertThat(hit, is(12 * 2));
 
+        hit = numberOfHits(articleName);
+        assertThat(hit, is(12 * 2));
+
+    }
+
+    public int numberOfHits(String uri) throws UnsupportedEncodingException {
+        HitsManagementIT hits = new HitsManagementIT();
+        hits.initClient();
+        String encoded = URLEncoder.encode("/entry/" + uri, "UTF-8");
+        return Integer.parseInt(hits.numberOfHits(encoded));
     }
     
 }
