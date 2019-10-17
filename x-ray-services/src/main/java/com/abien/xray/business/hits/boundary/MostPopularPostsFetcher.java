@@ -1,21 +1,20 @@
 package com.abien.xray.business.hits.boundary;
 
-import com.abien.xray.business.hits.control.ResultCache;
 import com.abien.xray.business.hits.control.HitsManagement;
+import com.abien.xray.business.hits.control.ResultCache;
 import com.abien.xray.business.hits.entity.Hit;
 import com.abien.xray.business.hits.entity.Post;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 /**
  *
  * @author airhacks.com
  */
-@Dependent
+@ApplicationScoped
 public class MostPopularPostsFetcher extends TitleFilter {
 
     @Inject
