@@ -65,7 +65,7 @@ public class HitsManagement {
     final static String HOUR = "1h";
 
     @PostConstruct
-    public void preloadCache() {
+    public void initCache() {
         this.hits = new ConcurrentHashMap<>();
         this.daily = new ConcurrentHashMap<>();
         this.filters = new ConcurrentHashMap<>();
