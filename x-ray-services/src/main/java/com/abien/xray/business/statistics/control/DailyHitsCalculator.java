@@ -45,7 +45,7 @@ public class DailyHitsCalculator {
         }
     }
 
-    @Scheduled(cron = "0 23 59 * * ?")
+    @Scheduled(cron = "0 59 23 * * ?")
     public void computeDailyHits() {
         AtomicLong todayHits = new AtomicLong(0);
         LOG.log(Level.INFO, "Computing daily hits");
