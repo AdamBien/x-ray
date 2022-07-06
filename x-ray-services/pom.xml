@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
-            <version>3.5.4</version>
+            <version>3.11</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
