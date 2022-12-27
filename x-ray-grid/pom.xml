@@ -9,7 +9,7 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
-            <version>3.3.3</version>
+            <version>3.12.13</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
